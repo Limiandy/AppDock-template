@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler", // ✅ 支持 .d.mts 类型文件
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "composite": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "typeRoots": ["./types", "./node_modules/@types/", "../node_modules/@types/"],
+
+    // ✅ 添加 Vite 类型支持
+    "types": ["vite/client"],
+
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@styles/*": ["src/styles/*"],
+      "@constant/*": ["src/constant/*"],
+    }
+  },
+  "include": ["src", "env.d.ts"], // ✅ 确保 env.d.ts 被包含
+  "exclude": ["node_modules", "dist"]
+}

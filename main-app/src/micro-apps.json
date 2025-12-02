@@ -1,0 +1,9 @@
+[
+  {
+    "name": "custom-comp-app",
+    "entry": "//localhost:60011",
+    "container": "#qiankun-container",
+    "activeRule": "/custom-comp-app",
+    "props": {}
+  }
+]
