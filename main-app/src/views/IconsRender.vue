@@ -4,12 +4,20 @@
       v-for="(value, key) in iconGroup"
       :key="key"
     >
-      <div>{{ key === '.' ? '无目录' : key }}</div>
-      <div>
-        <span
+      <div style="margin-bottom: 16px">{{ key === '.' ? '无目录' : key }}</div>
+      <div
+        style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px"
+      >
+        <div
           v-for="(item, index) in value"
           :key="index"
-          style="display: inline-block; margin: 16px; cursor: pointer"
+          style="
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+          "
           @click="handleClick(item.fullName)"
         >
           <svg-icon
@@ -17,7 +25,8 @@
             width="24px"
             height="24px"
           />
-        </span>
+          <p>{{ item.name }}</p>
+        </div>
       </div>
     </section>
   </div>

@@ -28,11 +28,6 @@ export const routes: RouteWithoutChildren[] = [
     children: [...asyncRoutes, ...microAppRoutes],
   },
   ...constantRoutes,
-  {
-    path: '/:catchAll(.*)',
-    name: 'NotFound',
-    component: () => import('@/views/exceptions/NotFound.vue'),
-  },
 ]
 
 const router = createRouter({

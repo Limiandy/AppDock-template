@@ -62,8 +62,11 @@
 
       <!-- Content -->
       <a-layout-content class="basic-layout-content">
-        <div id="qiankun-container" />
-        <router-view />
+        <router-view v-if="isBaseRoutePath" />
+        <div
+          v-else
+          id="qiankun-container"
+        />
       </a-layout-content>
     </a-layout>
 
@@ -73,8 +76,11 @@
       class="basic-layout-content"
       :class="{ 'is-fixed-header': fixedHeader }"
     >
-      <div id="qiankun-container" />
-      <router-view />
+      <router-view v-if="isBaseRoutePath" />
+      <div
+        v-else
+        id="qiankun-container"
+      />
     </a-layout-content>
   </a-layout>
 </template>
@@ -84,7 +90,7 @@ import { computed, h, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
 import { SvgIcon } from 'common'
-
+import { constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 
 const { eventBus } = useEvent()
@@ -93,6 +99,26 @@ function normalizePath(parent: string, path: string): string {
   if (!parent) return path.startsWith('/') ? path : '/' + path
   if (path.startsWith('/')) return path
   return `${parent.replace(/\/$/, '')}/${path}`
+}
+
+function getBaseAppRoutePaths(routes: any[], parentPath = ''): string[] {
+  const paths: string[] = []
+
+  routes.forEach((r) => {
+    if (r.path === '/' || r.path === '/:catchAll(.*)') return
+
+    const fullPath = normalizePath(parentPath, r.path)
+
+    // 先把父路径加入
+    paths.push(fullPath)
+
+    // 再递归处理子路由
+    if (r.children && r.children.length > 0) {
+      paths.push(...getBaseAppRoutePaths(r.children, fullPath))
+    }
+  })
+
+  return paths
 }
 
 /**
@@ -126,6 +152,13 @@ const fixedSider = ref<boolean>(true)
 const siderWidth = ref<number>(200)
 const collapsedWidth = ref<number>(80)
 const loading = ref<boolean>(false)
+
+const baseAppRoutePaths = getBaseAppRoutePaths(
+  asyncRoutes.concat(constantRoutes),
+)
+const isBaseRoutePath = computed(() => {
+  return baseAppRoutePaths.includes(route.fullPath)
+})
 
 eventBus.on('microLoad', (val: boolean) => {
   console.log(1111)
