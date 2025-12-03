@@ -85,10 +85,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
 import { SvgIcon } from 'common'
 
-import { useGlobalStore } from '@/store/modules/global.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
-
-const globalStore = useGlobalStore()
 
 const { eventBus } = useEvent()
 
@@ -333,5 +330,10 @@ function syncMenuByRoute() {
   flex: 1;
   min-height: 0;
   min-width: 0;
+}
+
+#qiankun-container {
+  width: 100%;
+  height: 100%;
 }
 </style>
