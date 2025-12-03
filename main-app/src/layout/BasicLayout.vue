@@ -84,9 +84,13 @@ import { computed, h, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
 import { SvgIcon } from 'common'
+
 import { useGlobalStore } from '@/store/modules/global.ts'
+import { useEvent } from '@/hooks/useEvent.ts'
 
 const globalStore = useGlobalStore()
+
+const { eventBus } = useEvent()
 
 function normalizePath(parent: string, path: string): string {
   if (!parent) return path.startsWith('/') ? path : '/' + path
@@ -124,7 +128,12 @@ const fixedHeader = ref<boolean>(true)
 const fixedSider = ref<boolean>(true)
 const siderWidth = ref<number>(200)
 const collapsedWidth = ref<number>(80)
-const loading = computed(() => globalStore.microLoading)
+const loading = ref<boolean>(false)
+
+eventBus.on('microLoad', (val: boolean) => {
+  console.log(1111)
+  loading.value = val
+})
 
 const fixedSiderStyle = computed(() => {
   const width = collapsed.value ? collapsedWidth.value : siderWidth.value

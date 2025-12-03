@@ -1,10 +1,10 @@
 import microApps from './micro-apps.json'
 import { registerMicroApps, start, initGlobalState } from 'qiankun'
-import { useGlobalStore } from '@/store/modules/global.ts'
+import { useEvent } from '@/hooks/useEvent.ts'
+
+const { eventBus } = useEvent()
 
 export function registerMicroApp() {
-  const globalStore = useGlobalStore()
-
   const actions = initGlobalState({
     user: { name: 'admin' },
   })
@@ -19,11 +19,11 @@ export function registerMicroApp() {
   })
   registerMicroApps(microApps, {
     async beforeLoad() {
-      globalStore.setMicroLoading(true)
+      eventBus.emit('microLoad', true)
       return Promise.resolve()
     },
     async afterMount() {
-      globalStore.setMicroLoading(false)
+      eventBus.emit('microLoad', false)
       return Promise.resolve()
     },
   })
