@@ -14,9 +14,21 @@ for await (const prefix of prefixes) {
 
   const iconSet = new IconSet(data)
 
+  const outlineIcons = iconSet.list().filter((name) => name.includes('outline'))
+
+  const filteredData = {
+    ...data,
+    icons: outlineIcons.reduce((acc, name) => {
+      acc[name] = data.icons[name]
+      return acc
+    }, {}),
+  }
+
+  const filteredIconSet = new IconSet(filteredData)
+
   console.log('Exporting', iconSet.info.name)
 
-  await exportToDirectory(iconSet, {
+  await exportToDirectory(filteredIconSet, {
     target: path.resolve(__dirname, '..', 'src', 'icons', `${prefix}`),
   })
 
