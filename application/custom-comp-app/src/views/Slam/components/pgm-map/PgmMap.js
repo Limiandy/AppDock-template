@@ -1,19 +1,23 @@
 import { fabric } from 'fabric-with-erasing'
-import { parsePGM, parseYamlMinimal, pixelToCanvas, removeHost, worldToPixel } from '@/components/SlamMap/utils'
-import MarkerStyle from '@/components/SlamMap/MarkerStyle'
-import MultiMarker from '@/components/SlamMap/MultiMarker'
+import {
+  parsePGM,
+  parseYamlMinimal,
+  pixelToCanvas,
+  removeHost,
+  worldToPixel,
+} from './utils'
+import MarkerStyle from './MarkerStyle'
+import MultiMarker from './MultiMarker'
 
-import Vue from 'vue'
-import MapSlider from './MapSlider.vue'
-// eslint-disable-next-line import/no-cycle
-import MultiPolyline from '@/components/SlamMap/MultiPolyline'
-import PolylineStyle from '@/components/SlamMap/PolylineStyle'
+import './MapSlider.js'
+
+import MultiPolyline from './MultiPolyline'
+import PolylineStyle from './PolylineStyle'
 // 覆写
 fabric.Text.prototype._setTextStyles = function (ctx, charStyle, forMeasuring) {
   // ✅ 修正拼写错误
   ctx.textBaseline = 'alphabetic'
   if (this.path) {
-    // eslint-disable-next-line default-case
     switch (this.pathAlign) {
       case 'center':
         ctx.textBaseline = 'middle'
@@ -47,6 +51,8 @@ class PgmMap {
   yamlData = null
   pgmImg = null
   _resizeTimer = null
+  baseScale = 1
+  options = {}
 
   constructor(el, options = {}) {
     this.el = el
@@ -122,21 +128,27 @@ class PgmMap {
     this._initResizeObserver()
 
     // -------------------- 渲染 MapSlider --------------------
-    const sliderContainer = document.createElement('div')
-    this.el.appendChild(sliderContainer)
+    const { controller = true } = this.options
 
-    const SliderConstructor = Vue.extend(MapSlider)
-    this.sliderVm = new SliderConstructor({
-      propsData: {
-        value: this.zoom,
-        min: this.minZoom,
-        max: this.maxZoom,
-        step: 0.5,
-        canvas: this,
-      },
-    })
+    if (controller) {
+      const slider = document.createElement('map-slider')
 
-    this.sliderVm.$mount(sliderContainer)
+      slider.value = this.zoom
+      slider.min = this.minZoom
+      slider.max = this.maxZoom
+      slider.step = 0.5
+
+      slider.style.position = 'absolute'
+      slider.style.bottom = '10px'
+      slider.style.right = '10px'
+
+      // 监听组件触发的事件
+      slider.addEventListener('change', (e) => {
+        this.setZoom(e.detail)
+      })
+
+      this.el.appendChild(slider)
+    }
   }
 
   _initResizeObserver() {
@@ -181,9 +193,13 @@ class PgmMap {
 
     this._updateCanvasSize(newW, newH)
 
-    this._markers.values().forEach(marker => {
+    this._updateCanvasCover()
+  }
+
+  _updateCanvasCover() {
+    this._markers.values().forEach((marker) => {
       const { geometries } = marker
-      const newGeometries = geometries.map(geometry => {
+      const newGeometries = geometries.map((geometry) => {
         const { position } = geometry
         geometry.position = new PgmMap.LatLng(this, position.latLng)
         return geometry
@@ -191,11 +207,13 @@ class PgmMap {
       marker.updateGeometries(newGeometries)
     })
 
-    this._polylines.values().forEach(polyline => {
+    this._polylines.values().forEach((polyline) => {
       const { geometries } = polyline
-      const newGeometries = geometries.map(geometry => {
+      const newGeometries = geometries.map((geometry) => {
         const { paths } = geometry
-        geometry.paths = paths.map(path => new PgmMap.LatLng(this, path.latLng))
+        geometry.paths = paths.map(
+          (path) => new PgmMap.LatLng(this, path.latLng),
+        )
         return geometry
       })
 
@@ -204,7 +222,6 @@ class PgmMap {
   }
 
   _updateCanvasSize(newW, newH) {
-    console.log('======newW, newH========: ', newW, newH)
     const canvas = this.canvasInstance
     const img = this.pgmImg
 
@@ -214,7 +231,7 @@ class PgmMap {
     const scaleX = newW / (img?.width || 1)
     const scaleY = newH / (img?.height || 1)
     const scale = Math.min(scaleX, scaleY)
-
+    this.baseScale = scale
     img?.set({
       scaleX: scale,
       scaleY: scale,
@@ -257,7 +274,7 @@ class PgmMap {
     if (!this.canvasInstance) return
 
     const canvas = this.canvasInstance
-    const errorObj = canvas.getObjects().find(obj => obj.id === 'HELP_TEXT')
+    const errorObj = canvas.getObjects().find((obj) => obj.id === 'HELP_TEXT')
     if (errorObj) {
       canvas.remove(errorObj)
       canvas.renderAll()
@@ -285,8 +302,10 @@ class PgmMap {
     const gradient = new fabric.Gradient({
       type: 'linear',
       coords: {
-        x1: -radius, y1: 0,
-        x2: radius, y2: 0,
+        x1: -radius,
+        y1: 0,
+        x2: radius,
+        y2: 0,
       },
       colorStops: [
         { offset: 0, color: '#ff4b4b' },
@@ -329,7 +348,10 @@ class PgmMap {
 
   _removeLoading() {
     const canvas = this.canvasInstance
-    canvas.getObjects().find(obj => obj.id === 'LOADING_GROUP')?.remove()
+    canvas
+      .getObjects()
+      .find((obj) => obj.id === 'LOADING_GROUP')
+      ?.remove()
   }
 
   /* ---------------------- 数据加载 ---------------------- */
@@ -364,7 +386,7 @@ class PgmMap {
       const scaleX = mapELWidth / img.width
       const scaleY = mapELHeight / img.height
       const scale = Math.min(scaleX, scaleY)
-
+      this.baseScale = scale
       this.pgmImg = new fabric.Image(img, {
         metadata: { id: '123', type: 'BASE_IMAGE' },
         originX: 'center',
@@ -401,7 +423,7 @@ class PgmMap {
       ])
 
       // 延迟测试
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // 检查两个响应是否都成功
       if (!yamlRes.ok || !pgmRes.ok) {
@@ -418,6 +440,7 @@ class PgmMap {
 
       return Promise.resolve(this.canvasInstance)
     } catch (e) {
+      console.log(e)
       this._renderHelpText(this.errorText)
       return Promise.reject(new Error('地图文件加载失败'))
     }
@@ -430,10 +453,8 @@ class PgmMap {
   }
 
   destroy() {
-    this.sliderVm && this.sliderVm.$destroy()
     this.resizeObserver?.disconnect()
     window.removeEventListener('resize', this._scheduleResize)
-    // this.canvasInstance?.dispose()
     this.canvasInstance = null
   }
 
@@ -460,13 +481,13 @@ class PgmMap {
     let lastPosX, lastPosY
     const canvas = this.canvasInstance
 
-    canvas.on('mouse:down', opt => {
+    canvas.on('mouse:down', (opt) => {
       isDragging = true
       lastPosX = opt.e.clientX
       lastPosY = opt.e.clientY
     })
 
-    canvas.on('mouse:move', opt => {
+    canvas.on('mouse:move', (opt) => {
       if (!isDragging) return
       const { e } = opt
       const vpt = canvas.viewportTransform
@@ -481,11 +502,27 @@ class PgmMap {
   }
 
   setZoom(zoom) {
-    const canvas = this.canvasInstance
     zoom = Math.min(Math.max(zoom, this.minZoom), this.maxZoom)
-    const center = { x: canvas.getWidth() / 2, y: canvas.getHeight() / 2 }
-    canvas.zoomToPoint(center, zoom)
-    this.zoom = zoom
+    const now = performance.now()
+
+    // 16ms 节流，大概一帧
+    if (this._lastCall && now - this._lastCall < 16) {
+      return
+    }
+    this._lastCall = now
+
+    if (this._rafId) cancelAnimationFrame(this._rafId)
+    this._rafId = requestAnimationFrame(() => {
+      const img = this.pgmImg
+      img?.set({
+        scaleX: this.baseScale * zoom,
+        scaleY: this.baseScale * zoom,
+      })
+
+      img?.setCoords()
+
+      this._updateCanvasCover()
+    })
   }
 
   registerMarker(marker) {

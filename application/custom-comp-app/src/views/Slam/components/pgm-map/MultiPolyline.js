@@ -12,7 +12,7 @@
  * @property {Object} [properties] - 折线的属性数据。
  */
 import { fabric } from 'fabric-with-erasing'
-import { randomUUID } from '@/components/SlamMap/utils'
+import { randomUUID } from './utils'
 
 export default class MultiPolyline {
   /**
@@ -23,9 +23,15 @@ export default class MultiPolyline {
    * @param {Array<PolylineGeometry>} [options.geometries] 初始化 geometry
    */
   constructor(options = {}) {
-    const { id = crypto.randomUUID(), map, styles = {}, geometries = [] } = options
+    const {
+      id = crypto.randomUUID(),
+      map,
+      styles = {},
+      geometries = [],
+    } = options
 
-    if (!map?.canvasInstance) throw new Error('MultiMarker: 必须传入 SlamMap 实例')
+    if (!map?.canvasInstance)
+      throw new Error('MultiMarker: 必须传入 SlamMap 实例')
     this.id = id
     this.map = map
     this.styles = styles
@@ -39,7 +45,7 @@ export default class MultiPolyline {
     const canvas = this.map.canvasInstance
     if (!canvas) return
 
-    this.geometries.forEach(geo => {
+    this.geometries.forEach((geo) => {
       this._createPolyline(canvas, geo)
     })
 
@@ -53,7 +59,7 @@ export default class MultiPolyline {
 
     style.apply(extraStyle)
 
-    const points = paths.map(path => ({x: path.x, y: path.y}))
+    const points = paths.map((path) => ({ x: path.x, y: path.y }))
     const polyline = new fabric.Polyline(points, {
       fill: '',
       stroke: style.color,
@@ -78,7 +84,7 @@ export default class MultiPolyline {
    * @private
    */
   _updatePolyline(polyline, geometry) {
-    const { paths: newPaths, styleId, id, extraStyle = {} } = geometry
+    const { paths: newPaths, styleId, extraStyle = {} } = geometry
     const style = styleId ? this.styles[styleId] : this.styles.default
     if (!style) throw new Error(`找不到 PolylineStyle: ${styleId || 'default'}`)
     const oldPaths = polyline.geometry.paths || []
@@ -88,12 +94,15 @@ export default class MultiPolyline {
       oldPaths.some((p, i) => p.x !== newPaths[i].x || p.y !== newPaths[i].y)
 
     if (pathChanged) {
-      const points = newPaths.map(path => ({x: path.x, y: path.y}))
+      const points = newPaths.map((path) => ({ x: path.x, y: path.y }))
       polyline.set({ points })
-      polyline.geometry.paths = geometry.paths.map(p => ({ ...p }))
+      polyline.geometry.paths = geometry.paths.map((p) => ({ ...p }))
     }
 
-    if (styleId && styleId !== polyline.style_id || style.version !== polyline.style_version) {
+    if (
+      (styleId && styleId !== polyline.style_id) ||
+      style.version !== polyline.style_version
+    ) {
       // 样式更新
       polyline.set({
         stroke: style.color,
@@ -128,7 +137,7 @@ export default class MultiPolyline {
     this.geometries = this.geometries || []
 
     geometries.forEach((geo) => {
-      const existingIndex = this.geometries.findIndex(g => g.id === geo.id)
+      const existingIndex = this.geometries.findIndex((g) => g.id === geo.id)
 
       if (existingIndex >= 0) {
         // 已存在，更新 position 和 content
@@ -136,7 +145,9 @@ export default class MultiPolyline {
           ...this.geometries[existingIndex],
           ...geo,
         }
-        const polyline = canvas.getObjects().find(obj => obj.polyline_id === geo.id)
+        const polyline = canvas
+          .getObjects()
+          .find((obj) => obj.polyline_id === geo.id)
 
         if (polyline) {
           // 这部分逻辑是否可以复用 _createMarker?
@@ -164,8 +175,8 @@ export default class MultiPolyline {
   remove(ids) {
     if (!ids?.length) return this
     const canvas = this.map.canvasInstance
-    ids.forEach(id => {
-      const polyline = canvas.getObjects().find(obj => obj.polyline_id === id)
+    ids.forEach((id) => {
+      const polyline = canvas.getObjects().find((obj) => obj.polyline_id === id)
       canvas.remove(polyline)
     })
 
@@ -177,13 +188,14 @@ export default class MultiPolyline {
     if (!geometries?.length) return this
 
     geometries.forEach((geometry) => {
-      const oldGeometry = this.geometries.find(geo => geo.id === geometry.id)
+      const oldGeometry = this.geometries.find((geo) => geo.id === geometry.id)
       if (oldGeometry) {
         const oldPaths = oldGeometry.paths
         oldGeometry.paths = [...geometry.paths, ...oldPaths]
+        this.updateGeometries([oldGeometry])
+      } else {
+        this.updateGeometries(geometries)
       }
     })
-
-    this.updateGeometries(this.geometries)
   }
 }

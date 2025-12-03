@@ -1,6 +1,6 @@
 import { fabric } from 'fabric-with-erasing'
-import MarkerStyle from '@/components/SlamMap/MarkerStyle'
-import { randomUUID } from '@/components/SlamMap/utils'
+import MarkerStyle from './MarkerStyle'
+import { randomUUID } from './utils'
 
 /**
  * @typedef {Object} LatLng
@@ -28,7 +28,8 @@ export default class MultiMarker {
    * @param {Array<PointGeometry>} options.geometries - marker 数据
    */
   constructor({ map, styles = {}, geometries = [] }) {
-    if (!map?.canvasInstance) throw new Error('MultiMarker: 必须传入 SlamMap 实例')
+    if (!map?.canvasInstance)
+      throw new Error('MultiMarker: 必须传入 SlamMap 实例')
     this.map = map
     this.styles = styles
     this.geometries = geometries
@@ -48,38 +49,40 @@ export default class MultiMarker {
 
   off(eventName, handler) {
     if (!this._events[eventName]) return this
-    this._events[eventName] = this._events[eventName].filter(h => h !== handler)
+    this._events[eventName] = this._events[eventName].filter(
+      (h) => h !== handler,
+    )
     return this
   }
 
   _emit(eventName, payload) {
     if (!this._events[eventName]) return
-    this._events[eventName].forEach(h => h(payload))
+    this._events[eventName].forEach((h) => h(payload))
   }
 
   addEvents(marker, eventObject) {
-    marker.on('mousedown', e => {
+    marker.on('mousedown', (e) => {
       this._emit('click', {
         ...eventObject,
         fabricEvent: e,
       })
     })
 
-    marker.on('mouseup', e => {
+    marker.on('mouseup', (e) => {
       this._emit('mouseup', {
         ...eventObject,
         fabricEvent: e,
       })
     })
 
-    marker.on('mouseover', e => {
+    marker.on('mouseover', (e) => {
       this._emit('marker:mouseenter', {
         ...eventObject,
         fabricEvent: e,
       })
     })
 
-    marker.on('mouseout', e => {
+    marker.on('mouseout', (e) => {
       this._emit('marker:mouseleave', {
         ...eventObject,
         fabricEvent: e,
@@ -94,7 +97,7 @@ export default class MultiMarker {
     const canvas = this.map.canvasInstance
     if (!canvas) return
 
-    this.geometries.forEach(geo => {
+    this.geometries.forEach((geo) => {
       this._createMarker(canvas, geo)
     })
 
@@ -260,9 +263,7 @@ export default class MultiMarker {
     ) {
       const oldPos = oldGeo.position
       const posChanged =
-        !oldPos ||
-        oldPos.x !== position.x ||
-        oldPos.y !== position.y
+        !oldPos || oldPos.x !== position.x || oldPos.y !== position.y
 
       if (posChanged) {
         const { anchor: { x: ax = 0, y: ay = 0 } = {} } = style
@@ -292,10 +293,10 @@ export default class MultiMarker {
     if (canvas.getActiveObject()) {
       canvas.discardActiveObject()
     }
-    ids.forEach(id => {
-      const marker = canvas.getObjects().find(obj => obj.marker_id === id)
+    ids.forEach((id) => {
+      const marker = canvas.getObjects().find((obj) => obj.marker_id === id)
       canvas.remove(marker)
-      this.geometries = this.geometries.filter(geo => geo.id !== id)
+      this.geometries = this.geometries.filter((geo) => geo.id !== id)
     })
 
     canvas.requestRenderAll()
@@ -317,7 +318,9 @@ export default class MultiMarker {
       if (style instanceof MarkerStyle) {
         this.styles[key] = style
       } else {
-        console.warn(`MultiMarker.setStyles: style[${key}] 不是 MarkerStyle 实例，忽略`)
+        console.warn(
+          `MultiMarker.setStyles: style[${key}] 不是 MarkerStyle 实例，忽略`,
+        )
       }
     })
 
@@ -334,14 +337,16 @@ export default class MultiMarker {
     const canvas = this.map.canvasInstance
     this.geometries = this.geometries || []
     geometries.forEach((geo) => {
-      const existingIndex = this.geometries.findIndex(g => g.id === geo.id)
+      const existingIndex = this.geometries.findIndex((g) => g.id === geo.id)
       if (existingIndex >= 0) {
         // 已存在，更新 position 和 content
         this.geometries[existingIndex] = {
           ...this.geometries[existingIndex],
           ...geo,
         }
-        const marker = canvas.getObjects().find(obj => obj.marker_id === geo.id)
+        const marker = canvas
+          .getObjects()
+          .find((obj) => obj.marker_id === geo.id)
 
         if (marker) {
           // 这部分逻辑是否可以复用 _createMarker?
