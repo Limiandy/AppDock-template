@@ -6,7 +6,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/custom-comp-app',
     name: 'CustomCompApp',
     component: null,
-    meta: { title: '自定义组件', icon: 'solar:atom-broken' },
+    meta: { title: '自定义组件', icon: 'solar:align-left-outline' },
     redirect: '/custom-comp-app/home',
     children: [
       {
@@ -18,8 +18,9 @@ export const routes: RouteRecordRaw[] = [
       {
         path: 'slam',
         name: 'Slam',
+        // @ts-ignore
         component: () => import('@/views/Slam/Slam.vue'),
-        meta: { title: 'SLAM 地图', icon: 'solar:gallery-wide-linear' },
+        meta: { title: 'SLAM 地图', icon: 'solar:bacteria-outline' },
       },
     ],
   },

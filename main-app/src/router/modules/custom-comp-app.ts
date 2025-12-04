@@ -7,7 +7,7 @@ export default [
     component: MicroAppLoader,
     meta: {
       title: '自定义组件',
-      icon: 'solar:atom-broken',
+      icon: 'solar:align-left-outline',
     },
     children: [
       {
@@ -25,7 +25,7 @@ export default [
         component: MicroAppLoader,
         meta: {
           title: 'SLAM 地图',
-          icon: 'solar:gallery-wide-linear',
+          icon: 'solar:bacteria-outline',
         },
       },
     ],
