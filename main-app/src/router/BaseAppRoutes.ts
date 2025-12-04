@@ -16,6 +16,12 @@ export const asyncRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/IconsRender.vue'),
         meta: { title: '全量图标', icon: 'solar:album-outline' },
       },
+      {
+        path: 'themeColor',
+        name: 'ThemeColor',
+        component: () => import('@/views/ThemeRender.vue'),
+        meta: { title: '主题颜色', icon: 'solar:album-outline' },
+      },
     ],
   },
 ]
