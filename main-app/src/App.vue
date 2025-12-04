@@ -4,7 +4,7 @@
       algorithm: currentTheme,
     }"
   >
-    <a-app>
+    <a-app style="width: 100%; height: 100%">
       <ThemeApply />
       <router-view />
     </a-app>
