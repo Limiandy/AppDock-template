@@ -4,8 +4,10 @@
       algorithm: currentTheme,
     }"
   >
-    <ThemeApply />
-    <router-view />
+    <a-app>
+      <ThemeApply />
+      <router-view />
+    </a-app>
   </a-config-provider>
 </template>
 
