@@ -3,5 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
   },
-  "include": ["./src"]
+  "include": [
+    "./src",
+    "../../types",
+    "../../node_modules/@types/"
+  ]
 }
