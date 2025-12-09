@@ -7,6 +7,10 @@
   },
   "description": "",
   "dependencies": {
-    "fabric-with-erasing": "^1.0.1"
+    "fabric-with-erasing": "^1.0.1",
+    "three": "^0.181.2"
+  },
+  "devDependencies": {
+    "@types/three": "^0.181.0"
   }
 }

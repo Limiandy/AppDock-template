@@ -4,13 +4,17 @@
       ref="pgmElRef"
       class="pgm-map-container"
     ></div>
-    <div class="pcd-map-container"></div>
+    <div
+      ref="pcdElRef"
+      class="pcd-map-container"
+    ></div>
   </div>
 </template>
 
 <script setup>
 import { nextTick, ref, useTemplateRef } from 'vue'
 import PgmMap from './components/pgm-map/PgmMap.js'
+import PcdMap from './components/pcd-map/PcdMap.ts'
 import sourceData from './data/point/point.json'
 
 const pointData = [sourceData[0], sourceData[300], sourceData[800]].map(
@@ -36,7 +40,13 @@ const yamlUrl = new URL(
   import.meta.url,
 ).href
 
+const pcdUrl = new URL(
+  './data/pcd/rBnWgWjwZZOAT0iRAuvfLYLj_jg748.pcd',
+  import.meta.url,
+).href
+
 const pgmEl = useTemplateRef('pgmElRef')
+const pcdEl = useTemplateRef('pcdElRef')
 let slamMapInstance = null
 let pointMarker = null
 let deviceMarker = null
@@ -223,6 +233,8 @@ nextTick(async () => {
     await renderMap(pgmEl.value)
     setPoints(pointData)
     mockDataPolling()
+
+    const pcdMapInstance = await PcdMap.create(pcdEl.value, { fileUrl: pcdUrl })
   } catch (e) {
     console.log(e)
   }
@@ -231,16 +243,16 @@ nextTick(async () => {
 
 <style lang="less" scoped>
 .slam-map-wrap {
-  width: 100%;
-  height: 100%;
   padding: 24px;
   background-color: #17181a;
 }
-.pgm-map-container {
+.pgm-map-container,
+.pcd-map-container {
   width: 100%;
   height: 512px;
   background-color: #cdcdcd;
   border-radius: 16px;
   overflow: hidden;
+  margin-bottom: 24px;
 }
 </style>
