@@ -4,6 +4,7 @@ import jsx from '@vitejs/plugin-vue-jsx'
 import qiankun from 'vite-plugin-qiankun'
 import path from 'path'
 import routeSyncPlugin from './vite/plugins/routeSyncPlugin'
+import rawJSPlugin from './vite/plugins/rawJSPlugin'
 import tailwindcss from '@tailwindcss/vite'
 import chalk from 'chalk'
 import simpleHtmlPlugin from 'vite-plugin-simple-html'
@@ -19,6 +20,7 @@ export default defineConfig(({ mode, command }) => {
   const plugins: PluginOption[] = [
     vue(),
     jsx(),
+    rawJSPlugin(),
     tailwindcss(),
     simpleHtmlPlugin({
       inject: {
