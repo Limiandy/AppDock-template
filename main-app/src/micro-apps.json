@@ -1,5 +1,12 @@
 [
   {
+    "name": "css-app",
+    "entry": "//localhost:60012",
+    "container": "#qiankun-container",
+    "activeRule": "/css-app",
+    "props": {}
+  },
+  {
     "name": "custom-comp-app",
     "entry": "//localhost:60011",
     "container": "#qiankun-container",
