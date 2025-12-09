@@ -1,6 +1,7 @@
 import { App, Component, createApp } from 'vue'
 import SvgIcon from './components/SvgIcon.vue'
 import DirectivesPlugin from './directives/index'
+import { setupStore } from './helper/piniaHelper'
 
 import {
   renderWithQiankun,
@@ -34,6 +35,7 @@ export function registerQiankun(
     return new Promise((resolve) => {
       const { container } = props
       app = createApp(rootComponent)
+      setupStore(app)
       getApp?.(app)
       app.use(DirectivesPlugin)
       app.component('SvgIcon', SvgIcon)

@@ -14,7 +14,11 @@
       "require": "./dist/index.cjs.js"
     },
     "./utils/*": "./dist/utils/*",
-    "./hooks/*": "./dist/hooks/*",
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.es.js",
+      "require": "./dist/hooks/index.cjs.js"
+    },
     "./styles/*": "./dist/styles/*",
     "./constant/*": "./dist/constant/*",
     "./icons": {
