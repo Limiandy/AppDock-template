@@ -166,119 +166,102 @@ export default class PcdMap {
   }
 
   private renderPcd(points: THREE.Points) {
-    const geometry = points.geometry as THREE.BufferGeometry
-    const positions = geometry.getAttribute('position')
-    const colors: number[] = []
+    // 添加到场景
+    this.scene?.add(points)
+    this.pointCloud = points
 
-    // 获取 z 的最小值和最大值，用于归一化
-    let zMin = Infinity,
-      zMax = -Infinity
-    for (let i = 0; i < positions.count; i++) {
-      const z = positions.getZ(i)
-      if (z < zMin) zMin = z
-      if (z > zMax) zMax = z
-    }
+    // 相机适应点云
+    this.adjustCameraToPointCloud(points)
 
-    for (let i = 0; i < positions.count; i++) {
-      const z = positions.getZ(i)
-      const t = (z - zMin) / (zMax - zMin) // 归一化到 0~1
-      const hue = 240 * (1 - t) // 240 -> 蓝, 0 -> 红
-
-      const color = new THREE.Color()
-      color.setHSL(hue / 360, 0.6, 0.4) // 饱和度0.6，亮度0.4，更柔和
-
-      colors.push(color.r, color.g, color.b)
-    }
-
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
-
-    const material = new THREE.PointsMaterial({
-      size: this.pointSize,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.6, // 半透明
-    })
-
-    const coloredPoints = new THREE.Points(geometry, material)
-    // coloredPoints.rotation.x = Math.PI
-
-    this.scene?.add(coloredPoints)
-    this.pointCloud = coloredPoints
-    this.adjustCameraToPointCloud(coloredPoints)
-    // this.debugPointCloudOrientation(coloredPoints)
+    // 可选：添加调试标记
     this.addMarker(0, 0, 0, 0xff0000, 1.5)
   }
 
-  private loadPCD(url: string) {
-    this.startLoading() // 禁止操作 + 显示 loading
+  /**
+   * 流式加载 PCD 文件并渲染点云
+   *
+   * 逻辑：
+   * 1. Worker 按 chunk 解析 PCD 文件，每个 chunk 返回 positions + colors
+   * 2. 主线程累积 chunk 数据，同时更新加载进度
+   * 3. 所有 chunk 完成后，合并 positions 和 colors，创建 BufferGeometry
+   * 4. 创建 THREE.Points 并添加到场景，同时调整相机和添加标记
+   */
+  private async loadPCD(url: string) {
+    this.startLoading() // 显示 loading，禁止操作
 
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const positionsChunks: Float32Array[] = []
-        let totalPoints = 0
-        let expectedPoints = 0 // worker 返回的 totalPoints
+    try {
+      const positionsChunks: Float32Array[] = []
+      const colorsChunks: Float32Array[] = []
+      let totalPoints = 0
+      let expectedPoints = 0
 
-        // Worker 流式加载
-        await workerPool!.postTask(
-          'pcd-load',
-          { fileUrl: url, chunkSize: 3000 },
-          (chunk: {
-            positions: ArrayBuffer
-            count: number
-            totalPoints: number
-          }) => {
-            const posChunkFull = new Float32Array(chunk.positions)
-            const posChunk = posChunkFull.subarray(0, chunk.count * 3) // 只取有效点
-            positionsChunks.push(posChunk)
+      // Worker 流式加载
+      await workerPool!.postTask(
+        'pcd-load',
+        { fileUrl: url, chunkSize: 3000 },
+        (chunk: {
+          positions: ArrayBuffer
+          colors: ArrayBuffer
+          count: number
+          totalPoints: number
+        }) => {
+          // 只取有效数据
+          const posChunkFull = new Float32Array(chunk.positions)
+          const colorChunkFull = new Float32Array(chunk.colors)
+          positionsChunks.push(posChunkFull.subarray(0, chunk.count * 3))
+          colorsChunks.push(colorChunkFull.subarray(0, chunk.count * 3))
 
-            totalPoints += chunk.count
-            expectedPoints = chunk.totalPoints
+          totalPoints += chunk.count
+          expectedPoints = chunk.totalPoints
 
-            // 更新加载进度
-            this.updateLoadProgress((totalPoints / expectedPoints) * 100)
-          },
-        )
+          // 更新加载进度百分比
+          this.updateLoadProgress((totalPoints / expectedPoints) * 100)
+        },
+      )
 
-        // 所有 chunk 加载完成后，合并 positions
-        const allPositions = new Float32Array(expectedPoints * 3)
-        let offset = 0
-        for (const arr of positionsChunks) {
-          allPositions.set(arr, offset)
-          offset += arr.length
-        }
-
-        // 修复 NaN（如果有）
-        for (let i = 0; i < allPositions.length; i++) {
-          if (!Number.isFinite(allPositions[i])) allPositions[i] = 0
-        }
-
-        // 创建 BufferGeometry
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute(
-          'position',
-          new THREE.BufferAttribute(allPositions, 3),
-        )
-
-        // 创建 Points 对象并渲染颜色
-        const points = new THREE.Points(
-          geometry,
-          new THREE.PointsMaterial({
-            size: this.pointSize,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.6,
-          }),
-        )
-
-        this.renderPcd(points) // renderPcd 内会计算颜色、加到场景中、调整相机等
-
-        resolve()
-      } catch (err) {
-        reject(err)
-      } finally {
-        this.stopLoading()
+      // 所有 chunk 完成后，合并 positions 和 colors
+      const allPositions = new Float32Array(expectedPoints * 3)
+      const allColors = new Float32Array(expectedPoints * 3)
+      let offset = 0
+      for (let i = 0; i < positionsChunks.length; i++) {
+        allPositions.set(positionsChunks[i], offset)
+        allColors.set(colorsChunks[i], offset)
+        offset += positionsChunks[i].length
       }
-    })
+
+      // 防止 NaN 导致 BufferGeometry 报错
+      for (let i = 0; i < allPositions.length; i++) {
+        if (!Number.isFinite(allPositions[i])) allPositions[i] = 0
+        if (!Number.isFinite(allColors[i])) allColors[i] = 0
+      }
+
+      // 创建 BufferGeometry 并设置属性
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(allPositions, 3),
+      )
+      geometry.setAttribute('color', new THREE.BufferAttribute(allColors, 3))
+
+      // 创建 PointsMaterial，启用 vertexColors
+      const points = new THREE.Points(
+        geometry,
+        new THREE.PointsMaterial({
+          size: this.pointSize,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.6,
+        }),
+      )
+
+      this.renderPcd(points)
+
+      return Promise.resolve()
+    } catch (err) {
+      return Promise.reject(err)
+    } finally {
+      this.stopLoading() // 隐藏 loading
+    }
   }
 
   animate() {
