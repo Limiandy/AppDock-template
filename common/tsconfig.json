@@ -8,6 +8,7 @@
     "outDir": "dist",
     "composite": true,
     "strict": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -24,6 +25,6 @@
       "@constant/*": ["src/constant/*"],
     }
   },
-  "include": ["src", "env.d.ts"], // ✅ 确保 env.d.ts 被包含
+  "include": ["src", "src/**/*.json", "env.d.ts"], // ✅ 确保 env.d.ts 被包含
   "exclude": ["node_modules", "dist"]
 }

@@ -4,7 +4,7 @@
       v-for="(value, key) in iconGroup"
       :key="key"
     >
-      <h3>{{ key === '.' ? '无目录' : key }}</h3>
+      <h3>{{ key }}</h3>
       <div class="icons-container">
         <div
           v-for="(item, index) in value"
