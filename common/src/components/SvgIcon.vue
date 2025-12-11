@@ -1,13 +1,9 @@
 <template>
-  <svg
-    aria-hidden="true"
-    :style="{ width, height }"
-  >
-    <use
-      :xlink:href="symbolId"
-      :fill="color"
-    />
-  </svg>
+  <span role="img" :aria-label="name" class="anticon" :class="[`anticon-${name}`]" tabindex="-1">
+    <svg aria-hidden="true" :style="{ width, height }">
+      <use :xlink:href="symbolId" :fill="color" />
+    </svg>
+  </span>
 </template>
 
 <script setup lang="ts">
@@ -44,3 +40,24 @@ const symbolId = computed(() => {
   return `#${props.prefix}-${dir ? dir + '-' : ''}${name}`
 })
 </script>
+
+<style lang="less" scoped>
+.anticon {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-style: normal;
+  line-height: 0;
+  text-align: center;
+  text-transform: none;
+  vertical-align: -0.125em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: bold;
+
+  &[tabindex] {
+    cursor: pointer;
+  }
+}
+</style>
