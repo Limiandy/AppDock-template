@@ -1,7 +1,12 @@
 <template>
   <a-config-provider
     :theme="{
-      algorithm: currentTheme,
+      token: {
+        colorPrimary: 'red',
+      },
+      components: {
+        Button: {},
+      },
     }"
   >
     <a-app style="width: 100%; height: 100%">
