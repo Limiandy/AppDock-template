@@ -4,7 +4,7 @@ import type { SeedToken, MapToken, AliasToken } from 'ant-design-vue/es/theme/in
 import formatToken from 'ant-design-vue/es/theme/util/alias'
 import { type DerivativeFunc, theme } from 'ant-design-vue'
 import tinycolor from 'tinycolor2'
-import type { TokenKey } from '@/hooks/useTheme.ts'
+import type { TokenKey } from './useTheme.ts'
 import merge from 'lodash.merge'
 
 const { defaultSeed, defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme
