@@ -1,6 +1,11 @@
 // updateStyle.ts
 import { styleCache } from './styleCache'
 
+function findInsertPosition() {
+  const styles = document.querySelectorAll<HTMLStyleElement>('style[data-vc-order]')
+  return styles.length ? styles[styles.length - 1] : null
+}
+
 export function updateStyle(hash: string, css: string, order = 0) {
   let cache = styleCache.get(hash)
 
@@ -8,10 +13,17 @@ export function updateStyle(hash: string, css: string, order = 0) {
     const el = document.createElement('style')
     el.setAttribute('type', 'text/css')
     el.setAttribute('data-css-i-hash', hash)
-    el.setAttribute('data-vc-order', 'prependQueue')
+    el.setAttribute('data-vc-order', 'custom')
     el.setAttribute('data-order', String(order))
 
-    document.head.appendChild(el)
+    const anchor = findInsertPosition()
+
+    if (anchor && anchor.parentNode) {
+      anchor.parentNode.insertBefore(el, anchor.nextSibling)
+    } else {
+      // fallback：如果 antd 还没注入，先丢到 head 末尾
+      document.head.appendChild(el)
+    }
 
     cache = { el, css: '' }
     styleCache.set(hash, cache)
