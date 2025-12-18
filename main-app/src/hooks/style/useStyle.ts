@@ -7,7 +7,10 @@ import { updateStyle, removeStyle } from './updateStyle'
 
 const { useToken } = theme
 
-export default function useStyle(className: string, styleFn: (token: AliasToken) => CSSObject) {
+export default function useStyle(
+  className: string,
+  styleFn: (token: AliasToken) => CSSObject,
+): [className: string, scopeClass: string] {
   const { token } = useToken()
 
   const styleObj = computed(() => styleFn(token.value))
