@@ -18,8 +18,7 @@ watch(
     const t = token.value
 
     for (const key in t) {
-      const cssVar =
-        '--ant-' + key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())
+      const cssVar = '--ant-' + key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())
       root.style.setProperty(cssVar, (t as Record<string, any>)[key])
     }
   },

@@ -6,7 +6,7 @@ export default {
   trailingComma: 'all',
   singleQuote: true,
   semi: false,
-  printWidth: 80,
+  printWidth: 120,
   arrowParens: 'always',
   proseWrap: 'always',
   endOfLine: 'auto',
@@ -19,5 +19,6 @@ export default {
   bracketSameLine: false,
   jsxBracketSameLine: false,
   vueIndentScriptAndStyle: false,
-  singleAttributePerLine: true,
+  singleAttributePerLine: false,
+  htmlWhitespaceSensitivity: 'ignore',
 }
