@@ -1,16 +1,15 @@
 <template>
   <a-config-provider
     :theme="{
-      token: {
-        colorPrimary: 'red',
-      },
+      algorithm: [currentTheme],
+      token: {},
       components: {
         Button: {},
       },
     }"
   >
     <a-app style="width: 100%; height: 100%">
-      <ThemeApply />
+      <inject-apply />
       <router-view />
     </a-app>
   </a-config-provider>
@@ -19,7 +18,7 @@
 <script setup lang="ts">
 import { theme } from 'ant-design-vue'
 import { computed, ref } from 'vue'
-import ThemeApply from '@/ThemeApply.vue'
+import InjectApply from '@/InjectApply.vue'
 
 type ThemeAlgorithm = typeof theme.defaultAlgorithm
 type ThemeMap = Record<'light' | 'dark', ThemeAlgorithm>

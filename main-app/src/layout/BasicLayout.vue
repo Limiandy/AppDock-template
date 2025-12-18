@@ -1,38 +1,20 @@
 <template>
-  <a-layout
-    v-loading="loading"
-    class="basic-layout"
-  >
+  <a-layout v-loading="loading" :class="[scopeClass, className]">
     <!-- Header -->
-    <a-layout-header
-      class="basic-layout-header"
-      :class="{ 'is-fixed': fixedHeader }"
-    >
+    <a-layout-header class="basic-layout-header" :class="{ 'is-fixed': fixedHeader }">
       <!-- Logo -->
       <div class="basic-layout-header__logo">LOGO</div>
 
       <!-- Top Menu -->
-      <div
-        v-if="mode !== 'SideMenu'"
-        class="basic-layout-header__menu"
-      >
-        <a-menu
-          :selected-keys="activeTopKeys"
-          mode="horizontal"
-          :items="topMenus"
-          @click="onTopMenuClick"
-        />
+      <div v-if="mode !== 'SideMenu'" class="basic-layout-header__menu">
+        <a-menu :selected-keys="activeTopKeys" mode="horizontal" :items="topMenus" @click="onTopMenuClick" />
       </div>
 
       <!-- Dropdown -->
       <div class="basic-layout-header__dropdown">dropdown</div>
     </a-layout-header>
 
-    <a-layout
-      v-if="mode !== 'TopMenu'"
-      class="basic-layout-body"
-      :class="{ 'is-fixed-header': fixedHeader }"
-    >
+    <a-layout v-if="mode !== 'TopMenu'" class="basic-layout-body" :class="{ 'is-fixed-header': fixedHeader }">
       <!-- Sider -->
       <a-layout-sider
         v-if="sideMenusComputed?.length"
@@ -51,22 +33,14 @@
           :items="sideMenusComputed"
           style="height: 100%"
           @click="onSideMenuClick"
-        >
-        </a-menu>
+        ></a-menu>
       </a-layout-sider>
-      <div
-        v-if="fixedSider && sideMenusComputed?.length"
-        style="height: 100%"
-        :style="fixedSiderStyle"
-      ></div>
+      <div v-if="fixedSider && sideMenusComputed?.length" style="height: 100%" :style="fixedSiderStyle"></div>
 
       <!-- Content -->
       <a-layout-content class="basic-layout-content">
         <router-view v-if="isBaseRoutePath" />
-        <div
-          v-else
-          id="qiankun-container"
-        />
+        <div v-else id="qiankun-container" />
       </a-layout-content>
     </a-layout>
 
@@ -77,10 +51,7 @@
       :class="{ 'is-fixed-header': fixedHeader }"
     >
       <router-view v-if="isBaseRoutePath" />
-      <div
-        v-else
-        id="qiankun-container"
-      />
+      <div v-else id="qiankun-container" />
     </a-layout-content>
   </a-layout>
 </template>
@@ -92,6 +63,7 @@ import { type ItemType, type MenuProps } from 'ant-design-vue'
 import { SvgIcon } from 'common'
 import { constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 const { eventBus } = useEvent()
 
@@ -153,15 +125,12 @@ const siderWidth = ref<number>(200)
 const collapsedWidth = ref<number>(80)
 const loading = ref<boolean>(false)
 
-const baseAppRoutePaths = getBaseAppRoutePaths(
-  asyncRoutes.concat(constantRoutes),
-)
+const baseAppRoutePaths = getBaseAppRoutePaths(asyncRoutes.concat(constantRoutes))
 const isBaseRoutePath = computed(() => {
   return baseAppRoutePaths.includes(route.fullPath)
 })
 
 eventBus.on('microLoad', (val: boolean) => {
-  console.log(1111)
   loading.value = val
 })
 
@@ -229,9 +198,7 @@ const sideMenusComputed = computed(() => {
   if (mode.value === 'SideMenu') return menus.value
 
   if (mode.value === 'Mixed') {
-    const top = menus.value!.find(
-      (m) => m!.key === activeTopKeys.value[0],
-    ) as any
+    const top = menus.value!.find((m) => m!.key === activeTopKeys.value[0]) as any
     return top?.children || []
   }
 
@@ -291,26 +258,47 @@ function syncMenuByRoute() {
     selectedKeys.value = stKeys
   }
 }
+
+/* ------------------------
+   样式管理
+------------------------- */
+const [className, scopeClass] = useStyle('basic-layout', (token) => {
+  console.log(token.colorBorder)
+  return {
+    'width': '100%',
+    'height': '100%',
+    'overflow': 'auto',
+
+    '.basic-layout-header': {
+      background: token.colorBgContainer,
+      border: 'none',
+      boxShadow: `inset 0 -1px 0 0 ${token.colorSplit}`,
+    },
+
+    '.basic-layout-body': {
+      '&.is-fixed-header': {
+        paddingTop: `${48 + token.size}px`,
+      },
+    },
+
+    '.basic-layout-sider': {
+      'background': token.colorBgContainer,
+
+      '&.is-fixed': {
+        top: `${48 + token.size}px`,
+      },
+    },
+  }
+})
 </script>
 
 <style lang="less" scoped>
-@header-height: 64px;
-
-.basic-layout {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-
 /* header */
 .basic-layout-header {
-  height: @header-height;
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--ant-color-split);
-  background: var(--ant-color-bg-container);
+  padding-inline: 20px;
   z-index: 100;
 
   &.is-fixed {
@@ -318,6 +306,7 @@ function syncMenuByRoute() {
     top: 0;
     left: 0;
     right: 0;
+    z-index: 9999;
   }
 }
 
@@ -337,23 +326,16 @@ function syncMenuByRoute() {
 
 /* body layout */
 .basic-layout-body {
-  //padding-top: @header-height;
   display: flex;
-
-  &.is-fixed-header {
-    padding-top: @header-height;
-  }
 }
 
 /* sider */
 .basic-layout-sider {
   height: 100%;
-  background: var(--ant-color-bg-container);
 
   &.is-fixed {
     position: fixed;
     left: 0;
-    top: @header-height;
     bottom: 0;
   }
 }
