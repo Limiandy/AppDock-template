@@ -47,7 +47,6 @@ const activeKey = ref([])
     flex-wrap: nowrap;
     align-items: center;
     padding: 0 16px;
-    color: rgba(0, 0, 0, 0.88);
     line-height: 1.5714285714285714;
     cursor: pointer;
     transition:

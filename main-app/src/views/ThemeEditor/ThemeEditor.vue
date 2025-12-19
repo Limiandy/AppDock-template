@@ -1,5 +1,5 @@
 <template>
-  <div class="theme-editor">
+  <div :class="classNames">
     <div class="theme-editor-header">
       <a-typography-title :level="5">主题编辑器</a-typography-title>
       <div>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div :style="containerStyle"></div>
+      <div :style="containerStyle">11111</div>
     </div>
   </div>
 </template>
@@ -94,6 +94,7 @@ import seedTokenMap from './utils/seedTokenMap.ts'
 import { type AlgorithmName, useTheme } from '@/hooks/theme/useTheme.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import { theme } from 'ant-design-vue'
+import useStyle from '@/hooks/style/useStyle.ts'
 const { useToken } = theme
 const { token } = useToken()
 
@@ -114,10 +115,10 @@ const panelStyle = computed(() => {
   return {
     flex: `0 0 ${isShowAlias.value ? 740 : 440}px`,
     height: `100%`,
-    backgroundColor: `rgb(247, 248, 250)`,
+    backgroundColor: token.value.colorBgLayout,
     backgroundImage: `linear-gradient(
-      rgb(255, 255, 255) 0%,
-      rgba(246, 247, 249, 0) 100%
+      ${token.value.colorBgContainer} 0%,
+      ${token.value.colorBgLayout} 100%
 )`,
     display: 'flex',
     transition: `0.3s`,
@@ -162,36 +163,51 @@ function handleChangeTheme(key: 'color' | 'size') {
 
   setAlgorithms(next)
 }
+
+const classNames = useStyle('theme-editor', (token) => {
+  return {
+    'backgroundColor': token.colorBgContainer,
+
+    '.theme-editor-header': {
+      'borderBottom': `1px solid ${token.colorSplit}`,
+      'paddingInline': `${token.paddingLG}px`,
+
+      '.theme-editor-header-actions': {
+        marginRight: `${token.marginXS}px`,
+      },
+    },
+
+    '.antd-theme-editor': {
+      'backgroundColor': token.colorBgLayout,
+      'display': 'flex',
+
+      '.token-panel-pro': {
+        'borderInlineEnd': `1px solid ${token.colorBorderSecondary}`,
+
+        '.token-panel-pro-color-alias-description': {
+          color: token.colorTextTertiary,
+          fontSize: `${token.fontSizeSM}px`,
+          lineHeight: token.lineHeightSM,
+          padding: `0 16px 12px`,
+        },
+      },
+    },
+  }
+})
 </script>
 
 <style lang="less" scoped>
-.theme-editor {
-  background-color: #fff;
-}
-
 .theme-editor-header {
   display: flex;
   height: 56px;
   align-items: center;
-  padding: 0 24px;
   justify-content: space-between;
-  border-bottom: 1px solid #f0f0f0;
   box-sizing: border-box;
-
-  .theme-editor-header-actions {
-    margin-right: 8px;
-  }
-}
-
-.antd-theme-editor {
-  background-color: #f5f5f5;
-  display: flex;
 }
 
 .token-panel-pro {
   height: 100%;
   display: flex;
-  border-inline-end: 1px solid #f0f0f0;
 
   .token-panel-pro-tabs {
     &.ant-tabs {
@@ -304,13 +320,6 @@ function handleChangeTheme(key: 'color' | 'size') {
       opacity: 0;
       transition: box-shadow 0.2s;
     }
-  }
-
-  .token-panel-pro-color-alias-description {
-    color: rgba(0, 0, 0, 0.45);
-    font-size: 12px;
-    line-height: 1.6666666666666667;
-    padding: 0 16px 12px;
   }
 }
 

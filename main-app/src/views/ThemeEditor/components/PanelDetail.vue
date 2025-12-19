@@ -1,5 +1,5 @@
 <template>
-  <div class="token-panel-token-detail" style="margin: 8px">
+  <div :class="classNames" style="margin: 8px">
     <div class="token-panel-pro-token-collapse-map-collapse-token-description">
       {{ description }}
     </div>
@@ -46,6 +46,7 @@ import TagTip from './TagTip.vue'
 
 import useTokenComputed from '../utils/useTokenComputed.ts'
 import { useTheme } from '@/hooks/theme/useTheme.ts'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 const getTokenRef = useTokenComputed()
 
@@ -56,19 +57,44 @@ defineProps<{
   components: string[]
   token: any
 }>()
+
+const classNames = useStyle('token-panel-token-detail', (token) => {
+  return {
+    '.token-panel-pro-token-collapse-map-collapse-token-description': {
+      color: token.colorTextQuaternary,
+    },
+
+    '.token-panel-pro-token-collapse-map-collapse-token-inputs': {
+      'backgroundColor': token.colorFillQuaternary,
+
+      '.previewer-token-input': {
+        '.ant-input,.ant-input-number': {
+          background: token.colorBgSpotlight,
+          borderRadius: `${token.borderRadiusLG}px`,
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        },
+
+        '.ant-input-group-addon,.ant-input-number-group-addon': {
+          padding: 0,
+          background: 'none',
+          border: 'none',
+        },
+      },
+    },
+  }
+})
 </script>
 
 <style scoped lang="less">
 .token-panel-token-detail {
   .token-panel-pro-token-collapse-map-collapse-token-description {
-    color: rgba(0, 0, 0, 0.25);
     margin-bottom: 8px;
     font-size: 12px;
   }
 
   .token-panel-pro-token-collapse-map-collapse-token-inputs {
     padding: 8px 10px;
-    background-color: rgba(0, 0, 0, 0.02);
     margin-top: 12px;
 
     .previewer-token-input {
@@ -77,20 +103,6 @@ defineProps<{
         padding: 0;
         height: 24px;
         width: 100%;
-      }
-
-      :deep(.ant-input),
-      :deep(.ant-input-number) {
-        background: white;
-        border-radius: 8px !important;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      :deep(.ant-input-group-addon),
-      :deep(.ant-input-number-group-addon) {
-        padding: 0;
-        background: none;
-        border: none;
       }
     }
   }

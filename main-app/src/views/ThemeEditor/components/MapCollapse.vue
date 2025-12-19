@@ -1,5 +1,5 @@
 <template>
-  <a-collapse v-model:active-key="activeKey" accordion class="token-panel-pro-token-collapse-map-collapse">
+  <a-collapse v-model:active-key="activeKey" accordion :class="classNames">
     <a-collapse-panel v-for="item in mapTokens" :key="item.key">
       <template #header>
         <collapse-header :title="item.title" :token="item.key" :count="getTokenRef(item.key).value">
@@ -39,8 +39,9 @@ import PanelDetail from './PanelDetail.vue'
 import CollapseHeader from './CollapseHeader.vue'
 import { computed, type CSSProperties, h, ref } from 'vue'
 import { type TokenKey } from '@/hooks/theme/useTheme.ts'
+import useStyle from '@/hooks/style/useStyle.ts'
 
-const props = defineProps<{
+defineProps<{
   mapTokens: any[]
 }>()
 
@@ -160,26 +161,35 @@ function renderChildren(key: string) {
     })
   }
 }
+
+const classNames = useStyle('token-panel-pro-token-collapse-map-collapse', (token) => {
+  return {
+    '&.ant-collapse': {
+      'borderRadius': `${token.borderRadiusSM}px`,
+      'backgroundColor': token.colorBgContainer,
+      'border': `1px solid ${token.colorBorderSecondary}`,
+
+      '.ant-collapse-item': {
+        borderBottom: `1px solid ${token.colorBorderSecondary}`,
+      },
+    },
+
+    '.token-panel-pro-token-collapse-map-collapse-preview-color': {
+      borderInline: `1px solid ${token.colorBorderSecondary}`,
+    },
+  }
+})
 </script>
 
 <style scoped lang="less">
 .token-panel-pro-token-collapse-map-collapse {
   &.ant-collapse {
-    border-radius: 4px;
-    background-color: #fff;
-    border: 1px solid #f0f0f0;
-
-    :deep(.ant-collapse-item) {
-      border-bottom: 1px solid #f0f0f0;
-    }
-
     :deep(.ant-collapse-header) {
       position: relative;
       display: flex;
       flex-wrap: nowrap;
       align-items: center;
       padding: 0 8px;
-      color: rgba(0, 0, 0, 0.88);
       line-height: 1.5714285714285714;
       cursor: pointer;
       transition:
@@ -201,7 +211,6 @@ function renderChildren(key: string) {
       height: 56px;
       width: 56px;
       position: relative;
-      border-inline: 1px solid #e8e8e8;
     }
   }
 }
