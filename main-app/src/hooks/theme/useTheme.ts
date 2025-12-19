@@ -1,23 +1,14 @@
-// useTheme.ts
-import { theme } from 'ant-design-vue'
+import type { AliasToken } from 'ant-design-vue/es/theme/interface'
+
 import { createThemeCore } from './themeCore'
 
-const { useToken } = theme
-
-const themeCore = createThemeCore()
-
-export type TokenKey = keyof typeof themeCore.aliasToken.value
-export type TokenValue = (typeof themeCore.aliasToken.value)[TokenKey]
+export type TokenKey = keyof AliasToken
+export type TokenValue = string | number | boolean | AliasToken
 export type { AlgorithmName } from './themeCore'
 
+let themeCore: ReturnType<typeof createThemeCore>
 export function useTheme() {
-  /**
-   * 是否受控，如果受控正常传递，否则删除，则内部使用最初的默认值计算
-   */
-  const { token, theme } = useToken()
-  themeCore.injectAliasToken.value = token.value
-  // @ts-ignore
-  themeCore.injectDerivatives.value = theme.value.derivatives
+  if (!themeCore) themeCore = createThemeCore()
 
   return themeCore
 }
