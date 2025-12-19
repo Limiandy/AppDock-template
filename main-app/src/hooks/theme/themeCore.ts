@@ -151,12 +151,11 @@ export function createThemeCore() {
     injectDerivatives,
     (derivatives) => {
       // 先复制当前算法数组
-      const fns: AlgorithmName[] = ['light']
+      const fns: AlgorithmName[] = []
 
       derivatives!.forEach((fn) => {
         switch (fn.name) {
           case 'derivative':
-            // 保证只保留 light/dark 中的一个
             fns.push('light')
             break
           case 'derivative2':
@@ -165,6 +164,8 @@ export function createThemeCore() {
           case 'derivative3':
             fns.push('compact')
             break
+          default:
+            fns.push('light')
         }
       })
 
