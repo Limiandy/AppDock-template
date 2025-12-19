@@ -11,7 +11,14 @@
       </div>
 
       <!-- Dropdown -->
-      <div class="basic-layout-header__dropdown">dropdown</div>
+      <div class="basic-layout-header__dropdown">
+        <a-select v-model:value="currentTheme" :dropdown-style="{ zIndex: 9999 }" style="width: 120px">
+          <a-select-option value="light">亮色</a-select-option>
+          <a-select-option value="dark">暗色</a-select-option>
+          <a-select-option value="light,compact">亮色+紧凑</a-select-option>
+          <a-select-option value="dark,compact">暗色+紧凑</a-select-option>
+        </a-select>
+      </div>
     </a-layout-header>
 
     <a-layout v-if="mode !== 'TopMenu'" class="basic-layout-body" :class="{ 'is-fixed-header': fixedHeader }">
@@ -64,6 +71,7 @@ import { SvgIcon } from 'common'
 import { constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { algorithmMap } from '@/hooks/theme/themeCore.ts'
 
 const { eventBus } = useEvent()
 
@@ -92,6 +100,17 @@ function getBaseAppRoutePaths(routes: any[], parentPath = ''): string[] {
 
   return paths
 }
+
+/**
+ * 主题切换
+ */
+const currentTheme = ref('light')
+watch(currentTheme, (theme) => {
+  const themeConfig = {
+    algorithm: theme.split(',').map((t) => (algorithmMap as any)[t]),
+  }
+  eventBus.emit('themeChange', themeConfig)
+})
 
 /**
  * 将路由数组转换为 menus 数组
@@ -263,7 +282,6 @@ function syncMenuByRoute() {
    样式管理
 ------------------------- */
 const [className, scopeClass] = useStyle('basic-layout', (token) => {
-  console.log(token.colorBorder)
   return {
     'width': '100%',
     'height': '100%',
