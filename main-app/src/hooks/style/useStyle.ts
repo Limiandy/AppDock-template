@@ -8,29 +8,43 @@ import { updateStyle, removeStyle } from './updateStyle'
 const { useToken } = theme
 
 export default function useStyle(
-  className: string,
-  styleFn: (token: AliasToken) => CSSObject,
+  arg1: string | ((token: AliasToken) => CSSObject),
+  arg2?: (token: AliasToken) => CSSObject,
 ): [className: string, scopeClass: string] {
+  let className: string
+  let styleFn: (token: AliasToken) => CSSObject
+
+  if (typeof arg1 === 'function') {
+    className = ''
+    styleFn = arg1
+  } else {
+    className = arg1
+    styleFn = arg2!
+  }
+
   const { token } = useToken()
 
   const styleObj = computed(() => styleFn(token.value))
 
-  const scopeClass = `css-${hashString(`css-scoped-identifier_${className}`)}`
+  const baseClass = className || ''
+  const scopeClass = `css-${hashString(`css-scoped-identifier_${baseClass || 'root'}`)}`
 
   const styleIdRef = shallowRef<string | null>(null)
 
   watch(
     styleObj,
     (style) => {
-      const selector = `:where(.${scopeClass}).${className}`
+      const selector = baseClass ? `:where(.${scopeClass}).${baseClass}` : `:where(.${scopeClass})`
+
       const css = serializeStyle(selector, style)
 
-      // tokenKey 作为版本, 它的改变说明是主题的改变，不是 cssObject 内容的改变
-      const styleId = hashString(className + (token.value as any)._tokenKey)
+      const tokenKey = (token.value as any)._tokenKey ?? 'default'
+      const styleId = hashString(`${baseClass || 'root'}_${tokenKey}`)
 
       if (styleIdRef.value && styleIdRef.value !== styleId) {
         removeStyle(styleIdRef.value)
       }
+
       updateStyle(styleId, css)
       styleIdRef.value = styleId
     },
@@ -38,7 +52,8 @@ export default function useStyle(
   )
 
   onScopeDispose(() => {
-    styleIdRef.value && removeStyle(styleIdRef.value)
+    if (styleIdRef.value) removeStyle(styleIdRef.value)
   })
-  return [className, scopeClass] as const
+
+  return [scopeClass, baseClass] as const
 }
