@@ -1,7 +1,7 @@
 <template>
   <a-popover v-model:open="open" trigger="click" placement="bottomRight">
     <template #content>
-      <div class="color-panel" style="border: none">
+      <div :class="classNames" style="border: none">
         <hex-color-picker :color="innerValue" style="width: 100%; height: 160px" @color-changed="handleColorChange" />
 
         <div style="margin-top: 12px">
@@ -9,7 +9,7 @@
             <div class="color-panel-preview">
               <div :style="panelPreviewStyle" />
             </div>
-            <a-select ref="select" v-model:value="colorModel" size="small" :bordered="false" style="width: 70px">
+            <a-select ref="select" v-model:value="colorModel" size="small" :bordered="false" style="width: 80px">
               <a-select-option value="HEX">HEX</a-select-option>
               <a-select-option value="HEX8">HEX8</a-select-option>
               <a-select-option value="RGB">RGB</a-select-option>
@@ -85,6 +85,7 @@
 import { computed, type CSSProperties, ref, watch } from 'vue'
 import tinycolor from 'tinycolor2'
 import { useTheme } from '@/hooks/theme/useTheme.ts'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 const { isSameColor } = useTheme()
 
@@ -217,13 +218,18 @@ function handleColorChange(event: CustomEvent) {
 function handelResetColor(rgb: string) {
   updateColor(rgb)
 }
+
+const classNames = useStyle('color-panel', (token) => {
+  return {
+    backgroundColor: token.colorBgElevated,
+  }
+})
 </script>
 
 <style lang="less" scoped>
 .color-panel {
   margin: -12px;
   padding: 12px;
-  background-color: #fff;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow:
