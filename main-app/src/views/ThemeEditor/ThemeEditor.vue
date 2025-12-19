@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div :style="containerStyle">11111</div>
+      <preview-content />
     </div>
   </div>
 </template>
@@ -89,6 +89,7 @@ import { computed, ref } from 'vue'
 import ColorHolder from './components/ColorHolder.vue'
 import QuestionTip from './components/QuestionTip.vue'
 import AliasCollapse from './components/AliasCollapse.vue'
+import PreviewContent from './PreviewContent/PreviewContent.vue'
 
 import seedTokenMap from './utils/seedTokenMap.ts'
 import { type AlgorithmName, useTheme } from '@/hooks/theme/useTheme.ts'
@@ -110,7 +111,7 @@ eventBus.on('subAliasToken', (tokens) => {
 
 const activeKey = ref('color')
 
-const isShowAlias = ref<boolean>(true)
+const isShowAlias = ref<boolean>(false)
 const panelStyle = computed(() => {
   return {
     flex: `0 0 ${isShowAlias.value ? 740 : 440}px`,
@@ -128,15 +129,6 @@ const panelAliasStyle = computed(() => {
   return {
     flex: `0 0 ${isShowAlias.value ? '320px' : 'auto'}`,
     width: '0px',
-  }
-})
-
-const containerStyle = computed(() => {
-  return {
-    flex: '1 1 0%',
-    overflow: 'auto',
-    background: 'rgb(245, 245, 245)',
-    paddingBottom: '24px',
   }
 })
 
@@ -183,6 +175,10 @@ const classNames = useStyle('theme-editor', (token) => {
 
       '.token-panel-pro': {
         'borderInlineEnd': `1px solid ${token.colorBorderSecondary}`,
+
+        '.token-panel-pro-color-alias': {
+          borderTop: `1px solid ${token.colorBorderSecondary}`,
+        },
 
         '.token-panel-pro-color-alias-description': {
           color: token.colorTextTertiary,
@@ -278,7 +274,6 @@ const classNames = useStyle('theme-editor', (token) => {
   display: flex;
   flex-direction: column;
   margin-top: calc(var(--i-margin-top));
-  border-top: 1px solid rgba(5, 5, 5, 0.06);
 
   .token-panel-pro-color-alias-title {
     display: flex;
