@@ -23,7 +23,7 @@ import InjectApply from '@/InjectApply.vue'
 type ThemeAlgorithm = typeof theme.defaultAlgorithm
 type ThemeMap = Record<'light' | 'dark', ThemeAlgorithm>
 
-const systemTheme = ref<'light' | 'dark'>('dark')
+const systemTheme = ref<'light' | 'dark'>('light')
 
 const themeMap: ThemeMap = {
   light: theme.defaultAlgorithm,
