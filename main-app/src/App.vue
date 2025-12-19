@@ -1,13 +1,5 @@
 <template>
-  <a-config-provider
-    :theme="{
-      algorithm: [currentTheme],
-      token: {},
-      components: {
-        Button: {},
-      },
-    }"
-  >
+  <a-config-provider :theme="currentTheme">
     <a-app style="width: 100%; height: 100%">
       <inject-apply />
       <router-view />
@@ -16,21 +8,20 @@
 </template>
 
 <script setup lang="ts">
-import { theme } from 'ant-design-vue'
-import { computed, ref } from 'vue'
+import { shallowRef, toRaw } from 'vue'
 import InjectApply from '@/InjectApply.vue'
+import { useEvent } from '@/hooks/useEvent.ts'
+import { theme } from 'ant-design-vue'
 
-type ThemeAlgorithm = typeof theme.defaultAlgorithm
-type ThemeMap = Record<'light' | 'dark', ThemeAlgorithm>
-
-const systemTheme = ref<'light' | 'dark'>('light')
-
-const themeMap: ThemeMap = {
-  light: theme.defaultAlgorithm,
-  dark: theme.darkAlgorithm,
-}
-
-const currentTheme = computed(() => {
-  return themeMap[systemTheme.value]
+const currentTheme = shallowRef({
+  algorithm: [theme.defaultAlgorithm],
+  token: {},
+  components: {
+    Button: {},
+  },
+})
+const { eventBus } = useEvent()
+eventBus.on('themeChange', (themeConfig) => {
+  currentTheme.value = { ...currentTheme.value, ...toRaw(themeConfig) }
 })
 </script>

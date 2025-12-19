@@ -11,7 +11,7 @@ const { defaultSeed, defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme
 // 1. 算法集合
 export type AlgorithmName = 'light' | 'dark' | 'compact'
 
-const algorithmMap = {
+export const algorithmMap = {
   light: defaultAlgorithm,
   dark: darkAlgorithm,
   compact: compactAlgorithm,
