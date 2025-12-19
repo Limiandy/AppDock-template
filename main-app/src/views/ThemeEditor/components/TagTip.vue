@@ -3,6 +3,7 @@
     <template #title>{{ fullText }}</template>
     <div
       ref="containerRef"
+      :class="classNames"
       class="token-panel-pro-token-collapse-map-collapse-token-usage-tag-container"
       @mouseenter="handleShowTip"
       @mouseleave="open = false"
@@ -20,6 +21,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 // props: 接收文字数组
 const props = defineProps<{ texts: string[] }>()
@@ -54,6 +56,16 @@ watch(fullText, async () => {
   await nextTick()
   checkOverflow()
 })
+
+const classNames = useStyle((token) => ({
+  '&.token-panel-pro-token-collapse-map-collapse-token-usage-tag-container': {
+    'color': token.colorTextSecondary,
+
+    '.token-panel-pro-token-collapse-map-collapse-token-usage-tag': {
+      backgroundColor: token.colorFillQuaternary,
+    },
+  },
+}))
 </script>
 
 <style scoped lang="less">
@@ -61,7 +73,6 @@ watch(fullText, async () => {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  color: rgba(0, 0, 0, 0.65);
 }
 
 .token-panel-pro-token-collapse-map-collapse-token-usage-tag {
@@ -72,6 +83,5 @@ watch(fullText, async () => {
   padding: 0 8px;
   font-size: 12px;
   line-height: 20px;
-  background-color: rgba(0, 0, 0, 0.015);
 }
 </style>

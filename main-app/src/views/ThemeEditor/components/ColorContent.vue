@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="classNames">
     <div class="token-panel-pro-token-collapse-description">{{ seedToken.description }}</div>
 
     <!--    Seed Token Start -->
@@ -58,42 +58,50 @@ import MapCollapse from './MapCollapse.vue'
 import SeedBlock from './SeedBlock.vue'
 
 import { ref } from 'vue'
+import useStyle from '@/hooks/style/useStyle.ts'
 
-const props = defineProps<{
+defineProps<{
   seedToken: any
 }>()
 
-console.log(props.seedToken)
-
 const isGroupPreview = ref(true)
+const classNames = useStyle('color-content', (token) => {
+  return {
+    '.token-panel-pro-token-collapse-description': {
+      'color': token.colorTextTertiary,
+      'marginBottom': `${token.margin}px`,
+
+      '.ant-collapse': {
+        color: token.colorText,
+        backgroundColor: token.colorBgContainer,
+        borderTop: `1px solid ${token.colorBorderSecondary}`,
+      },
+    },
+
+    '.token-panel-pro-grouped-map-collapse': {
+      'borderRadius': `${token.borderRadiusSM}px`,
+
+      '.ant-collapse-header': {
+        padding: `6px 12px`,
+        color: token.colorTextTertiary,
+        fontSize: `${token.fontSizeSM}px`,
+        lineHeight: token.lineHeightSM,
+      },
+    },
+  }
+})
 </script>
 
 <style lang="less" scoped>
 :deep(.ant-collapse) {
   .ant-collapse-content {
-    color: rgba(0, 0, 0, 0.88);
-    background-color: #ffffff;
-    border-top: 1px solid #f0f0f0;
-
     .ant-collapse-content-box {
       padding: 0;
     }
   }
 }
-.token-panel-pro-token-collapse-description {
-  color: rgba(0, 0, 0, 0.45);
-  margin-bottom: 16px;
-}
 
 .token-panel-pro-grouped-map-collapse {
-  border-radius: 4px;
-  :deep(.ant-collapse-header) {
-    padding: 6px 12px;
-    color: rgba(0, 0, 0, 0.45);
-    font-size: 12px;
-    line-height: 1.6666666666666667;
-  }
-
   .token-panel-pro-token-collapse-map-collapse.ant-collapse {
     border: none;
 

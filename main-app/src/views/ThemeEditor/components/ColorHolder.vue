@@ -1,5 +1,5 @@
 <template>
-  <div class="token-panel-pro-color">
+  <div :class="classNames">
     <div class="token-panel-pro-color-seeds">
       <div class="token-panel-pro-color-themes">
         <slot name="header"></slot>
@@ -32,6 +32,7 @@ import { ref, watchEffect } from 'vue'
 import ColorContent from './ColorContent.vue'
 import { useEvent } from '@/hooks/useEvent.ts'
 import { CaretRightOutlined } from '@ant-design/icons-vue'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 const props = defineProps<{
   seedTokens: any[]
@@ -49,18 +50,33 @@ watchEffect(() => {
 function handleResetPrimaryColor() {
   console.log('handleResetPrimaryColor')
 }
+
+const classNames = useStyle('token-panel-pro-color', (token) => {
+  return {
+    'height': '100%',
+    'display': 'flex',
+
+    '.token-panel-pro-color-seeds': {
+      'borderInlineEnd': `1px solid ${token.colorBorderSecondary}`,
+
+      '.token-panel-pro-token-collapse.ant-collapse > .ant-collapse-item-active': {
+        backgroundColor: token.colorBgContainer,
+        boxShadow: `0 6px 16px -8px rgba(0, 0, 0, 0.08),
+      0 9px 28px 0 rgba(0, 0, 0, 0.05),
+      0 12px 48px -8px rgba(0, 0, 0, 0.03),
+      inset 0 0 0 2px ${token.colorPrimary}`,
+      },
+    },
+  }
+})
 </script>
 
 <style lang="less" scoped>
 .token-panel-pro-color {
-  height: 100%;
-  display: flex;
-
   .token-panel-pro-color-seeds {
     height: 100%;
     flex: 1;
     width: 0;
-    border-inline-end: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -83,12 +99,6 @@ function handleResetPrimaryColor() {
         overflow: auto;
 
         & > .ant-collapse-item-active {
-          background-color: #fff;
-          box-shadow:
-            0 6px 16px -8px rgba(0, 0, 0, 0.08),
-            0 9px 28px 0 rgba(0, 0, 0, 0.05),
-            0 12px 48px -8px rgba(0, 0, 0, 0.03),
-            inset 0 0 0 2px #1677ff;
           transition: box-shadow 0.2s ease-in-out;
           border-radius: 8px;
         }
