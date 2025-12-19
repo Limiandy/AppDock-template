@@ -263,7 +263,6 @@ function syncMenuByRoute() {
    样式管理
 ------------------------- */
 const [className, scopeClass] = useStyle('basic-layout', (token) => {
-  console.log(token.colorBorder)
   return {
     'width': '100%',
     'height': '100%',
