@@ -1,5 +1,5 @@
 <template>
-  <div :class="classNames">
+  <div :class="classNames(scopeClass, className)">
     <div class="theme-editor-header">
       <a-typography-title :level="5">主题编辑器</a-typography-title>
       <div>
@@ -96,6 +96,8 @@ import { type AlgorithmName, useTheme } from '@/hooks/theme/useTheme.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import { theme } from 'ant-design-vue'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { classNames } from 'common/helper'
+
 const { useToken } = theme
 const { token } = useToken()
 
@@ -156,7 +158,7 @@ function handleChangeTheme(key: 'color' | 'size') {
   setAlgorithms(next)
 }
 
-const classNames = useStyle('theme-editor', (token) => {
+const [scopeClass, className] = useStyle('theme-editor', (token) => {
   return {
     'backgroundColor': token.colorBgContainer,
 
