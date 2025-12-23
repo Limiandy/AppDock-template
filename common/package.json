@@ -1,6 +1,7 @@
 {
   "name": "common",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
@@ -13,14 +14,16 @@
       "import": "./dist/index.es.js",
       "require": "./dist/index.cjs.js"
     },
-    "./utils/*": "./dist/utils/*",
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
       "import": "./dist/hooks/index.es.js",
       "require": "./dist/hooks/index.cjs.js"
     },
-    "./styles/*": "./dist/styles/*",
-    "./constant/*": "./dist/constant/*",
+    "./helper": {
+      "types": "./dist/helper/index.d.ts",
+      "import": "./dist/helper/index.es.js",
+      "require": "./dist/helper/index.cjs.js"
+    },
     "./icons": {
       "types": "./dist/icons/index.d.ts",
       "import": "./dist/icons/index.es.js",
@@ -43,13 +46,9 @@
     "@iconify/tools": "^5.0.0",
     "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.0",
-    "fast-glob": "^3.3.3",
     "rimraf": "^6.1.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-svg-icons": "^2.0.1"
-  },
-  "volta": {
-    "node": "22.17.1"
   }
 }
