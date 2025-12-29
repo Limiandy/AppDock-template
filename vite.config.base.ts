@@ -5,11 +5,15 @@ import qiankun from 'vite-plugin-qiankun'
 import path from 'path'
 import routeSyncPlugin from './vite/plugins/routeSyncPlugin'
 import rawJSPlugin from './vite/plugins/rawJSPlugin'
-import tailwindcss from '@tailwindcss/vite'
 import chalk from 'chalk'
 import simpleHtmlPlugin from 'vite-plugin-simple-html'
+import autoprefixer from 'autoprefixer'
+import cssnano from 'cssnano'
+import postcssPresetEnv from 'postcss-preset-env'
+import postcssNormalize from 'postcss-normalize'
 
 // https://vite.dev/config/
+// @ts-ignore
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd())
 
@@ -21,7 +25,6 @@ export default defineConfig(({ mode, command }) => {
     vue(),
     jsx(),
     rawJSPlugin(),
-    tailwindcss(),
     simpleHtmlPlugin({
       inject: {
         data: {
@@ -65,6 +68,22 @@ export default defineConfig(({ mode, command }) => {
           modifyVars: {},
           math: 'always', // 兼容 less-loader 3.x
         },
+      },
+      postcss: {
+        plugins: [
+          autoprefixer(),
+          cssnano({ preset: 'default' }),
+          postcssNormalize({
+            forceImport: true,
+          }),
+          postcssPresetEnv({
+            stage: 3,
+            autoprefixer: { grid: true },
+            features: {
+              'nesting-rules': true,
+            },
+          }),
+        ],
       },
     },
     resolve: {
