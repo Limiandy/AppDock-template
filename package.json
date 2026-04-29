@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run dev --workspace=main-app",
-    "build": "vue-tsc -b && vite build",
+    "dev": "node scripts/gen-micro-apps.js && npm run dev --workspace=main-app",
+    "build": "node scripts/gen-micro-apps.js --build && vue-tsc -b && pnpm --filter main-app build",
+    "build:select": "node scripts/select-projects.mjs build",
+    "dev:select": "node scripts/select-projects.mjs dev",
     "preview": "vite preview",
-    "gen-micro-apps": "node scripts/gen-micro-apps.js"
+    "gen-micro-apps": "node scripts/gen-micro-apps.js",
+    "test:scripts": "node --test scripts/*.test.mjs"
   },
   "workspaces": [
     "main-app",

@@ -11,6 +11,17 @@ import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
 import postcssPresetEnv from 'postcss-preset-env'
 import postcssNormalize from 'postcss-normalize'
+import fs from 'fs'
+
+function getPackageName() {
+  const packagePath = path.resolve(process.cwd(), 'package.json')
+  if (fs.existsSync(packagePath)) {
+    const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'))
+    if (typeof pkg.name === 'string' && pkg.name) return pkg.name
+  }
+
+  return process.env.npm_package_name
+}
 
 // https://vite.dev/config/
 // @ts-ignore
@@ -19,7 +30,7 @@ export default defineConfig(({ mode, command }) => {
 
   console.log(chalk.green('[ENV]'), env)
   console.log(chalk.green('[COMMAND]'), command)
-  const appName = process.env.npm_package_name
+  const appName = getPackageName()
 
   const plugins: PluginOption[] = [
     vue(),
