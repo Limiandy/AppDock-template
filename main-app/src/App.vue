@@ -8,20 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { shallowRef, toRaw } from 'vue'
+import { toRaw } from 'vue'
 import InjectApply from '@/InjectApply.vue'
 import { useEvent } from '@/hooks/useEvent.ts'
-import { theme } from 'ant-design-vue'
+import { globalThemeConfig, setGlobalThemeConfig } from '@/hooks/theme/themeCore.ts'
 
-const currentTheme = shallowRef({
-  algorithm: [theme.defaultAlgorithm],
-  token: {},
-  components: {
-    Button: {},
-  },
-})
+const currentTheme = globalThemeConfig
 const { eventBus } = useEvent()
 eventBus.on('themeChange', (themeConfig) => {
-  currentTheme.value = { ...currentTheme.value, ...toRaw(themeConfig) }
+  setGlobalThemeConfig(toRaw(themeConfig), { replaceToken: true, replaceComponents: true })
 })
 </script>

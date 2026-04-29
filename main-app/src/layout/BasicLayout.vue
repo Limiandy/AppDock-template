@@ -67,11 +67,18 @@
 import { computed, h, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
+import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { SvgIcon } from 'common'
 import { constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
-import { algorithmMap } from '@/hooks/theme/themeCore.ts'
+import {
+  getAlgorithmsByMode,
+  getModeByThemeConfig,
+  globalThemeMode,
+  setGlobalThemeConfig,
+  type ThemeMode,
+} from '@/hooks/theme/themeCore.ts'
 
 const { eventBus } = useEvent()
 
@@ -104,12 +111,20 @@ function getBaseAppRoutePaths(routes: any[], parentPath = ''): string[] {
 /**
  * 主题切换
  */
-const currentTheme = ref('light')
+const currentTheme = ref<ThemeMode>(globalThemeMode.value)
 watch(currentTheme, (theme) => {
   const themeConfig = {
-    algorithm: theme.split(',').map((t) => (algorithmMap as any)[t]),
+    algorithm: getAlgorithmsByMode(theme),
   }
-  eventBus.emit('themeChange', themeConfig)
+  setGlobalThemeConfig(themeConfig)
+  eventBus.emit('themeChange', themeConfig, { mode: theme, source: 'layout-theme-select' })
+})
+
+eventBus.on('themeChange', (themeConfig: ThemeConfig, info?: { mode?: ThemeMode; source?: string }) => {
+  const nextMode = info?.mode ?? getModeByThemeConfig(themeConfig)
+  if (currentTheme.value !== nextMode) {
+    currentTheme.value = nextMode
+  }
 })
 
 /**
