@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/gen-micro-apps.js && npm run dev --workspace=main-app",
-    "build": "node scripts/gen-micro-apps.js --build && vue-tsc -b && pnpm --filter main-app build",
+    "build": "node scripts/gen-micro-apps.js --build && vue-tsc -b && pnpm --filter common build && pnpm --filter main-app build",
     "build:select": "node scripts/select-projects.mjs build",
     "dev:select": "node scripts/select-projects.mjs dev",
     "create:app": "node scripts/create-application.mjs",

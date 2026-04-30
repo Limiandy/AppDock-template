@@ -97,6 +97,7 @@ async function runBuild() {
 
   console.log('\n> vue-tsc -b')
   await runCommand({ name: 'root', dir: rootDir }, 'pnpm', ['exec', 'vue-tsc', '-b'])
+  await runCommand({ name: 'common', dir: path.join(rootDir, 'common') }, 'pnpm', ['run', 'build'])
 
   for (const project of uniqueProjects([...requiredProjects, ...buildMicroApps])) {
     cleanProjectDist(project)
