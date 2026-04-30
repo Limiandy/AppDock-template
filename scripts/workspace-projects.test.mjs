@@ -17,6 +17,15 @@ import {
   uniqueProjects,
   writeMicroApps,
 } from './workspace-projects.mjs'
+import {
+  createApplicationFiles,
+  createApplicationFileMap,
+  deleteApplicationFiles,
+  getNextApplicationPort,
+  toKebabCase,
+  toPascalCase,
+  validateAppName,
+} from './scaffold-application.mjs'
 
 function makeProject(rootDir, relativeDir, pkgName) {
   const projectDir = path.join(rootDir, relativeDir)
@@ -179,5 +188,63 @@ test('micro app config is written into main-app source', () => {
       fs.readFileSync(path.join(rootDir, 'main-app/src/micro-apps.json'), 'utf-8'),
       `${JSON.stringify(createMicroApps([project], 'build'), null, 2)}\n`,
     )
+  })
+})
+
+test('application scaffold normalizes names and validates project names', () => {
+  assert.equal(toKebabCase('Demo App'), 'demo-app')
+  assert.equal(toPascalCase('demo-app'), 'DemoApp')
+  assert.doesNotThrow(() => validateAppName('demo-app'))
+  assert.throws(() => validateAppName('1-demo'), /子项目名称/)
+})
+
+test('application scaffold picks the next available port', () => {
+  withTempWorkspace((rootDir) => {
+    const firstDir = makeProject(rootDir, 'application/first-app', 'first-app')
+    const secondDir = makeProject(rootDir, 'application/second-app', 'second-app')
+    fs.writeFileSync(path.join(firstDir, 'vite.config.ts'), 'const port = 60011\nexport default {}\n')
+    fs.writeFileSync(path.join(secondDir, 'vite.config.ts'), 'const port = 60015\nexport default {}\n')
+
+    assert.equal(getNextApplicationPort(rootDir), 60016)
+  })
+})
+
+test('application scaffold creates a runnable micro app skeleton', () => {
+  withTempWorkspace((rootDir) => {
+    const result = createApplicationFiles(rootDir, {
+      name: 'Demo App',
+      title: '演示应用',
+      port: 60020,
+    })
+
+    assert.equal(result.name, 'demo-app')
+    assert.equal(result.port, 60020)
+    assert.deepEqual(result.files, Object.keys(createApplicationFileMap({ name: 'demo-app', title: '演示应用', port: 60020, pascalName: 'DemoApp' })).sort())
+    const packageJson = JSON.parse(fs.readFileSync(path.join(result.dir, 'package.json'), 'utf-8'))
+    assert.equal(packageJson.name, 'demo-app')
+    assert.equal(packageJson.scripts.build, 'vite build')
+    assert.match(fs.readFileSync(path.join(result.dir, 'vite.config.ts'), 'utf-8'), /const port = 60020/)
+    assert.match(fs.readFileSync(path.join(result.dir, 'src/router/index.ts'), 'utf-8'), /path: '\/demo-app'/)
+  })
+})
+
+test('application scaffold deletes app folder and generated route module', () => {
+  withTempWorkspace((rootDir) => {
+    const result = createApplicationFiles(rootDir, {
+      name: 'delete-me',
+      title: '删除验证',
+      port: 60021,
+    })
+    const routeModuleDir = path.join(rootDir, 'main-app/src/router/modules')
+    const routeModulePath = path.join(routeModuleDir, 'delete-me.ts')
+    fs.mkdirSync(routeModuleDir, { recursive: true })
+    fs.writeFileSync(routeModulePath, 'export default []\n')
+
+    const deleted = deleteApplicationFiles(rootDir, { name: 'delete-me' })
+
+    assert.equal(deleted.name, 'delete-me')
+    assert.equal(fs.existsSync(result.dir), false)
+    assert.equal(fs.existsSync(routeModulePath), false)
+    assert.throws(() => deleteApplicationFiles(rootDir, { name: 'delete-me' }), /子项目不存在/)
   })
 })

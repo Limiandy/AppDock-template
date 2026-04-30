@@ -3,16 +3,17 @@ import { type App } from 'vue'
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: '/first-app',
-    name: 'FirstApp',
+    path: '/test-app',
+    name: 'TestApp',
     component: null,
-    meta: {},
+    meta: { title: 'test-app', icon: 'solar:widget-outline' },
+    redirect: '/test-app/home',
     children: [
       {
         path: 'home',
         name: 'Home',
         component: () => import('@/views/Home.vue'),
-        meta: {},
+        meta: { title: '首页', icon: 'solar:home-outline' },
       },
     ],
   },

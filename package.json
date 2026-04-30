@@ -8,6 +8,8 @@
     "build": "node scripts/gen-micro-apps.js --build && vue-tsc -b && pnpm --filter main-app build",
     "build:select": "node scripts/select-projects.mjs build",
     "dev:select": "node scripts/select-projects.mjs dev",
+    "create:app": "node scripts/create-application.mjs",
+    "delete:app": "node scripts/delete-application.mjs",
     "preview": "vite preview",
     "gen-micro-apps": "node scripts/gen-micro-apps.js",
     "test:scripts": "node --test scripts/*.test.mjs"
