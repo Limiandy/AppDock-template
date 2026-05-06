@@ -24,7 +24,7 @@ import type {
   SuperTableRecord,
   SuperTableRequestParams,
   SuperTableRequestResult,
-  SuperTableSearchField,
+  SuperTableSearchFields,
 } from 'common'
 import { useGlobalStore } from '@/store/modules/global.ts'
 
@@ -39,20 +39,24 @@ interface ShelterRecord {
 
 const global = useGlobalStore()
 
-const searchFields: SuperTableSearchField[] = [
-  { field: 'shelterName', label: '应急避难所名称', placeholder: '请输入应急避难所名称' },
-  { field: 'shelterCode', label: '应急避难所编号', placeholder: '请输入应急避难所编号' },
-  { field: 'type', label: '类型', placeholder: '请输入类型' },
-  { field: 'totalArea', label: '总面积', placeholder: '请输入总面积' },
-  { field: 'contact', label: '人防工作联系人', placeholder: '请输入人防工作联系人' },
-  { field: 'phone', label: '人防工作联系电话', placeholder: '请输入人防工作联系电话' },
-  {
-    field: 'createdAt',
-    label: '创建时间',
-    component: 'rangePicker',
-    placeholder: ['起始创建时间', '结束创建时间'],
-  },
-]
+const searchFields: SuperTableSearchFields = {
+  fields: [
+    { field: 'shelterName', label: '应急避难所名称', placeholder: '请输入应急避难所名称' },
+    { field: 'shelterCode', label: '应急避难所编号', placeholder: '请输入应急避难所编号' },
+    { field: 'type', label: '类型', placeholder: '请输入类型' },
+    { field: 'totalArea', label: '总面积', placeholder: '请输入总面积' },
+  ],
+  moreFields: [
+    { field: 'contact', label: '人防工作联系人', placeholder: '请输入人防工作联系人' },
+    { field: 'phone', label: '人防工作联系电话', placeholder: '请输入人防工作联系电话' },
+    {
+      field: 'createdAt',
+      label: '创建时间',
+      component: 'rangePicker',
+      placeholder: ['起始创建时间', '结束创建时间'],
+    },
+  ],
+}
 
 const columns: SuperTableColumn[] = [
   { key: 'shelterName', title: '应急避难所名称', dataIndex: 'shelterName', width: 200 },

@@ -23,6 +23,14 @@ export interface SuperTableSearchField {
   slot?: string
 }
 
+export interface SuperTableSearchFieldsConfig {
+  fields: SuperTableSearchField[]
+  moreFields?: SuperTableSearchField[]
+  defaultExpanded?: boolean
+}
+
+export type SuperTableSearchFields = SuperTableSearchField[] | SuperTableSearchFieldsConfig
+
 export interface SuperTableAction<RecordType = SuperTableRecord> {
   key: string
   label: string

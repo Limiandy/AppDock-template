@@ -1,7 +1,7 @@
 <template>
   <section class="super-table">
     <a-form
-      v-if="visibleSearchFields.length"
+      v-if="hasSearchFields"
       class="super-table__search"
       :model="innerSearchModel"
       :colon="false"
@@ -21,6 +21,7 @@
               v-model:value="innerSearchModel[field.field]"
               allow-clear
               :placeholder="getPlaceholder(field)"
+              size="large"
               v-bind="field.props"
             >
               <a-select-option
@@ -37,6 +38,7 @@
               v-model:value="innerSearchModel[field.field]"
               class="super-table__control"
               :placeholder="getRangePlaceholder(field)"
+              size="large"
               v-bind="field.props"
             />
             <a-date-picker
@@ -51,6 +53,7 @@
               v-model:value="innerSearchModel[field.field]"
               class="super-table__control"
               :placeholder="getPlaceholder(field)"
+              size="large"
               v-bind="field.props"
             />
             <a-input
@@ -58,6 +61,7 @@
               v-model:value="innerSearchModel[field.field]"
               allow-clear
               :placeholder="getPlaceholder(field)"
+              size="large"
               v-bind="field.props"
               @press-enter="onSearch"
             />
@@ -67,13 +71,23 @@
         <a-col :xs="24" :md="12" :xl="6">
           <div class="super-table__search-actions">
             <a-space :size="12">
-              <a-button type="primary" :loading="searchLoading" @click="onSearch">
+              <a-button
+                v-if="hasMoreSearchFields"
+                size="large"
+                :title="searchExpanded ? '收起更多查询条件' : '展开更多查询条件'"
+                @click="toggleSearchExpanded"
+              >
+                <template #icon>
+                  <SvgIcon :name="searchExpanded ? 'solar:alt-arrow-up-outline' : 'solar:alt-arrow-down-outline'" />
+                </template>
+              </a-button>
+              <a-button type="primary" size="large" :loading="searchLoading" @click="onSearch">
                 <template #icon>
                   <SvgIcon name="solar:magnifer-outline" />
                 </template>
                 搜索
               </a-button>
-              <a-button @click="onReset">
+              <a-button size="large" @click="onReset">
                 <template #icon>
                   <SvgIcon name="solar:refresh-outline" />
                 </template>
@@ -217,6 +231,7 @@ import type {
   SuperTableRequestParams,
   SuperTableRequestResult,
   SuperTableSearchField,
+  SuperTableSearchFields,
   SuperTableTransformParams,
   SuperTableTransformResponse,
 } from './types'
@@ -240,7 +255,7 @@ const props = withDefaults(
     autoRequest?: boolean
     transformParams?: SuperTableTransformParams
     transformResponse?: SuperTableTransformResponse
-    searchFields?: SuperTableSearchField[]
+    searchFields?: SuperTableSearchFields
     searchModel?: SuperTableRecord
     rowKey?: string | ((record: SuperTableRecord) => string)
     loading?: boolean
@@ -316,6 +331,7 @@ const internalPagination = reactive({
 const latestRequestId = ref(0)
 const lastSorter = ref<any>()
 const lastFilters = ref<Record<string, any>>({})
+const searchExpanded = ref(false)
 let syncingSearchModelFromProps = false
 
 const forwardedTableSlotNames = computed<string[]>((): string[] => {
@@ -350,7 +366,45 @@ watch(
   { deep: true },
 )
 
-const visibleSearchFields = computed<SuperTableSearchField[]>(() => props.searchFields.filter((item) => !item.hidden))
+const normalizedSearchFields = computed(() => {
+  if (Array.isArray(props.searchFields)) {
+    return {
+      fields: props.searchFields,
+      moreFields: [],
+      defaultExpanded: false,
+    }
+  }
+
+  return {
+    fields: props.searchFields.fields,
+    moreFields: props.searchFields.moreFields ?? [],
+    defaultExpanded: props.searchFields.defaultExpanded ?? false,
+  }
+})
+
+const mainSearchFields = computed<SuperTableSearchField[]>(() =>
+  normalizedSearchFields.value.fields.filter((item) => !item.hidden),
+)
+
+const moreSearchFields = computed<SuperTableSearchField[]>(() =>
+  normalizedSearchFields.value.moreFields.filter((item) => !item.hidden),
+)
+
+const hasMoreSearchFields = computed(() => moreSearchFields.value.length > 0)
+const hasSearchFields = computed(() => mainSearchFields.value.length > 0 || hasMoreSearchFields.value)
+
+const visibleSearchFields = computed<SuperTableSearchField[]>(() => [
+  ...mainSearchFields.value,
+  ...(searchExpanded.value ? moreSearchFields.value : []),
+])
+
+watch(
+  () => normalizedSearchFields.value.defaultExpanded,
+  (defaultExpanded) => {
+    searchExpanded.value = defaultExpanded
+  },
+  { immediate: true },
+)
 
 const hasDataRequest = computed(() => Boolean(props.request || props.api))
 
@@ -698,6 +752,10 @@ function onDownloadTemplate() {
   emit('downloadTemplate')
 }
 
+function toggleSearchExpanded() {
+  searchExpanded.value = !searchExpanded.value
+}
+
 onMounted(() => {
   if (hasDataRequest.value && props.autoRequest) {
     void reload()
@@ -740,6 +798,10 @@ defineExpose({
   gap: 12px;
   min-height: 76px;
   padding: 18px 24px;
+}
+
+.super-table__table {
+  padding: 0 24px;
 }
 
 .super-table__upload-text {
