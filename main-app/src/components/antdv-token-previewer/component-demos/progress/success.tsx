@@ -1,6 +1,6 @@
-import { Progress, Space } from 'ant-design-vue';
+import { Progress, Space } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = () => (
   <Space direction={'vertical'} size={'large'}>
@@ -10,12 +10,12 @@ const Demo = () => (
     </Space>
     <Progress percent={50} status="success" />
   </Space>
-);
+)
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorSuccess'],
   key: 'success',
-};
+}
 
-export default componentDemo;
+export default componentDemo

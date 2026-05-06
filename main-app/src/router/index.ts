@@ -8,16 +8,11 @@ export type RouteWithoutChildren = Omit<RouteRecordRaw, 'children'> & {
   meta?: Record<string, any>
 }
 
-const modules = import.meta.glob<{ default: RouteRecordRaw[] }>(
-  './modules/*.ts',
-  {
-    eager: true,
-  },
-)
+const modules = import.meta.glob<{ default: RouteRecordRaw[] }>('./modules/*.ts', {
+  eager: true,
+})
 
-const microAppRoutes: RouteRecordRaw[] = Object.values(modules).flatMap(
-  (mod) => mod.default,
-)
+const microAppRoutes: RouteRecordRaw[] = Object.values(modules).flatMap((mod) => mod.default)
 
 export const routes: RouteWithoutChildren[] = [
   {

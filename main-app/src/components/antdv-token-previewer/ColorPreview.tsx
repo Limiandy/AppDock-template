@@ -1,22 +1,22 @@
-import { defineComponent, toRefs } from 'vue';
-import type { CSSProperties } from 'vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import makeStyle from './utils/makeStyle';
-import getColorBgImg from './utils/getColorBgImg';
+import { defineComponent, toRefs } from 'vue'
+import type { CSSProperties } from 'vue'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import makeStyle from './utils/makeStyle'
+import getColorBgImg from './utils/getColorBgImg'
 
 export type ColorPreviewProps = {
-  color: string;
-  dark?: boolean;
-};
+  color: string
+  dark?: boolean
+}
 
-const useStyle = makeStyle('ColorPreview', token => ({
+const useStyle = makeStyle('ColorPreview', (token) => ({
   '.previewer-color-preview': {
-    width: '20px',
-    height: '20px',
-    position: 'relative',
-    borderRadius: '50%',
-    padding: 0,
-    display: 'inline-block',
+    'width': '20px',
+    'height': '20px',
+    'position': 'relative',
+    'borderRadius': '50%',
+    'padding': 0,
+    'display': 'inline-block',
 
     '&::before': {
       content: '""',
@@ -31,7 +31,7 @@ const useStyle = makeStyle('ColorPreview', token => ({
       boxShadow: `0 2px 3px -1px rgba(0,0,0,0.20), inset 0 0 0 1px ${token.colorBorder}`,
     },
   },
-}));
+}))
 
 const ColorPreview = defineComponent({
   name: 'ColorPreview',
@@ -41,9 +41,9 @@ const ColorPreview = defineComponent({
     dark: { type: Boolean },
   },
   setup(props, { attrs }) {
-    const { color, dark } = toRefs(props);
+    const { color, dark } = toRefs(props)
 
-    const [warpSSR, hashId] = useStyle();
+    const [warpSSR, hashId] = useStyle()
 
     return () => {
       return warpSSR(
@@ -72,9 +72,9 @@ const ColorPreview = defineComponent({
             }}
           />
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default ColorPreview;
+export default ColorPreview

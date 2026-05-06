@@ -1,7 +1,7 @@
-import Demo from './popconfirm';
+import Demo from './popconfirm'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Demo];
+const previewerDemo: ComponentDemo[] = [Demo]
 
-export default previewerDemo;
+export default previewerDemo

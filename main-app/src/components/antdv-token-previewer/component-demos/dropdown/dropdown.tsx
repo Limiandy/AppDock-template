@@ -1,10 +1,10 @@
-import { defineComponent } from 'vue';
-import { Dropdown } from 'ant-design-vue';
-import { DownOutlined } from '@ant-design/icons-vue';
+import { defineComponent } from 'vue'
+import { Dropdown } from 'ant-design-vue'
+import { DownOutlined } from '@ant-design/icons-vue'
 
-import menu from './menu';
+import menu from './menu'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -15,19 +15,19 @@ const Demo = defineComponent({
             overlay: () => menu,
           }}
         >
-          <a class="ant-dropdown-link" onClick={e => e.preventDefault()}>
+          <a class="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
             Hover me <DownOutlined />
           </a>
         </Dropdown>
       </div>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimary', 'colorError', 'colorErrorHover', 'colorBgElevated'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

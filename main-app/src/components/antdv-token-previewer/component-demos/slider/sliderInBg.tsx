@@ -1,11 +1,11 @@
-import { defineComponent } from 'vue';
-import { Slider, theme } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import { Slider, theme } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
-    const { token } = theme.useToken();
+    const { token } = theme.useToken()
 
     return () => {
       return (
@@ -13,10 +13,10 @@ const Demo = defineComponent({
           <Slider defaultValue={30} />
           <Slider range defaultValue={[20, 50]} />
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: [
@@ -29,6 +29,6 @@ const componentDemo: ComponentDemo = {
     'colorPrimaryBorder',
   ],
   key: 'sliderInBg',
-};
+}
 
-export default componentDemo;
+export default componentDemo

@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Timeline } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Timeline } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -11,14 +11,14 @@ const Demo = defineComponent({
         <Timeline.Item color={'green'}>Technical testing 2015-09-01</Timeline.Item>
         <Timeline.Item color={'green'}>Network problems being solved 2015-09-01</Timeline.Item>
       </Timeline>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorSuccess'],
   key: 'success',
-};
+}
 
-export default componentDemo;
+export default componentDemo

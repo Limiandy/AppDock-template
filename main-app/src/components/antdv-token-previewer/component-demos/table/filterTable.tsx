@@ -1,10 +1,10 @@
-import { defineComponent } from 'vue';
-import type { TableProps } from 'ant-design-vue';
-import { Table } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import type { TableProps } from 'ant-design-vue'
+import { Table } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-type TableData = { name: string; age: number; address: string };
+type TableData = { name: string; age: number; address: string }
 
 const columns: TableProps<TableData>['columns'] = [
   {
@@ -61,7 +61,7 @@ const columns: TableProps<TableData>['columns'] = [
     ],
     onFilter: (value, record) => record.address.indexOf(String(value)) === 0,
   },
-];
+]
 const data = [
   {
     key: '1',
@@ -87,23 +87,22 @@ const data = [
     age: 32,
     address: 'London No. 2 Lake Park',
   },
-];
+]
 
 const onChange: TableProps<TableData>['onChange'] = (pagination, filters, sorter, extra) => {
-  // eslint-disable-next-line no-console
-  console.log('params', pagination, filters, sorter, extra);
-};
+  console.log('params', pagination, filters, sorter, extra)
+}
 
 const Demo = defineComponent({
   setup() {
-    return () => <Table columns={columns} dataSource={data} onChange={onChange} />;
+    return () => <Table columns={columns} dataSource={data} onChange={onChange} />
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorFillSecondary', 'colorFillContentHover', 'colorFillContent', 'colorFillAlter'],
   key: 'filterTable',
-};
+}
 
-export default componentDemo;
+export default componentDemo

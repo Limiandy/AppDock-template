@@ -1,8 +1,8 @@
-import Default from './tabs';
-import card from './cardTabs';
+import Default from './tabs'
+import card from './cardTabs'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, card];
+const previewerDemo: ComponentDemo[] = [Default, card]
 
-export default previewerDemo;
+export default previewerDemo

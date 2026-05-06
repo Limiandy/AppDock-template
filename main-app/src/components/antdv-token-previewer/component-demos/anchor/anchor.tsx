@@ -1,7 +1,7 @@
-import { Anchor } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { Anchor } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { Link } = Anchor;
+const { Link } = Anchor
 const Demo = () => {
   return (
     <div style={{ padding: '12px' }}>
@@ -14,13 +14,13 @@ const Demo = () => {
         </Link>
       </Anchor>
     </div>
-  );
-};
+  )
+}
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimary', 'colorSplit', 'colorBgContainer'],
   key: 'anchor',
-};
+}
 
-export default componentDemo;
+export default componentDemo

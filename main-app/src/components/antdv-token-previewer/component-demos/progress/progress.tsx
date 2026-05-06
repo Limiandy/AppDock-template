@@ -1,7 +1,7 @@
-import { defineComponent } from 'vue';
-import { Progress } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import { Progress } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -14,14 +14,14 @@ const Demo = defineComponent({
         <Progress percent={50} showInfo={false} />
         <Progress steps={8} />
       </>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorFillSecondary', 'colorText', 'colorBgContainer'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

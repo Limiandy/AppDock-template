@@ -1,33 +1,33 @@
-import { CaretRightOutlined } from '@ant-design/icons-vue';
-import { Collapse, Space } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { PropType, CSSProperties } from 'vue';
-import { defineComponent, toRefs, watch, computed, ref } from 'vue';
-import ColorPreview from '../../ColorPreview';
-import { Pick } from '../../icons';
-import type { MutableTheme, TokenValue } from '../../interface';
-import TokenInput from '../../TokenInput';
-import getValueByPath from '../../utils/getValueByPath';
-import isColor from '../../utils/isColor';
-import makeStyle from '../../utils/makeStyle';
-import { getRelatedComponents } from '../../utils/statistic';
-import getDesignToken from '../../utils/getDesignToken';
+import { CaretRightOutlined } from '@ant-design/icons-vue'
+import { Collapse, Space } from 'ant-design-vue'
+import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { PropType, CSSProperties } from 'vue'
+import { defineComponent, toRefs, watch, computed, ref } from 'vue'
+import ColorPreview from '../../ColorPreview'
+import { Pick } from '../../icons'
+import type { MutableTheme, TokenValue } from '../../interface'
+import TokenInput from '../../TokenInput'
+import getValueByPath from '../../utils/getValueByPath'
+import isColor from '../../utils/isColor'
+import makeStyle from '../../utils/makeStyle'
+import { getRelatedComponents } from '../../utils/statistic'
+import getDesignToken from '../../utils/getDesignToken'
 
-const { Panel } = Collapse;
+const { Panel } = Collapse
 
 export interface TokenItemProps {
-  tokenName: string;
-  tokenPath: string[];
-  active?: boolean;
-  onActiveChange?: (active: boolean) => void;
-  onTokenChange?: (theme: MutableTheme, tokenName: string, value: TokenValue) => void;
-  themes: MutableTheme[];
-  selectedTokens?: string[];
-  onTokenSelect?: (token: string) => void;
-  enableTokenSelect?: boolean;
-  hideUsageCount?: boolean;
-  fallback?: (config: ThemeConfig) => Record<string, TokenValue>;
+  tokenName: string
+  tokenPath: string[]
+  active?: boolean
+  onActiveChange?: (active: boolean) => void
+  onTokenChange?: (theme: MutableTheme, tokenName: string, value: TokenValue) => void
+  themes: MutableTheme[]
+  selectedTokens?: string[]
+  onTokenSelect?: (token: string) => void
+  enableTokenSelect?: boolean
+  hideUsageCount?: boolean
+  fallback?: (config: ThemeConfig) => Record<string, TokenValue>
 }
 
 const AdditionInfo = defineComponent({
@@ -39,7 +39,7 @@ const AdditionInfo = defineComponent({
     dark: { type: Boolean },
   },
   setup(props, { attrs }) {
-    const { info, visible, dark } = toRefs(props);
+    const { info, visible, dark } = toRefs(props)
 
     return () => {
       if (typeof info.value === 'string' && isColor(info.value)) {
@@ -49,7 +49,7 @@ const AdditionInfo = defineComponent({
             color={String(info.value)}
             style={{ display: visible.value ? 'block' : 'none', ...(attrs.style as CSSProperties) }}
           />
-        );
+        )
       }
 
       if (info.value.toString().length < 6 && String(info.value) !== '') {
@@ -69,21 +69,15 @@ const AdditionInfo = defineComponent({
           >
             {info.value}
           </div>
-        );
+        )
       }
 
-      return null;
-    };
+      return null
+    }
   },
-});
+})
 
-const ShowUsageButton = ({
-  selected,
-  toggleSelected,
-}: {
-  selected: boolean;
-  toggleSelected: (v: boolean) => void;
-}) => {
+const ShowUsageButton = ({ selected, toggleSelected }: { selected: boolean; toggleSelected: (v: boolean) => void }) => {
   return (
     <span
       style={{ marginInlineStart: '12px', verticalAlign: 'middle', cursor: 'pointer' }}
@@ -97,14 +91,14 @@ const ShowUsageButton = ({
         }}
       />
     </span>
-  );
-};
+  )
+}
 
-const useStyle = makeStyle('TokenItem', token => ({
+const useStyle = makeStyle('TokenItem', (token) => ({
   [`${token.rootCls}-collapse.previewer-token-item-collapse`]: {
     [`.previewer-token-item${token.rootCls}-collapse-item`]: {
-      transition: `background-color ${token.motionDurationSlow}`,
-      borderRadius: { _skip_check_: true, value: `4px !important` },
+      'transition': `background-color ${token.motionDurationSlow}`,
+      'borderRadius': { _skip_check_: true, value: `4px !important` },
 
       [`&:not(${token.rootCls}-collapse-item-active):hover`]: {
         backgroundColor: token.colorFillSecondary,
@@ -164,9 +158,9 @@ const useStyle = makeStyle('TokenItem', token => ({
       },
 
       '.previewer-token-preview': {
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
+        'display': 'flex',
+        'alignItems': 'center',
+        'position': 'relative',
 
         '> .previewer-color-preview': {
           position: 'absolute',
@@ -188,9 +182,9 @@ const useStyle = makeStyle('TokenItem', token => ({
       },
     },
   },
-}));
+}))
 
-export const getTokenItemId = (token: string) => `previewer-token-panel-item-${token}`;
+export const getTokenItemId = (token: string) => `previewer-token-panel-item-${token}`
 
 export default defineComponent({
   name: 'TokenItem',
@@ -204,42 +198,32 @@ export default defineComponent({
     hideUsageCount: { type: Boolean },
     onActiveChange: { type: Function as PropType<(active: boolean) => void> },
     onTokenChange: {
-      type: Function as PropType<
-        (theme: MutableTheme, tokenName: string, value: TokenValue) => void
-      >,
+      type: Function as PropType<(theme: MutableTheme, tokenName: string, value: TokenValue) => void>,
     },
     onTokenSelect: { type: Function as PropType<(token: string) => void> },
     fallback: { type: Function as PropType<(config: ThemeConfig) => Record<string, TokenValue>> },
   },
   setup(props, { attrs }) {
-    const {
-      tokenName,
-      active,
-      tokenPath,
-      selectedTokens,
-      themes,
-      enableTokenSelect,
-      hideUsageCount,
-    } = toRefs(props);
+    const { tokenName, active, tokenPath, selectedTokens, themes, enableTokenSelect, hideUsageCount } = toRefs(props)
 
-    const infoVisible = ref(false);
-    const [wrapSSR, hashId] = useStyle();
+    const infoVisible = ref(false)
+    const [wrapSSR, hashId] = useStyle()
 
     watch(
       active,
-      val => {
+      (val) => {
         if (val) {
-          infoVisible.value = true;
+          infoVisible.value = true
         }
       },
       { immediate: true },
-    );
+    )
 
     const handleTokenChange = (theme: MutableTheme, value: TokenValue) => {
-      props.onTokenChange?.(theme, tokenName.value, value);
-    };
+      props.onTokenChange?.(theme, tokenName.value, value)
+    }
 
-    const count = computed(() => getRelatedComponents(tokenName.value).length);
+    const count = computed(() => getRelatedComponents(tokenName.value).length)
 
     return () => {
       return wrapSSR(
@@ -247,13 +231,10 @@ export default defineComponent({
           <Collapse
             collapsible="header"
             ghost
-            onChange={key => (infoVisible.value = Array.isArray(key) ? key.length > 0 : !!key)}
+            onChange={(key) => (infoVisible.value = Array.isArray(key) ? key.length > 0 : !!key)}
             class={classNames('previewer-token-item-collapse', hashId.value)}
             expandIcon={({ isActive }) => (
-              <CaretRightOutlined
-                rotate={isActive ? 90 : 0}
-                style={{ fontSize: '12px', cursor: 'pointer' }}
-              />
+              <CaretRightOutlined rotate={isActive ? 90 : 0} style={{ fontSize: '12px', cursor: 'pointer' }} />
             )}
             activeKey={infoVisible.value ? tokenName.value : undefined}
           >
@@ -291,9 +272,7 @@ export default defineComponent({
                     >
                       {tokenName.value}
                     </span>
-                    {!hideUsageCount.value && (
-                      <span class="previewer-token-count">{count.value}</span>
-                    )}
+                    {!hideUsageCount.value && <span class="previewer-token-count">{count.value}</span>}
                   </span>
                   {!infoVisible.value && (
                     <div
@@ -303,9 +282,8 @@ export default defineComponent({
                       }}
                     >
                       {themes.value.map(({ config, key }, index) => {
-                        const token = getDesignToken(config);
-                        const previewDark =
-                          key === 'dark' || String(token.colorBgContainer).toLowerCase() === '#141414';
+                        const token = getDesignToken(config)
+                        const previewDark = key === 'dark' || String(token.colorBgContainer).toLowerCase() === '#141414'
                         return (
                           <AdditionInfo
                             key={key}
@@ -321,7 +299,7 @@ export default defineComponent({
                               zIndex: 10 - index,
                             }}
                           />
-                        );
+                        )
                       })}
                     </div>
                   )}
@@ -332,41 +310,41 @@ export default defineComponent({
                   <ShowUsageButton
                     selected={!!selectedTokens.value?.includes(tokenName.value)}
                     toggleSelected={() => {
-                      props.onTokenSelect?.(tokenName.value);
+                      props.onTokenSelect?.(tokenName.value)
                     }}
                   />
                 ) : undefined
               }
             >
-	              <Space
-	                direction="vertical"
-	                style={{
-	                  background: 'var(--ant-color-fill-alter)',
-	                  borderRadius: '4px',
-	                  padding: '8px',
+              <Space
+                direction="vertical"
+                style={{
+                  background: 'var(--ant-color-fill-alter)',
+                  borderRadius: '4px',
+                  padding: '8px',
                   width: '100%',
                 }}
               >
-                {themes.value.map(theme => {
+                {themes.value.map((theme) => {
                   return (
                     <div key={theme.key}>
                       <TokenInput
                         hideTheme={themes.value.length === 1}
                         theme={theme}
-                        onChange={value => handleTokenChange(theme, value)}
+                        onChange={(value) => handleTokenChange(theme, value)}
                         value={
                           getValueByPath(theme.config, [...tokenPath.value, tokenName.value]) ??
                           props.fallback?.(theme.config)[tokenName.value]
                         }
                       />
                     </div>
-                  );
+                  )
                 })}
               </Space>
             </Panel>
           </Collapse>
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})

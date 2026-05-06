@@ -1,7 +1,7 @@
-import Default from './spin';
+import Default from './spin'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default];
+const previewerDemo: ComponentDemo[] = [Default]
 
-export default previewerDemo;
+export default previewerDemo

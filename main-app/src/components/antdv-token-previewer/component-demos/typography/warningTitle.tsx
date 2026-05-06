@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue';
-import { Typography } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Typography } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 const Demo = defineComponent({
   setup() {
@@ -12,14 +12,14 @@ const Demo = defineComponent({
           Warning Text
         </Title>
       </div>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorWarning'],
   key: 'warning',
-};
+}
 
-export default componentDemo;
+export default componentDemo

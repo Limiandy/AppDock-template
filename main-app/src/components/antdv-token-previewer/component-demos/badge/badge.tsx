@@ -1,11 +1,11 @@
-import { defineComponent } from 'vue';
-import { Badge, Avatar, Space, theme } from 'ant-design-vue';
-import { ClockCircleFilled } from '@ant-design/icons-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Badge, Avatar, Space, theme } from 'ant-design-vue'
+import { ClockCircleFilled } from '@ant-design/icons-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
-    const { token } = theme.useToken();
+    const { token } = theme.useToken()
 
     return () => (
       <Space size="large">
@@ -19,14 +19,14 @@ const Demo = defineComponent({
           <Avatar shape="square" size="large" />
         </Badge>
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorError', 'colorBorderBg', 'colorBgContainer'],
   key: 'badge',
-};
+}
 
-export default componentDemo;
+export default componentDemo

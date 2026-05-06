@@ -1,15 +1,15 @@
-import { defineComponent, ref } from 'vue';
-import { TreeSelect } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent, ref } from 'vue'
+import { TreeSelect } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { TreeNode } = TreeSelect;
+const { TreeNode } = TreeSelect
 
 const Demo = defineComponent({
   setup() {
-    const value = ref(undefined);
+    const value = ref(undefined)
     const onChange = () => {
-      value.value = value.value;
-    };
+      value.value = value.value
+    }
     return () => {
       return (
         <TreeSelect
@@ -33,15 +33,15 @@ const Demo = defineComponent({
             </TreeNode>
           </TreeNode>
         </TreeSelect>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorTextDisabled', 'colorBgContainerDisabled'],
   key: 'disabled',
-};
+}
 
-export default componentDemo;
+export default componentDemo

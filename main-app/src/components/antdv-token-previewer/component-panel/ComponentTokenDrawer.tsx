@@ -1,20 +1,20 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, computed } from 'vue';
-import { BuildOutlined, CarOutlined } from '@ant-design/icons-vue';
-import { ConfigProvider, Drawer, Empty, Tag, theme as antdTheme, Tooltip } from 'ant-design-vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import ComponentDemos from '../component-demos';
-import type { AliasToken, ComponentDemo, MutableTheme, TokenName, TokenValue } from '../interface';
-import { useInjectLocaleContext } from '../locale';
-import TokenCard from '../token-panel/token-card';
-import getDesignToken from '../utils/getDesignToken';
-import makeStyle from '../utils/makeStyle';
-import { getComponentToken } from '../utils/statistic';
-import ComponentCard from './ComponentCard';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, computed } from 'vue'
+import { BuildOutlined, CarOutlined } from '@ant-design/icons-vue'
+import { ConfigProvider, Drawer, Empty, Tag, theme as antdTheme, Tooltip } from 'ant-design-vue'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import ComponentDemos from '../component-demos'
+import type { AliasToken, ComponentDemo, MutableTheme, TokenName, TokenValue } from '../interface'
+import { useInjectLocaleContext } from '../locale'
+import TokenCard from '../token-panel/token-card'
+import getDesignToken from '../utils/getDesignToken'
+import makeStyle from '../utils/makeStyle'
+import { getComponentToken } from '../utils/statistic'
+import ComponentCard from './ComponentCard'
 
-const { defaultAlgorithm } = antdTheme;
+const { defaultAlgorithm } = antdTheme
 
-const useStyle = makeStyle('ComponentTokenDrawer', token => ({
+const useStyle = makeStyle('ComponentTokenDrawer', (token) => ({
   '.previewer-component-token-drawer': {
     [`${token.rootCls}-drawer-content`]: {
       backgroundColor: token.colorBgContainer,
@@ -51,23 +51,23 @@ const useStyle = makeStyle('ComponentTokenDrawer', token => ({
       borderColor: token.colorInfoBg,
     },
   },
-}));
+}))
 
 export type ComponentFullDemosProps = {
-  demos: ComponentDemo[];
-};
+  demos: ComponentDemo[]
+}
 
-const useComponentFullDemosStyle = makeStyle('ComponentFullDemos', token => ({
+const useComponentFullDemosStyle = makeStyle('ComponentFullDemos', (token) => ({
   '.previewer-component-full-demos': {
-    flex: 1,
-    overflow: 'auto',
-    padding: 24,
-    backgroundColor: token.colorBgLayout,
+    'flex': 1,
+    'overflow': 'auto',
+    'padding': 24,
+    'backgroundColor': token.colorBgLayout,
     '> *:not(:last-child)': {
       marginBottom: 12,
     },
   },
-}));
+}))
 
 const ComponentFullDemos = defineComponent({
   name: 'ComponentFullDemos',
@@ -76,17 +76,14 @@ const ComponentFullDemos = defineComponent({
     demos: { type: Array as PropType<ComponentDemo[]> },
   },
   setup(props, { attrs }) {
-    const { demos } = toRefs(props);
-    const [, hashId] = useComponentFullDemosStyle();
-    const locale = useInjectLocaleContext();
+    const { demos } = toRefs(props)
+    const [, hashId] = useComponentFullDemosStyle()
+    const locale = useInjectLocaleContext()
 
     return () => {
       return (
-        <div
-          {...attrs}
-          class={classNames('previewer-component-full-demos', hashId.value, attrs.class)}
-        >
-          {demos.value?.map(demo => (
+        <div {...attrs} class={classNames('previewer-component-full-demos', hashId.value, attrs.class)}>
+          {demos.value?.map((demo) => (
             <ComponentCard
               key={demo.key}
               title={
@@ -102,18 +99,18 @@ const ComponentFullDemos = defineComponent({
             </ComponentCard>
           ))}
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 export type ComponentTokenDrawerProps = {
-  open?: boolean;
-  component?: string;
-  onClose?: () => void;
-  theme: MutableTheme;
-  onTokenClick?: (token: TokenName) => void;
-};
+  open?: boolean
+  component?: string
+  onClose?: () => void
+  theme: MutableTheme
+  onTokenClick?: (token: TokenName) => void
+}
 
 const ComponentTokenDrawer = defineComponent({
   name: 'ComponentTokenDrawer',
@@ -126,22 +123,22 @@ const ComponentTokenDrawer = defineComponent({
     onTokenClick: { type: Function as PropType<(token: TokenName) => void> },
   },
   setup(props) {
-    const { open, component, theme } = toRefs(props);
+    const { open, component, theme } = toRefs(props)
 
-    const [, hashId] = useStyle();
+    const [, hashId] = useStyle()
 
     const componentToken = computed(
       () =>
         getComponentToken(component.value) || {
           global: [],
         },
-    );
+    )
 
-    const componentTokenData = computed(() => Object.keys(componentToken.value.component ?? {}));
+    const componentTokenData = computed(() => Object.keys(componentToken.value.component ?? {}))
 
     const aliasTokenData = computed(() => {
-      return componentToken.value.global.slice().sort();
-    });
+      return componentToken.value.global.slice().sort()
+    })
 
     const handleComponentTokenChange = (token: string, value: TokenValue) => {
       theme.value.onThemeChange?.(
@@ -156,8 +153,8 @@ const ComponentTokenDrawer = defineComponent({
           },
         },
         ['components', component.value, token],
-      );
-    };
+      )
+    }
 
     return () => {
       return (
@@ -201,9 +198,7 @@ const ComponentTokenDrawer = defineComponent({
                 tokenPath={['components', component.value]}
                 themes={[theme.value]}
                 fallback={() => componentToken.value.component}
-                onTokenChange={(_, tokenName, value) =>
-                  handleComponentTokenChange(tokenName, value)
-                }
+                onTokenChange={(_, tokenName, value) => handleComponentTokenChange(tokenName, value)}
                 placeholder={
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -223,10 +218,8 @@ const ComponentTokenDrawer = defineComponent({
                 title="Alias Token"
                 tokenArr={aliasTokenData.value}
                 tokenPath={['components', component.value]}
-                fallback={themeConfig => getDesignToken(themeConfig) as AliasToken}
-                onTokenChange={(_, tokenName, value) =>
-                  handleComponentTokenChange(tokenName, value)
-                }
+                fallback={(themeConfig) => getDesignToken(themeConfig) as AliasToken}
+                onTokenChange={(_, tokenName, value) => handleComponentTokenChange(tokenName, value)}
                 placeholder={
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -241,10 +234,10 @@ const ComponentTokenDrawer = defineComponent({
             </div>
           </div>
         </Drawer>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 export default defineComponent({
   name: 'ComponentTokenDrawerProvider',
@@ -260,6 +253,6 @@ export default defineComponent({
       <ConfigProvider theme={props.theme?.config ?? { algorithm: defaultAlgorithm }}>
         <ComponentTokenDrawer {...props} {...attrs} />
       </ConfigProvider>
-    );
+    )
   },
-});
+})

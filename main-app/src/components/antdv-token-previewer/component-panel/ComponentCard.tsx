@@ -1,17 +1,17 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, ref } from 'vue';
-import type { CardProps } from 'ant-design-vue';
-import { Button, Card } from 'ant-design-vue';
-import { Control } from '../icons';
-import makeStyle from '../utils/makeStyle';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { MutableTheme, TokenName } from '../interface';
-import ComponentTokenDrawer from './ComponentTokenDrawer';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, ref } from 'vue'
+import type { CardProps } from 'ant-design-vue'
+import { Button, Card } from 'ant-design-vue'
+import { Control } from '../icons'
+import makeStyle from '../utils/makeStyle'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { MutableTheme, TokenName } from '../interface'
+import ComponentTokenDrawer from './ComponentTokenDrawer'
 
-const useStyle = makeStyle('ComponentCard', token => ({
+const useStyle = makeStyle('ComponentCard', (token) => ({
   [`${token.rootCls}-card.component-card`]: {
-    borderRadius: 6,
-    boxShadow: `0 1px 2px 0 rgba(25,15,15,0.07)`,
+    'borderRadius': 6,
+    'boxShadow': `0 1px 2px 0 rgba(25,15,15,0.07)`,
 
     [`${token.rootCls}-card-head`]: {
       paddingInline: 18,
@@ -28,26 +28,26 @@ const useStyle = makeStyle('ComponentCard', token => ({
     },
 
     '.component-token-control-icon': {
-      color: token.colorIcon,
-      transition: `color ${token.motionDurationMid}`,
-      fontSize: token.fontSizeLG,
-      cursor: 'pointer',
+      'color': token.colorIcon,
+      'transition': `color ${token.motionDurationMid}`,
+      'fontSize': token.fontSizeLG,
+      'cursor': 'pointer',
 
       '&:hover': {
         color: token.colorIconHover,
       },
     },
   },
-}));
+}))
 
-export const getComponentDemoId = (component: string) => `antdv-token-previewer-${component}`;
+export const getComponentDemoId = (component: string) => `antdv-token-previewer-${component}`
 
 export interface ComponentCardProps {
-  title: CardProps['title'];
-  component?: string;
-  onTokenClick?: (token: TokenName) => void;
-  drawer?: boolean;
-  theme?: MutableTheme;
+  title: CardProps['title']
+  component?: string
+  onTokenClick?: (token: TokenName) => void
+  drawer?: boolean
+  theme?: MutableTheme
 }
 
 const ComponentCard = defineComponent({
@@ -61,10 +61,10 @@ const ComponentCard = defineComponent({
     theme: { type: Object as PropType<MutableTheme> },
   },
   setup(props, { attrs, slots }) {
-    const { component, title, theme, drawer } = toRefs(props);
+    const { component, title, theme, drawer } = toRefs(props)
 
-    const [wrapSSR, hashId] = useStyle();
-    const drawerOpen = ref(false);
+    const [wrapSSR, hashId] = useStyle()
+    const drawerOpen = ref(false)
 
     return () => {
       return wrapSSR(
@@ -79,9 +79,9 @@ const ComponentCard = defineComponent({
                 theme.value && (
                   <Button
                     type="text"
-                    onClick={e => {
-                      e.stopPropagation();
-                      drawerOpen.value = true;
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      drawerOpen.value = true
                     }}
                   >
                     <Control class="component-token-control-icon" />
@@ -100,9 +100,9 @@ const ComponentCard = defineComponent({
             />
           )}
         </>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default ComponentCard;
+export default ComponentCard

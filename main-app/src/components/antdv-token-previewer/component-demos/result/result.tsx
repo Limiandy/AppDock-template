@@ -1,7 +1,7 @@
-import { defineComponent } from 'vue';
-import { Button, Result } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import { Button, Result } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -17,14 +17,14 @@ const Demo = defineComponent({
           <Button key="buy">Buy Again</Button>,
         ]}
       />
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorSuccess'],
   key: 'result',
-};
+}
 
-export default componentDemo;
+export default componentDemo

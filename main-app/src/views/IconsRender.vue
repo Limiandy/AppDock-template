@@ -1,9 +1,6 @@
 <template>
   <div class="icons-render">
-    <section
-      v-for="(value, key) in iconGroup"
-      :key="key"
-    >
+    <section v-for="(value, key) in iconGroup" :key="key">
       <h3>{{ key }}</h3>
       <div class="icons-container">
         <div
@@ -12,19 +9,10 @@
           class="icons-item"
           @click="handleClick(item.fullName, key, index)"
         >
-          <svg-icon
-            :name="item.fullName"
-            width="24px"
-            height="24px"
-          />
+          <svg-icon :name="item.fullName" width="24px" height="24px" />
           <p>{{ item.name }}</p>
 
-          <div
-            v-if="copiedIndex === index && copiedDir === key"
-            class="is-mask"
-          >
-            复制成功!
-          </div>
+          <div v-if="copiedIndex === index && copiedDir === key" class="is-mask">复制成功!</div>
         </div>
       </div>
     </section>

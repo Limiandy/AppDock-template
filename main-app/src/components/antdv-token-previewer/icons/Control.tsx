@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'vue';
-import { defineComponent } from 'vue';
+import type { CSSProperties } from 'vue'
+import { defineComponent } from 'vue'
 
 const Control = defineComponent({
   name: 'Control',
@@ -18,13 +18,7 @@ const Control = defineComponent({
           viewBox="0 0 17 17"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g
-            id="Control-\u9875\u9762-1"
-            stroke="none"
-            stroke-width="1"
-            fill="none"
-            fill-rule="evenodd"
-          >
+          <g id="Control-\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
             <g
               id="Control-\u4E3B\u9898\u9884\u89C8\u5668---\u7EC4\u4EF6\u9884\u89C8"
               transform="translate(-1372.000000, -505.000000)"
@@ -32,10 +26,7 @@ const Control = defineComponent({
             >
               <g id="Control-\u7F16\u7EC4-18" transform="translate(0.000000, 70.000000)">
                 <g id="Control-\u7F16\u7EC4-14" transform="translate(536.000000, 420.000000)">
-                  <g
-                    id="Control-\u7CFB\u7EDF\u63A7\u5236"
-                    transform="translate(836.000000, 15.000000)"
-                  >
+                  <g id="Control-\u7CFB\u7EDF\u63A7\u5236" transform="translate(836.000000, 15.000000)">
                     <rect
                       id="Control-\u77E9\u5F62"
                       fill="#000000"
@@ -91,9 +82,9 @@ const Control = defineComponent({
             </g>
           </g>
         </svg>
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default Control;
+export default Control

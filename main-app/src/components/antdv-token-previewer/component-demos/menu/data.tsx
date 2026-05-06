@@ -1,23 +1,17 @@
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from 'ant-design-vue'
 
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons-vue';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons-vue'
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Required<MenuProps>['items'][number]
 
-const getItem = (
-  label: any,
-  key: string,
-  icon?: any,
-  children?: MenuItem[],
-  type?: 'group',
-): MenuItem =>
+const getItem = (label: any, key: string, icon?: any, children?: MenuItem[], type?: 'group'): MenuItem =>
   ({
     key,
     icon,
     children,
     label,
     type,
-  } as MenuItem);
+  }) as MenuItem
 
 const items: MenuProps['items'] = [
   getItem('Navigation One', 'sub1', <MailOutlined />, [
@@ -37,6 +31,6 @@ const items: MenuProps['items'] = [
     getItem('Option 11', '11'),
     getItem('Option 12', '12'),
   ]),
-];
+]
 
-export default items;
+export default items

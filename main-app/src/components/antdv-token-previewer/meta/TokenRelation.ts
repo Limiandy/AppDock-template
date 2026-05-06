@@ -1,25 +1,25 @@
-import type { AliasToken, MapToken, SeedToken } from 'ant-design-vue/es/theme/interface';
-import defaultMap from 'ant-design-vue/es/theme/themes/default';
-import seedToken from 'ant-design-vue/es/theme/themes/seed';
-import formatToken from 'ant-design-vue/es/theme/util/alias';
+import type { AliasToken, MapToken, SeedToken } from 'ant-design-vue/es/theme/interface'
+import defaultMap from 'ant-design-vue/es/theme/themes/default'
+import seedToken from 'ant-design-vue/es/theme/themes/seed'
+import formatToken from 'ant-design-vue/es/theme/util/alias'
 
-export type PureAliasToken = Omit<AliasToken, keyof MapToken>;
+export type PureAliasToken = Omit<AliasToken, keyof MapToken>
 
 type SeedRelatedMap = {
-  [key in keyof SeedToken]?: (keyof MapToken)[];
-};
+  [key in keyof SeedToken]?: (keyof MapToken)[]
+}
 
 type SeedRelatedAlias = {
-  [key in keyof SeedToken]?: (keyof PureAliasToken)[];
-};
+  [key in keyof SeedToken]?: (keyof PureAliasToken)[]
+}
 
 type MapRelatedAlias = {
-  [key in keyof MapToken]?: (keyof PureAliasToken)[];
-};
+  [key in keyof MapToken]?: (keyof PureAliasToken)[]
+}
 
 // Alias Token 优先级排序，数字小的排在前面，在 map 中的优先级比不在 map 中的优先级高，都不在 map 中的按字母顺序排序
 const tokenOrder: {
-  [key in keyof AliasToken]?: number;
+  [key in keyof AliasToken]?: number
 } = {
   // example
   // 0-20 留给 text
@@ -42,24 +42,24 @@ const tokenOrder: {
   controlItemBgActive: 61,
   controlItemBgActiveHover: 62,
   controlItemBgHover: 63,
-};
+}
 
 export function sortToken<T extends (keyof AliasToken)[]>(arr: T): T {
   if (!arr) {
-    return arr;
+    return arr
   }
   return arr.sort((a, b) => {
     if (tokenOrder[a] && !tokenOrder[b]) {
-      return -1;
+      return -1
     }
     if (!tokenOrder[a] && tokenOrder[b]) {
-      return 1;
+      return 1
     }
     if (tokenOrder[a] && tokenOrder[b]) {
-      return tokenOrder[a]! - tokenOrder[b]!;
+      return tokenOrder[a]! - tokenOrder[b]!
     }
-    return a.localeCompare(b);
-  });
+    return a.localeCompare(b)
+  })
 }
 
 export const seedRelatedMap: SeedRelatedMap = {
@@ -137,52 +137,52 @@ export const seedRelatedMap: SeedRelatedMap = {
     'colorFillTertiary',
     'colorFillQuaternary',
   ],
-};
+}
 
 const getMapRelatedAlias = () => {
-  const mapRelatedAlias: any = {};
-  const mapFn = defaultMap;
-  const mapToken = mapFn({ ...seedToken });
-  const aliasToken = formatToken({ ...mapToken, override: {} });
-  Object.keys(mapToken).forEach(mapKey => {
-    delete (aliasToken as any)[mapKey];
-  });
+  const mapRelatedAlias: any = {}
+  const mapFn = defaultMap
+  const mapToken = mapFn({ ...seedToken })
+  const aliasToken = formatToken({ ...mapToken, override: {} })
+  Object.keys(mapToken).forEach((mapKey) => {
+    delete (aliasToken as any)[mapKey]
+  })
 
-  Object.keys(mapToken).forEach(mapKey => {
+  Object.keys(mapToken).forEach((mapKey) => {
     const newAlias = formatToken({
       ...mapToken,
       [mapKey]: 'changed',
       override: {},
-    });
-    Object.keys(aliasToken).forEach(aliasKey => {
+    })
+    Object.keys(aliasToken).forEach((aliasKey) => {
       if ((aliasToken as any)[aliasKey] !== (newAlias as any)[aliasKey]) {
         if (!mapRelatedAlias[mapKey]) {
-          mapRelatedAlias[mapKey] = [];
+          mapRelatedAlias[mapKey] = []
         }
-        mapRelatedAlias[mapKey].push(aliasKey);
+        mapRelatedAlias[mapKey].push(aliasKey)
       }
-    });
-    mapRelatedAlias[mapKey] = sortToken(mapRelatedAlias[mapKey]);
-  });
+    })
+    mapRelatedAlias[mapKey] = sortToken(mapRelatedAlias[mapKey])
+  })
 
-  return mapRelatedAlias;
-};
+  return mapRelatedAlias
+}
 
-export const mapRelatedAlias: MapRelatedAlias = getMapRelatedAlias();
+export const mapRelatedAlias: MapRelatedAlias = getMapRelatedAlias()
 
 const getSeedRelatedAlias = (): SeedRelatedAlias => {
-  const result: SeedRelatedAlias = {};
-  Object.keys(seedToken).forEach(key => {
-    const seedKey = key as keyof SeedToken;
-    const arr = mapRelatedAlias[seedKey] || [];
-    seedRelatedMap[seedKey]?.forEach(mapKey => {
-      arr.push(...(mapRelatedAlias[mapKey] ?? []));
-    });
+  const result: SeedRelatedAlias = {}
+  Object.keys(seedToken).forEach((key) => {
+    const seedKey = key as keyof SeedToken
+    const arr = mapRelatedAlias[seedKey] || []
+    seedRelatedMap[seedKey]?.forEach((mapKey) => {
+      arr.push(...(mapRelatedAlias[mapKey] ?? []))
+    })
     if (arr.length) {
-      (result as any)[key] = sortToken(Array.from(new Set(arr)));
+      ;(result as any)[key] = sortToken(Array.from(new Set(arr)))
     }
-  });
-  return result;
-};
+  })
+  return result
+}
 
-export const seedRelatedAlias = getSeedRelatedAlias();
+export const seedRelatedAlias = getSeedRelatedAlias()

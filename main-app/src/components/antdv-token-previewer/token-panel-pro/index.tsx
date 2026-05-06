@@ -1,18 +1,18 @@
-import { Tabs } from 'ant-design-vue';
-import type { Theme, SelectedToken } from '../interface';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { PropType } from 'vue';
-import { toRefs, defineComponent, watchEffect, computed, ref } from 'vue';
-import { useInjectLocaleContext } from '../locale';
-import { tokenCategory } from '../meta';
-import type { TokenGroup } from '../meta/interface';
-import makeStyle from '../utils/makeStyle';
-import AliasPanel from './AliasPanel';
-import TokenContent from './TokenContent';
+import { Tabs } from 'ant-design-vue'
+import type { Theme, SelectedToken } from '../interface'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { PropType } from 'vue'
+import { toRefs, defineComponent, watchEffect, computed, ref } from 'vue'
+import { useInjectLocaleContext } from '../locale'
+import { tokenCategory } from '../meta'
+import type { TokenGroup } from '../meta/interface'
+import makeStyle from '../utils/makeStyle'
+import AliasPanel from './AliasPanel'
+import TokenContent from './TokenContent'
 
-const { TabPane } = Tabs;
+const { TabPane } = Tabs
 
-const useStyle = makeStyle('TokenPanelPro', token => ({
+const useStyle = makeStyle('TokenPanelPro', (token) => ({
   '.token-panel-pro': {
     height: '100%',
     display: 'flex',
@@ -28,18 +28,18 @@ const useStyle = makeStyle('TokenPanelPro', token => ({
       },
     },
   },
-}));
+}))
 
 export type TokenPanelProProps = {
-  theme: Theme;
-  selectedTokens?: SelectedToken;
-  infoFollowPrimary?: boolean;
-  aliasOpen?: boolean;
-  activeTheme?: string;
-  onTokenSelect?: (token: string | string[], type: keyof SelectedToken) => void;
-  onInfoFollowPrimaryChange?: (value: boolean) => void;
-  onAliasOpenChange?: (value: boolean) => void;
-};
+  theme: Theme
+  selectedTokens?: SelectedToken
+  infoFollowPrimary?: boolean
+  aliasOpen?: boolean
+  activeTheme?: string
+  onTokenSelect?: (token: string | string[], type: keyof SelectedToken) => void
+  onInfoFollowPrimaryChange?: (value: boolean) => void
+  onAliasOpenChange?: (value: boolean) => void
+}
 
 const TokenPanelPro = defineComponent({
   name: 'TokenPanelPro',
@@ -57,22 +57,22 @@ const TokenPanelPro = defineComponent({
     onAliasOpenChange: { type: Function as PropType<(value: boolean) => void> },
   },
   setup(props, { attrs }) {
-    const { theme, selectedTokens, infoFollowPrimary, aliasOpen } = toRefs(props);
+    const { theme, selectedTokens, infoFollowPrimary, aliasOpen } = toRefs(props)
 
-    const [wrapSSR, hashId] = useStyle();
+    const [wrapSSR, hashId] = useStyle()
 
-    const activeGroup = ref<string>('brandColor');
-    const locale = useInjectLocaleContext();
+    const activeGroup = ref<string>('brandColor')
+    const locale = useInjectLocaleContext()
 
     const activeCategory = computed(() => {
       return tokenCategory.reduce<TokenGroup<string> | undefined>((result, category) => {
-        return result ?? category.groups.find(group => group.key === activeGroup.value);
-      }, undefined);
-    });
+        return result ?? category.groups.find((group) => group.key === activeGroup.value)
+      }, undefined)
+    })
 
     watchEffect(() => {
-      props.onTokenSelect(activeCategory.value?.seedToken ?? [], 'seed');
-    });
+      props.onTokenSelect(activeCategory.value?.seedToken ?? [], 'seed')
+    })
 
     return () => {
       return wrapSSR(
@@ -83,16 +83,12 @@ const TokenPanelPro = defineComponent({
             tabBarStyle={{ padding: '0 16px', margin: 0 }}
             style={{ height: '100%', flex: '0 0 540px' }}
             class="token-panel-pro-tabs"
-            onChange={key => {
-              activeGroup.value =
-                tokenCategory.find(category => category.nameEn === key)?.groups[0].key ?? '';
+            onChange={(key) => {
+              activeGroup.value = tokenCategory.find((category) => category.nameEn === key)?.groups[0].key ?? ''
             }}
           >
-            {tokenCategory.map(category => (
-              <TabPane
-                key={category.nameEn}
-                tab={locale.value._lang === 'zh-CN' ? category.name : category.nameEn}
-              >
+            {tokenCategory.map((category) => (
+              <TabPane key={category.nameEn} tab={locale.value._lang === 'zh-CN' ? category.name : category.nameEn}>
                 <TokenContent
                   category={category}
                   theme={theme.value}
@@ -116,9 +112,9 @@ const TokenPanelPro = defineComponent({
             onTokenSelect={props.onTokenSelect}
           />
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default TokenPanelPro;
+export default TokenPanelPro

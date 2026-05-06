@@ -1,19 +1,19 @@
-import { Button, Drawer } from 'ant-design-vue';
-import { defineComponent, ref } from 'vue';
-import type { ComponentDemo } from '../../interface';
+import { Button, Drawer } from 'ant-design-vue'
+import { defineComponent, ref } from 'vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
-    () => {
-      const visible = ref(false);
+    ;() => {
+      const visible = ref(false)
 
       const showDrawer = () => {
-        visible.value = true;
-      };
+        visible.value = true
+      }
 
       const onClose = () => {
-        visible.value = false;
-      };
+        visible.value = false
+      }
 
       return (
         <>
@@ -26,14 +26,14 @@ const Demo = defineComponent({
             <p>Some contents...</p>
           </Drawer>
         </>
-      );
-    };
+      )
+    }
   },
-});
+})
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorBgMask', 'colorBgElevated'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

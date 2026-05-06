@@ -1,7 +1,7 @@
-import { Modal, Button } from 'ant-design-vue';
-import { defineComponent } from 'vue';
+import { Modal, Button } from 'ant-design-vue'
+import { defineComponent } from 'vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -14,16 +14,16 @@ const Demo = defineComponent({
             <p>some messages...some messages...</p>
           </div>
         ),
-      });
-    };
+      })
+    }
 
-    return () => <Button onClick={warning}>Warning</Button>;
+    return () => <Button onClick={warning}>Warning</Button>
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorWarning'],
   key: 'warning',
-};
-export default componentDemo;
+}
+export default componentDemo

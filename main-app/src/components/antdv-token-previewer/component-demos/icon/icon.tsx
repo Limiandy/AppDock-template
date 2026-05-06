@@ -1,13 +1,7 @@
-import { defineComponent } from 'vue';
-import { Space } from 'ant-design-vue';
-import {
-  HomeOutlined,
-  SettingFilled,
-  SmileOutlined,
-  SyncOutlined,
-  LoadingOutlined,
-} from '@ant-design/icons-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Space } from 'ant-design-vue'
+import { HomeOutlined, SettingFilled, SmileOutlined, SyncOutlined, LoadingOutlined } from '@ant-design/icons-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -16,13 +10,13 @@ const Demo = defineComponent({
         <HomeOutlined /> <SettingFilled /> <SmileOutlined /> <SyncOutlined spin />
         <SmileOutlined rotate={180} /> <LoadingOutlined />
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

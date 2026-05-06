@@ -1,6 +1,6 @@
-import type { AliasToken } from '../interface';
-import type { TokenTree } from './interface';
-import { seedRelatedAlias, seedRelatedMap } from './TokenRelation';
+import type { AliasToken } from '../interface'
+import type { TokenTree } from './interface'
+import { seedRelatedAlias, seedRelatedMap } from './TokenRelation'
 
 const category: TokenTree<keyof AliasToken> = [
   {
@@ -149,16 +149,7 @@ const category: TokenTree<keyof AliasToken> = [
             nameEn: 'Margin',
             desc: '',
             descEn: '',
-            mapToken: [
-              'marginXXS',
-              'marginXS',
-              'marginSM',
-              'margin',
-              'marginMD',
-              'marginLG',
-              'marginXL',
-              'marginXXL',
-            ],
+            mapToken: ['marginXXS', 'marginXS', 'marginSM', 'margin', 'marginMD', 'marginLG', 'marginXL', 'marginXXL'],
           },
           {
             key: 'padding',
@@ -167,15 +158,7 @@ const category: TokenTree<keyof AliasToken> = [
             nameEn: 'Padding',
             desc: '',
             descEn: '',
-            mapToken: [
-              'paddingXXS',
-              'paddingXS',
-              'paddingSM',
-              'padding',
-              'paddingMD',
-              'paddingLG',
-              'paddingXL',
-            ],
+            mapToken: ['paddingXXS', 'paddingXS', 'paddingSM', 'padding', 'paddingMD', 'paddingLG', 'paddingXL'],
             aliasToken: [
               'paddingContentHorizontal',
               'paddingContentVertical',
@@ -233,6 +216,6 @@ const category: TokenTree<keyof AliasToken> = [
       },
     ],
   },
-];
+]
 
-export default category;
+export default category

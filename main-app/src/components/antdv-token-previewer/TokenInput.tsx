@@ -1,23 +1,23 @@
-import { Button, Popover, Input, InputNumber } from 'ant-design-vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, computed, ref, watch } from 'vue';
-import { debounce } from 'lodash';
-import ColorPanel from './ColorPanel';
-import ColorPreview from './ColorPreview';
-import type { MutableTheme } from './interface';
-import { useInjectLocaleContext } from './locale';
-import isColor from './utils/isColor';
-import makeStyle from './utils/makeStyle';
+import { Button, Popover, Input, InputNumber } from 'ant-design-vue'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, computed, ref, watch } from 'vue'
+import { debounce } from 'lodash'
+import ColorPanel from './ColorPanel'
+import ColorPreview from './ColorPreview'
+import type { MutableTheme } from './interface'
+import { useInjectLocaleContext } from './locale'
+import isColor from './utils/isColor'
+import makeStyle from './utils/makeStyle'
 
-const useStyle = makeStyle('TokenInput', token => ({
+const useStyle = makeStyle('TokenInput', (token) => ({
   '.previewer-token-input': {
     [`${token.rootCls}-input-group-addon, ${token.rootCls}-input-number-group-addon`]: {
-      border: '0 !important',
-      color: `${token.colorTextTertiary} !important`,
-      fontSize: `${token.fontSizeSM}px !important`,
-      padding: '0 !important',
-      backgroundColor: 'transparent !important',
+      'border': '0 !important',
+      'color': `${token.colorTextTertiary} !important`,
+      'fontSize': `${token.fontSizeSM}px !important`,
+      'padding': '0 !important',
+      'backgroundColor': 'transparent !important',
 
       '&:first-child': {
         paddingInlineStart: 0,
@@ -67,18 +67,18 @@ const useStyle = makeStyle('TokenInput', token => ({
       },
     },
   },
-}));
+}))
 
 export type TokenInputProps = {
-  theme?: MutableTheme;
-  value?: string | number;
-  onChange?: (value: string | number) => void;
-  light?: boolean;
-  readonly?: boolean;
-  onReset?: () => void;
-  canReset?: boolean;
-  hideTheme?: boolean;
-};
+  theme?: MutableTheme
+  value?: string | number
+  onChange?: (value: string | number) => void
+  light?: boolean
+  readonly?: boolean
+  onReset?: () => void
+  canReset?: boolean
+  hideTheme?: boolean
+}
 
 const TokenInput = defineComponent({
   name: 'TokenInput',
@@ -94,46 +94,46 @@ const TokenInput = defineComponent({
     hideTheme: { type: Boolean },
   },
   setup(props, { attrs }) {
-    const { value, theme, light, readonly, canReset: customCanReset, hideTheme } = toRefs(props);
+    const { value, theme, light, readonly, canReset: customCanReset, hideTheme } = toRefs(props)
 
-    const valueRef = ref<number | string>(value.value || '');
+    const valueRef = ref<number | string>(value.value || '')
 
-    const tokenValue = ref<string | number>(value.value || '');
+    const tokenValue = ref<string | number>(value.value || '')
 
-    const canReset = computed(() => customCanReset.value ?? valueRef.value !== tokenValue.value);
+    const canReset = computed(() => customCanReset.value ?? valueRef.value !== tokenValue.value)
 
-    const locale = useInjectLocaleContext();
+    const locale = useInjectLocaleContext()
 
-    const [wrapSSR, hashId] = useStyle();
+    const [wrapSSR, hashId] = useStyle()
 
     watch(
       value,
-      val => {
+      (val) => {
         if (val !== undefined) {
-          tokenValue.value = val;
+          tokenValue.value = val
         }
       },
       { immediate: true },
-    );
+    )
 
     const debouncedOnChange = debounce((newValue: number | string) => {
-      props.onChange?.(newValue);
-    }, 500);
+      props.onChange?.(newValue)
+    }, 500)
 
     const handleTokenChange = (newValue: number | string) => {
       if (!readonly.value) {
-        tokenValue.value = newValue;
-        debouncedOnChange(newValue);
+        tokenValue.value = newValue
+        debouncedOnChange(newValue)
       }
-    };
+    }
 
     const handleReset = () => {
       if (props.onReset) {
-        props.onReset();
+        props.onReset()
       } else {
-        handleTokenChange(valueRef.value);
+        handleTokenChange(valueRef.value)
       }
-    };
+    }
 
     return () => {
       const addonAfter = !readonly.value && (
@@ -160,9 +160,9 @@ const TokenInput = defineComponent({
             <span style={{ padding: '0 8px' }}>{theme.value?.name}</span>
           )}
         </span>
-      );
+      )
 
-      let inputNode;
+      let inputNode
       if (typeof valueRef.value === 'string' && isColor(valueRef.value)) {
         inputNode = (
           <Input
@@ -183,7 +183,7 @@ const TokenInput = defineComponent({
                       color={String(tokenValue.value)}
                       style={{ border: 'none' }}
                       onChange={(v: string) => {
-                        handleTokenChange(v);
+                        handleTokenChange(v)
                       }}
                     />
                   ),
@@ -200,11 +200,11 @@ const TokenInput = defineComponent({
                 />
               </Popover>
             }
-            onChange={e => {
-              handleTokenChange(e.target.value);
+            onChange={(e) => {
+              handleTokenChange(e.target.value)
             }}
           />
-        );
+        )
       } else if (typeof valueRef.value === 'number') {
         inputNode = (
           <InputNumber
@@ -212,11 +212,11 @@ const TokenInput = defineComponent({
             bordered={false}
             value={tokenValue.value}
             disabled={readonly.value}
-            onChange={newValue => {
-              handleTokenChange(Number(newValue));
+            onChange={(newValue) => {
+              handleTokenChange(Number(newValue))
             }}
           />
-        );
+        )
       } else {
         inputNode = (
           <Input
@@ -224,13 +224,11 @@ const TokenInput = defineComponent({
             bordered={false}
             value={String(tokenValue.value)}
             disabled={readonly.value}
-            onChange={e => {
-              handleTokenChange(
-                typeof value.value === 'number' ? Number(e.target.value) : e.target.value,
-              );
+            onChange={(e) => {
+              handleTokenChange(typeof value.value === 'number' ? Number(e.target.value) : e.target.value)
             }}
           />
-        );
+        )
       }
       return wrapSSR(
         <div
@@ -242,9 +240,9 @@ const TokenInput = defineComponent({
         >
           {inputNode}
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default TokenInput;
+export default TokenInput

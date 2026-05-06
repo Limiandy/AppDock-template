@@ -1,21 +1,20 @@
-import { defineComponent, ref } from 'vue';
-import type { MenuProps } from 'ant-design-vue';
-import { Menu } from 'ant-design-vue';
+import { defineComponent, ref } from 'vue'
+import type { MenuProps } from 'ant-design-vue'
+import { Menu } from 'ant-design-vue'
 
-import items from './data';
+import items from './data'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
     return () => {
-      const onClick: MenuProps['onClick'] = e => {
-        // eslint-disable-next-line no-console
-        console.log('click ', e);
-      };
+      const onClick: MenuProps['onClick'] = (e) => {
+        console.log('click ', e)
+      }
 
-      const selectedKeys = ref(['1']);
-      const openKeys = ref(['sub1', 'sub2']);
+      const selectedKeys = ref(['1'])
+      const openKeys = ref(['sub1', 'sub2'])
 
       return (
         <div>
@@ -24,23 +23,23 @@ const Demo = defineComponent({
             style={{ width: '256px' }}
             selectedKeys={selectedKeys.value}
             openKeys={openKeys.value}
-            onSelect={val => (selectedKeys.value = val as any)}
-            onOpenChange={val => (openKeys.value = val as any)}
+            onSelect={(val) => (selectedKeys.value = val as any)}
+            onOpenChange={(val) => (openKeys.value = val as any)}
             // v-model={[selectedKeys.value, 'selectedKeys']}
             // v-model={[openKeys.value, 'openKeys']}
             mode="inline"
             items={items}
           />
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimary', 'colorBgContainer', 'colorFillAlter', 'colorSplit', 'colorPrimaryHover'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

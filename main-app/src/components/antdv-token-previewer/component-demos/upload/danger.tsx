@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue';
-import { UploadOutlined } from '@ant-design/icons-vue';
-import { Upload, Button } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import { UploadOutlined } from '@ant-design/icons-vue'
+import { Upload, Button } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -35,14 +35,14 @@ const Demo = defineComponent({
           <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
       </div>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorError', 'colorErrorBg'],
   key: 'danger',
-};
+}
 
-export default componentDemo;
+export default componentDemo

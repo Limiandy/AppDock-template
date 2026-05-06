@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Pagination, Space } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Pagination, Space } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -10,14 +10,14 @@ const Demo = defineComponent({
 
         <Pagination simple />
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimary', 'colorPrimaryHover', 'colorBgContainer'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

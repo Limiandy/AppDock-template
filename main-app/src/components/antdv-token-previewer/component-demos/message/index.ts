@@ -1,11 +1,11 @@
-import Default from './message';
-import error from './error';
-import info from './info';
-import success from './success';
-import warning from './warning';
+import Default from './message'
+import error from './error'
+import info from './info'
+import success from './success'
+import warning from './warning'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, error, info, success, warning];
+const previewerDemo: ComponentDemo[] = [Default, error, info, success, warning]
 
-export default previewerDemo;
+export default previewerDemo

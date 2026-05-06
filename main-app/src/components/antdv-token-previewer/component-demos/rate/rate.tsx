@@ -1,13 +1,13 @@
-import { Rate } from 'ant-design-vue';
+import { Rate } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const Demo = () => <Rate />;
+const Demo = () => <Rate />
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorFillContent'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

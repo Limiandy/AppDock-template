@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'vue';
-import { defineComponent } from 'vue';
+import type { CSSProperties } from 'vue'
+import { defineComponent } from 'vue'
 
 const TokenPanel = defineComponent({
   name: 'TokenPanel',
@@ -47,21 +47,16 @@ const TokenPanel = defineComponent({
                     id="TokenPanel-\u77E9\u5F62"
                     opacity="0.400000006"
                   ></path>
-                  <circle
-                    id="TokenPanel-\u692D\u5706\u5F62"
-                    cx="4.34782609"
-                    cy="4.34782609"
-                    r="4.34782609"
-                  ></circle>
+                  <circle id="TokenPanel-\u692D\u5706\u5F62" cx="4.34782609" cy="4.34782609" r="4.34782609"></circle>
                   <circle id="TokenPanel-\u692D\u5706\u5F62" cx="15.5" cy="15.5" r="3.5"></circle>
                 </g>
               </g>
             </g>
           </g>
         </svg>
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default TokenPanel;
+export default TokenPanel

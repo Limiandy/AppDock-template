@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Radio, Space } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Radio, Space } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -18,14 +18,14 @@ const Demo = defineComponent({
           <Radio.Button checked>Orange</Radio.Button>
         </div>
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimaryActive', 'colorPrimaryHover'],
   key: 'button',
-};
+}
 
-export default componentDemo;
+export default componentDemo

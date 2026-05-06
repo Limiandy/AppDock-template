@@ -1,11 +1,11 @@
-import { defineComponent } from 'vue';
-import { Anchor, theme } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Anchor, theme } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { Link } = Anchor;
+const { Link } = Anchor
 const Demo = defineComponent({
   setup() {
-    const { token } = theme.useToken();
+    const { token } = theme.useToken()
 
     return () => {
       return (
@@ -19,15 +19,15 @@ const Demo = defineComponent({
             </Link>
           </Anchor>
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorSplit'],
   key: 'anchorInLayout',
-};
+}
 
-export default componentDemo;
+export default componentDemo

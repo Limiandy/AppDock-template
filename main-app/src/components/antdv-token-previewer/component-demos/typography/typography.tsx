@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue';
-import { Typography } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Typography } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title, Paragraph, Text, Link } = Typography
 const Demo = defineComponent({
   setup() {
     return () => (
@@ -29,14 +29,14 @@ const Demo = defineComponent({
           </ul>
         </Paragraph>
       </Typography>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorSuccess'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

@@ -57,11 +57,7 @@ export class WorkerPool {
         }
       }
     `
-    return new Worker(
-      URL.createObjectURL(
-        new Blob([bootstrap], { type: 'application/javascript' }),
-      ),
-    )
+    return new Worker(URL.createObjectURL(new Blob([bootstrap], { type: 'application/javascript' })))
   }
 
   /** 注册 worker 代码（字符串） */

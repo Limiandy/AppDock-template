@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'vue';
-import { defineComponent } from 'vue';
+import type { CSSProperties } from 'vue'
+import { defineComponent } from 'vue'
 
 const SearchDropdown = defineComponent({
   name: 'SearchDropdown',
@@ -18,13 +18,7 @@ const SearchDropdown = defineComponent({
           viewBox="0 0 18 18"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g
-            id="SearchDropdown-\u9875\u9762-1"
-            stroke="none"
-            stroke-width="1"
-            fill="none"
-            fill-rule="evenodd"
-          >
+          <g id="SearchDropdown-\u9875\u9762-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
             <g
               id="SearchDropdown-\u4E3B\u9898\u9884\u89C8\u5668---\u7EC4\u4EF6\u9884\u89C8"
               transform="translate(-23.000000, -198.000000)"
@@ -56,9 +50,9 @@ const SearchDropdown = defineComponent({
             </g>
           </g>
         </svg>
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default SearchDropdown;
+export default SearchDropdown

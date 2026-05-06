@@ -1,9 +1,9 @@
-import Default from './timeline';
-import danger from './danger';
-import success from './success';
+import Default from './timeline'
+import danger from './danger'
+import success from './success'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, danger, success];
+const previewerDemo: ComponentDemo[] = [Default, danger, success]
 
-export default previewerDemo;
+export default previewerDemo

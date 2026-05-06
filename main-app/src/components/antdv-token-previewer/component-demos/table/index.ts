@@ -1,8 +1,8 @@
-import Default from './table';
-import Filter from './filterTable';
+import Default from './table'
+import Filter from './filterTable'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, Filter];
+const previewerDemo: ComponentDemo[] = [Default, Filter]
 
-export default previewerDemo;
+export default previewerDemo

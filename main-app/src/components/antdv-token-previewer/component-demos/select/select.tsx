@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue';
-import { Select, Space } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Select, Space } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { Option } = Select;
+const { Option } = Select
 
 function handleChange() {}
 const Demo = defineComponent({
@@ -26,21 +26,14 @@ const Demo = defineComponent({
           <Option value="lucy">Lucy</Option>
         </Select>
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
-  tokens: [
-    'controlOutline',
-    'colorPrimary',
-    'colorPrimaryHover',
-    'colorText',
-    'colorBgElevated',
-    'colorBgContainer',
-  ],
+  tokens: ['controlOutline', 'colorPrimary', 'colorPrimaryHover', 'colorText', 'colorBgElevated', 'colorBgContainer'],
   key: 'select',
-};
+}
 
-export default componentDemo;
+export default componentDemo

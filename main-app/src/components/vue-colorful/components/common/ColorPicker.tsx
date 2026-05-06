@@ -1,16 +1,16 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, ref, computed } from 'vue';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, ref, computed } from 'vue'
 
-import { Hue } from './Hue';
-import { Saturation } from './Saturation';
+import { Hue } from './Hue'
+import { Saturation } from './Saturation'
 
-import type { ColorModel, ColorPickerBaseProps, AnyColor } from '../../types';
-import { useColorManipulation } from '../../hooks/useColorManipulation';
-import { useStyleSheet } from '../../hooks/useStyleSheet';
-import { formatClassName } from '../../utils/format';
+import type { ColorModel, ColorPickerBaseProps, AnyColor } from '../../types'
+import { useColorManipulation } from '../../hooks/useColorManipulation'
+import { useStyleSheet } from '../../hooks/useStyleSheet'
+import { formatClassName } from '../../utils/format'
 
 export interface ColorPickerProps<T extends AnyColor> extends Partial<ColorPickerBaseProps<T>> {
-  colorModel: ColorModel<T>;
+  colorModel: ColorModel<T>
 }
 
 export const ColorPicker = defineComponent({
@@ -21,28 +21,24 @@ export const ColorPicker = defineComponent({
     onChange: { type: Function as PropType<(newColor: AnyColor) => void> },
   },
   setup(props, { attrs }) {
-    const { colorModel, color } = toRefs(props);
+    const { colorModel, color } = toRefs(props)
 
-    const nodeRef = ref<HTMLDivElement>(null);
-    useStyleSheet(nodeRef);
+    const nodeRef = ref<HTMLDivElement>(null)
+    useStyleSheet(nodeRef)
 
-    const mergedColor = computed(() => color.value || colorModel.value.defaultColor);
+    const mergedColor = computed(() => color.value || colorModel.value.defaultColor)
 
-    const [hsva, updateHsva] = useColorManipulation<AnyColor>(
-      colorModel,
-      mergedColor,
-      props.onChange,
-    );
+    const [hsva, updateHsva] = useColorManipulation<AnyColor>(colorModel, mergedColor, props.onChange)
 
     return () => {
-      const nodeClassName = formatClassName(['vue-colorful', attrs.class]);
+      const nodeClassName = formatClassName(['vue-colorful', attrs.class])
 
       return (
         <div {...attrs} ref={nodeRef} class={nodeClassName}>
           <Saturation hsva={hsva.value} onChange={updateHsva} />
           <Hue hue={hsva.value.h} onChange={updateHsva} class="vue-colorful__last-control" />
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})

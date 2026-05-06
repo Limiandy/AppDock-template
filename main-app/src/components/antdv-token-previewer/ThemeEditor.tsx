@@ -1,45 +1,45 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, ref, computed } from 'vue';
-import type { DerivativeFunc } from 'ant-design-vue/es/_util/cssinjs';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { SelectedToken, Theme } from './interface';
-import type { Locale } from './locale';
-import { useProvideLocaleContext, zhCN } from './locale';
-import { mapRelatedAlias, seedRelatedAlias, seedRelatedMap } from './meta/TokenRelation';
-import { getRelatedComponents } from './utils/statistic';
-import makeStyle from './utils/makeStyle';
-import useControlledTheme from './hooks/useControlledTheme';
-import getDesignToken from './utils/getDesignToken';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, ref, computed } from 'vue'
+import type { DerivativeFunc } from 'ant-design-vue/es/_util/cssinjs'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { SelectedToken, Theme } from './interface'
+import type { Locale } from './locale'
+import { useProvideLocaleContext, zhCN } from './locale'
+import { mapRelatedAlias, seedRelatedAlias, seedRelatedMap } from './meta/TokenRelation'
+import { getRelatedComponents } from './utils/statistic'
+import makeStyle from './utils/makeStyle'
+import useControlledTheme from './hooks/useControlledTheme'
+import getDesignToken from './utils/getDesignToken'
 
-import type { TokenPanelProProps } from './token-panel-pro';
-import TokenPanelPro from './token-panel-pro';
-import ComponentDemoPro from './token-panel-pro/ComponentDemoPro';
-import { antdComponents } from './component-panel';
+import type { TokenPanelProProps } from './token-panel-pro'
+import TokenPanelPro from './token-panel-pro'
+import ComponentDemoPro from './token-panel-pro/ComponentDemoPro'
+import { antdComponents } from './component-panel'
 
-const useStyle = makeStyle('ThemeEditor', token => ({
+const useStyle = makeStyle('ThemeEditor', (token) => ({
   '.antd-theme-editor': {
     backgroundColor: token.colorBgLayout,
     display: 'flex',
   },
-}));
+}))
 
 const defaultTheme: Theme = {
   name: '默认主题',
   key: 'default',
   config: {},
-};
+}
 
 export type ThemeEditorProps = {
   /**
    * @deprecated
    * @default true
    */
-  simple?: boolean;
-  theme?: Theme;
-  onThemeChange?: (theme: Theme) => void;
-  darkAlgorithm?: DerivativeFunc<any, any>;
-  locale?: Locale;
-};
+  simple?: boolean
+  theme?: Theme
+  onThemeChange?: (theme: Theme) => void
+  darkAlgorithm?: DerivativeFunc<any, any>
+  locale?: Locale
+}
 
 const ThemeEditor = defineComponent({
   name: 'ThemeEditor',
@@ -52,45 +52,45 @@ const ThemeEditor = defineComponent({
     locale: { type: Object as PropType<Locale>, default: zhCN },
   },
   setup(props, { attrs, expose }) {
-    const { theme: customTheme, darkAlgorithm, locale } = toRefs(props);
+    const { theme: customTheme, darkAlgorithm, locale } = toRefs(props)
 
-    const [wrapSSR, hashId] = useStyle();
+    const [wrapSSR, hashId] = useStyle()
 
     const selectedTokens = ref<SelectedToken>({
       seed: ['colorPrimary'],
-    });
+    })
 
-    const aliasOpen = ref<boolean>(false);
+    const aliasOpen = ref<boolean>(false)
 
     const { theme, infoFollowPrimary, onInfoFollowPrimaryChange, updateRef } = useControlledTheme({
       theme: customTheme,
       defaultTheme,
       onChange: props.onThemeChange,
       darkAlgorithm,
-    });
+    })
 
     const handleTokenSelect: TokenPanelProProps['onTokenSelect'] = (token, type) => {
-      const tokens = typeof token === 'string' ? (token ? [token] : []) : token;
+      const tokens = typeof token === 'string' ? (token ? [token] : []) : token
       if (type === 'seed') {
         return {
           seed: tokens,
-        };
+        }
       }
 
-      let newSelectedTokens = { ...selectedTokens.value };
-      tokens.forEach(newToken => {
+      let newSelectedTokens = { ...selectedTokens.value }
+      tokens.forEach((newToken) => {
         newSelectedTokens = {
           ...selectedTokens.value,
           [type]: selectedTokens.value[type]?.includes(newToken)
-            ? selectedTokens.value[type]?.filter(t => t !== newToken)
+            ? selectedTokens.value[type]?.filter((t) => t !== newToken)
             : [...(selectedTokens.value[type] ?? []), newToken],
-        };
-      });
+        }
+      })
       if (type === 'map') {
-        delete newSelectedTokens.alias;
+        delete newSelectedTokens.alias
       }
-      selectedTokens.value = newSelectedTokens;
-    };
+      selectedTokens.value = newSelectedTokens
+    }
 
     const computedSelectedTokens = computed(() => {
       if (
@@ -102,34 +102,34 @@ const ThemeEditor = defineComponent({
           ...selectedTokens.value.seed,
           ...((seedRelatedMap as any)[selectedTokens.value.seed[0]] ?? []),
           ...((seedRelatedAlias as any)[selectedTokens.value.seed[0]] ?? []),
-        ];
+        ]
       }
       if (selectedTokens.value.map?.length && !selectedTokens.value.alias?.length) {
         return [
           ...selectedTokens.value.map,
           ...selectedTokens.value.map.reduce((result, item) => {
-            return result.concat((mapRelatedAlias as any)[item]);
+            return result.concat((mapRelatedAlias as any)[item])
           }, []),
-        ];
+        ]
       }
       if (selectedTokens.value.alias?.length) {
-        return [...selectedTokens.value.alias];
+        return [...selectedTokens.value.alias]
       }
-      return [];
-    });
+      return []
+    })
 
     const relatedComponents = computed(() => {
-      return computedSelectedTokens.value ? getRelatedComponents(computedSelectedTokens.value) : [];
-    });
+      return computedSelectedTokens.value ? getRelatedComponents(computedSelectedTokens.value) : []
+    })
 
     expose({
       updateRef,
-    });
+    })
 
-    useProvideLocaleContext(locale);
+    useProvideLocaleContext(locale)
 
     return () => {
-      const token = getDesignToken(theme.value.config);
+      const token = getDesignToken(theme.value.config)
 
       return wrapSSR(
         <div {...attrs} class={classNames(hashId.value, 'antd-theme-editor', attrs.class)}>
@@ -145,7 +145,7 @@ const ThemeEditor = defineComponent({
           >
             <TokenPanelPro
               aliasOpen={aliasOpen.value}
-              onAliasOpenChange={open => (aliasOpen.value = open)}
+              onAliasOpenChange={(open) => (aliasOpen.value = open)}
               theme={theme.value}
               style={{ flex: 1 }}
               selectedTokens={selectedTokens.value}
@@ -163,9 +163,9 @@ const ThemeEditor = defineComponent({
             componentDrawer
           />
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default ThemeEditor;
+export default ThemeEditor

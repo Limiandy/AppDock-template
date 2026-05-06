@@ -1,10 +1,10 @@
-import Default from './badge';
-import Progress from './progress';
-import warning from './warning';
-import success from './success';
+import Default from './badge'
+import Progress from './progress'
+import warning from './warning'
+import success from './success'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, Progress, warning, success];
+const previewerDemo: ComponentDemo[] = [Default, Progress, warning, success]
 
-export default previewerDemo;
+export default previewerDemo

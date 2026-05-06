@@ -1,7 +1,5 @@
 {
-  "root": [
-    "location"
-  ],
+  "root": ["location"],
   "solar": [
     "4k-outline",
     "accessibility-outline",

@@ -1,19 +1,19 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs } from 'vue';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 
-import type { Interaction } from './Interactive';
-import { Interactive } from './Interactive';
-import { Pointer } from './Pointer';
+import type { Interaction } from './Interactive'
+import { Interactive } from './Interactive'
+import { Pointer } from './Pointer'
 
-import { hsvaToHslString } from '../../utils/convert';
-import { formatClassName } from '../../utils/format';
-import { clamp } from '../../utils/clamp';
-import { round } from '../../utils/round';
+import { hsvaToHslString } from '../../utils/convert'
+import { formatClassName } from '../../utils/format'
+import { clamp } from '../../utils/clamp'
+import { round } from '../../utils/round'
 
 export interface Props {
-  className?: string;
-  hue: number;
-  onChange: (newHue: { h: number }) => void;
+  className?: string
+  hue: number
+  onChange: (newHue: { h: number }) => void
 }
 
 export const Hue = defineComponent({
@@ -23,20 +23,20 @@ export const Hue = defineComponent({
     onChange: { type: Function as PropType<(newHue: { h: number }) => void> },
   },
   setup(props, { attrs }) {
-    const { hue } = toRefs(props);
+    const { hue } = toRefs(props)
 
     const handleMove = (interaction: Interaction) => {
-      props.onChange({ h: 360 * interaction.left });
-    };
+      props.onChange({ h: 360 * interaction.left })
+    }
 
     const handleKey = (offset: Interaction) => {
       // Hue measured in degrees of the color circle ranging from 0 to 360
       props.onChange({
         h: clamp(hue.value + offset.left * 360, 0, 360),
-      });
-    };
+      })
+    }
     return () => {
-      const nodeClassName = formatClassName(['vue-colorful__hue', attrs.class]);
+      const nodeClassName = formatClassName(['vue-colorful__hue', attrs.class])
 
       return (
         <div class={nodeClassName}>
@@ -55,7 +55,7 @@ export const Hue = defineComponent({
             />
           </Interactive>
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})

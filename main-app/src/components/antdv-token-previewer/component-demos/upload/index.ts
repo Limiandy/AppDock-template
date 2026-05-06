@@ -1,9 +1,9 @@
-import Default from './upload';
-import danger from './danger';
-import avatar from './avatar';
+import Default from './upload'
+import danger from './danger'
+import avatar from './avatar'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-const previewerDemo: ComponentDemo[] = [Default, danger, avatar];
+const previewerDemo: ComponentDemo[] = [Default, danger, avatar]
 
-export default previewerDemo;
+export default previewerDemo

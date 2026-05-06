@@ -19,16 +19,8 @@ interface RegisterQiankunOptions {
   mounted?: (props: QiankunProps) => void
 }
 
-export function registerQiankun(
-  rootComponent: Component,
-  options: RegisterQiankunOptions = {},
-) {
-  const {
-    container: rootContainer = '#app',
-    plugins = [],
-    getApp,
-    mounted,
-  } = options
+export function registerQiankun(rootComponent: Component, options: RegisterQiankunOptions = {}) {
+  const { container: rootContainer = '#app', plugins = [], getApp, mounted } = options
 
   let app: App<Element> | null = null
   function render(props: QiankunProps) {

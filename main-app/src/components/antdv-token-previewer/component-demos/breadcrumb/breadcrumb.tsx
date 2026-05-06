@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Breadcrumb } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Breadcrumb } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -15,14 +15,14 @@ const Demo = defineComponent({
         </Breadcrumb.Item>
         <Breadcrumb.Item>An Application</Breadcrumb.Item>
       </Breadcrumb>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorText', 'colorPrimary', 'colorPrimaryActive', 'colorPrimaryHover'],
   key: 'breadcrumb',
-};
+}
 
-export default componentDemo;
+export default componentDemo

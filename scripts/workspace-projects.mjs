@@ -145,7 +145,8 @@ export function writeMicroApps(rootDir, projects, target) {
 export function createViteCommand(task, viteArgs = [], options = {}) {
   const viteCommand = task === 'build' ? ['vite', 'build'] : ['vite']
   const normalizedArgs = normalizeForwardedArgs(viteArgs)
-  const buildArgs = task === 'build' && options.rootDir && options.project ? getProjectDistArgs(options.rootDir, options.project) : []
+  const buildArgs =
+    task === 'build' && options.rootDir && options.project ? getProjectDistArgs(options.rootDir, options.project) : []
   return ['pnpm', ['exec', ...viteCommand, ...normalizedArgs, ...buildArgs]]
 }
 

@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Button, Space } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Button, Space } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -22,20 +22,14 @@ const Demo = defineComponent({
           link
         </Button>
       </Space>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
-  tokens: [
-    'colorError',
-    'colorErrorActive',
-    'colorErrorHover',
-    'colorErrorBorder',
-    'colorErrorOutline',
-  ],
+  tokens: ['colorError', 'colorErrorActive', 'colorErrorHover', 'colorErrorBorder', 'colorErrorOutline'],
   key: 'danger',
-};
+}
 
-export default componentDemo;
+export default componentDemo

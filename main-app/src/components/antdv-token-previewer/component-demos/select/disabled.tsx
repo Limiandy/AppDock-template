@@ -1,9 +1,9 @@
-import { defineComponent } from 'vue';
-import { Select } from 'ant-design-vue';
+import { defineComponent } from 'vue'
+import { Select } from 'ant-design-vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
-import options from './data';
+import options from './data'
 
 const Demo = defineComponent({
   setup() {
@@ -19,14 +19,14 @@ const Demo = defineComponent({
         placeholder="Please select"
         value={['a10', 'c12']}
       />
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorBgContainerDisabled', 'colorTextDisabled'],
   key: 'disabled',
-};
+}
 
-export default componentDemo;
+export default componentDemo

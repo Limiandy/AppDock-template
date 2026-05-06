@@ -1,15 +1,15 @@
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import type { PropType } from 'vue';
-import { toRefs, defineComponent } from 'vue';
+import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
+import type { PropType } from 'vue'
+import { toRefs, defineComponent } from 'vue'
 
-import getColorBgImg from '../utils/getColorBgImg';
-import getDesignToken from '../utils/getDesignToken';
+import getColorBgImg from '../utils/getColorBgImg'
+import getDesignToken from '../utils/getDesignToken'
 
 export type TokenPreviewProps = {
-  theme: ThemeConfig;
-  tokenName: string;
-  type?: string;
-};
+  theme: ThemeConfig
+  tokenName: string
+  type?: string
+}
 
 const TokenPreview = defineComponent({
   name: 'TokenPreview',
@@ -19,7 +19,7 @@ const TokenPreview = defineComponent({
     type: { type: String },
   },
   setup(props) {
-    const { theme, tokenName, type } = toRefs(props);
+    const { theme, tokenName, type } = toRefs(props)
 
     return () => {
       if (type.value === 'Color') {
@@ -41,7 +41,7 @@ const TokenPreview = defineComponent({
               }}
             />
           </div>
-        );
+        )
       }
       if (type.value === 'FontSize') {
         return (
@@ -61,7 +61,7 @@ const TokenPreview = defineComponent({
           >
             <span>Aa</span>
           </div>
-        );
+        )
       }
       if (type.value === 'LineHeight') {
         return (
@@ -81,9 +81,7 @@ const TokenPreview = defineComponent({
             <span
               style={{
                 fontSize: `${
-                  (getDesignToken(theme.value) as any)[
-                    tokenName.value.replace('lineHeight', 'fontSize')
-                  ]
+                  (getDesignToken(theme.value) as any)[tokenName.value.replace('lineHeight', 'fontSize')]
                 }px`,
                 lineHeight: (getDesignToken(theme.value) as any)[tokenName.value],
                 background: '#fff2f0',
@@ -93,10 +91,10 @@ const TokenPreview = defineComponent({
               Aa
             </span>
           </div>
-        );
+        )
       }
       if (type.value === 'Margin') {
-        const margin = (getDesignToken(theme.value) as any)[tokenName.value];
+        const margin = (getDesignToken(theme.value) as any)[tokenName.value]
         return (
           <div
             style={{
@@ -127,10 +125,10 @@ const TokenPreview = defineComponent({
               />
             </div>
           </div>
-        );
+        )
       }
       if (type.value === 'Padding') {
-        const padding = `${(getDesignToken(theme.value) as any)[tokenName.value]}px`;
+        const padding = `${(getDesignToken(theme.value) as any)[tokenName.value]}px`
         return (
           <div
             style={{
@@ -161,7 +159,7 @@ const TokenPreview = defineComponent({
               />
             </div>
           </div>
-        );
+        )
       }
       if (type.value === 'BorderRadius') {
         return (
@@ -186,7 +184,7 @@ const TokenPreview = defineComponent({
               }}
             />
           </div>
-        );
+        )
       }
       if (type.value === 'BoxShadow') {
         return (
@@ -213,11 +211,11 @@ const TokenPreview = defineComponent({
               }}
             />
           </div>
-        );
+        )
       }
-      return null;
-    };
+      return null
+    }
   },
-});
+})
 
-export default TokenPreview;
+export default TokenPreview

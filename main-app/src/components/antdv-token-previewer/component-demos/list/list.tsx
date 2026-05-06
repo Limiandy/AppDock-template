@@ -1,13 +1,13 @@
-import { defineComponent } from 'vue';
-import { List, ListItem, ListItemMeta, Avatar } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { List, ListItem, ListItemMeta, Avatar } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const data = [
   { title: 'Ant Design Vue Title 1' },
   { title: 'Ant Design Vue Title 2' },
   { title: 'Ant Design Vue Title 3' },
   { title: 'Ant Design Vue Title 4' },
-];
+]
 const Demo = defineComponent({
   setup() {
     return () => (
@@ -28,14 +28,14 @@ const Demo = defineComponent({
           ),
         }}
       />
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: [],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

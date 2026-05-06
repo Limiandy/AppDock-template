@@ -8,9 +8,7 @@ import { ref } from 'vue'
 export const useGlobalStore = defineStore('global', () => {
   const message = ref<MessageInstance>({} as MessageInstance)
   const notification = ref<NotificationInstance>({} as NotificationInstance)
-  const modal = ref<Omit<ModalStaticFunctions, 'warn'>>(
-    {} as Omit<ModalStaticFunctions, 'warn'>,
-  )
+  const modal = ref<Omit<ModalStaticFunctions, 'warn'>>({} as Omit<ModalStaticFunctions, 'warn'>)
 
   function init(appContext: ReturnType<typeof App.useApp>) {
     message.value = appContext.message

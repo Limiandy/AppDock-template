@@ -1,5 +1,5 @@
-import { Tree } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { Tree } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const treeData = [
   {
@@ -27,7 +27,7 @@ const treeData = [
       },
     ],
   },
-];
+]
 const Demo = () => {
   return (
     <Tree
@@ -38,13 +38,13 @@ const Demo = () => {
       checkedKeys={['0-0-0', '0-0-1']}
       treeData={treeData}
     />
-  );
-};
+  )
+}
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorTextDisabled', 'colorBgContainerDisabled'],
   key: 'disabled',
-};
+}
 
-export default componentDemo;
+export default componentDemo

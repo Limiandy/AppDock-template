@@ -1,7 +1,7 @@
-import { Modal, Button } from 'ant-design-vue';
-import { defineComponent } from 'vue';
+import { Modal, Button } from 'ant-design-vue'
+import { defineComponent } from 'vue'
 
-import type { ComponentDemo } from '../../interface';
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -15,19 +15,18 @@ const Demo = defineComponent({
           </div>
         ),
         onOk() {
-          // eslint-disable-next-line no-console
-          console.log('i am ok');
+          console.log('i am ok')
         },
-      });
-    };
+      })
+    }
 
-    return () => <Button onClick={info}>info</Button>;
+    return () => <Button onClick={info}>info</Button>
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorInfo'],
   key: 'info',
-};
-export default componentDemo;
+}
+export default componentDemo

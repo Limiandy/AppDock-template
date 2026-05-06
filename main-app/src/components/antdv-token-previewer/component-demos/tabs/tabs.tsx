@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue';
-import { Tabs } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Tabs } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
-const { TabPane } = Tabs;
+const { TabPane } = Tabs
 function callback() {}
 const Demo = defineComponent({
   setup() {
@@ -18,14 +18,14 @@ const Demo = defineComponent({
           Content of Tab Pane 3
         </TabPane>
       </Tabs>
-    );
+    )
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorPrimary', 'colorPrimaryHover', 'colorPrimaryActive', 'colorBgContainer'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo

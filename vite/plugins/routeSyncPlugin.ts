@@ -9,9 +9,7 @@ import { moduleType } from 'node-module-type'
 
 const type = moduleType()
 const traverse = (
-  typeof _traverse === 'function' || type === 'commonjs'
-    ? _traverse
-    : (_traverse as any).default
+  typeof _traverse === 'function' || type === 'commonjs' ? _traverse : (_traverse as any).default
 ) as typeof traverseType
 
 function astToValue(node: t.Node): any {
@@ -54,11 +52,7 @@ function astToValue(node: t.Node): any {
   }
 
   if (t.isCallExpression(node)) {
-    if (
-      t.isImport(node.callee) &&
-      node.arguments.length === 1 &&
-      t.isStringLiteral(node.arguments[0])
-    ) {
+    if (t.isImport(node.callee) && node.arguments.length === 1 && t.isStringLiteral(node.arguments[0])) {
       return `import(${node.arguments[0].value})`
     }
     return '[CallExpression]'
@@ -81,10 +75,7 @@ export async function loadRoutes(path: string) {
   // 遍历 AST，找到变量 routes 的初始化表达式
   traverse(ast, {
     VariableDeclarator(path) {
-      if (
-        path.node.id.type === 'Identifier' &&
-        path.node.id.name === 'routes'
-      ) {
+      if (path.node.id.type === 'Identifier' && path.node.id.name === 'routes') {
         routesNode = path.node.init
         path.stop()
       }
@@ -108,10 +99,7 @@ export async function loadRoutes(path: string) {
 }
 
 function generateMicroAppRoutes(routes: any[]): string {
-  const formatRoutes = JSON.stringify(routes, null, 2).replace(
-    /null/g,
-    'MicroAppLoader',
-  )
+  const formatRoutes = JSON.stringify(routes, null, 2).replace(/null/g, 'MicroAppLoader')
   return `
 import MicroAppLoader from '@/layout/MicroAppLoader.vue'
 
@@ -130,18 +118,13 @@ function transformRoute(route: any, parentName = ''): any {
   }
 
   if (route.children && Array.isArray(route.children)) {
-    newRoute.children = route.children.map((child: any) =>
-      transformRoute(child, name),
-    )
+    newRoute.children = route.children.map((child: any) => transformRoute(child, name))
   }
 
   return newRoute
 }
 
-export default function MicroAppRoutePlugin(
-  source: string,
-  target: string,
-): Plugin {
+export default function MicroAppRoutePlugin(source: string, target: string): Plugin {
   return {
     name: 'vite-plugin-sync-router',
     apply: 'serve',

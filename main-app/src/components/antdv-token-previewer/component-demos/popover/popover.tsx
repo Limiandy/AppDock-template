@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue';
-import { Popover, Button } from 'ant-design-vue';
-import type { ComponentDemo } from '../../interface';
+import { defineComponent } from 'vue'
+import { Popover, Button } from 'ant-design-vue'
+import type { ComponentDemo } from '../../interface'
 
 const Demo = defineComponent({
   setup() {
@@ -8,7 +8,7 @@ const Demo = defineComponent({
       <div>
         <p>Content</p> <p>Content</p>
       </div>
-    );
+    )
 
     return () => {
       return (
@@ -17,15 +17,15 @@ const Demo = defineComponent({
             <Button type="primary">Hover me</Button>
           </Popover>
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 
 const componentDemo: ComponentDemo = {
   demo: <Demo />,
   tokens: ['colorBgElevated'],
   key: 'default',
-};
+}
 
-export default componentDemo;
+export default componentDemo
