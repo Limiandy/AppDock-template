@@ -17,7 +17,6 @@ export default {
   jsxSingleQuote: false,
   bracketSpacing: true,
   bracketSameLine: false,
-  jsxBracketSameLine: false,
   vueIndentScriptAndStyle: false,
   singleAttributePerLine: false,
   htmlWhitespaceSensitivity: 'ignore',

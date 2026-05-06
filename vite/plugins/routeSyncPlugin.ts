@@ -152,7 +152,6 @@ export default function MicroAppRoutePlugin(source: string, target: string): Plu
             jsxSingleQuote: false,
             bracketSpacing: true,
             bracketSameLine: false,
-            jsxBracketSameLine: false,
             vueIndentScriptAndStyle: false,
             singleAttributePerLine: true,
           })
