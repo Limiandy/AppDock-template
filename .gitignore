@@ -11,12 +11,15 @@ node_modules
 dist
 dist-ssr
 *.local
+docker/supabase/.env.local
+docker/supabase/.generated/
 main-app/src/micro-apps.json
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+.playwright-mcp/
 .DS_Store
 *.suo
 *.ntvs*
