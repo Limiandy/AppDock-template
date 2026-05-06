@@ -7,83 +7,82 @@
       :colon="false"
       :layout="searchLabelVisible ? 'vertical' : 'horizontal'"
     >
-      <div class="super-table__search-grid">
-        <a-form-item
-          v-for="field in visibleSearchFields"
-          :key="field.field"
-          class="super-table__search-item"
-          :label="searchLabelVisible ? field.label : undefined"
-        >
-          <slot
-            v-if="field.component === 'slot'"
-            :name="field.slot || `search-${field.field}`"
-            :field="field"
-            :model="innerSearchModel"
-          />
-          <a-select
-            v-else-if="field.component === 'select'"
-            v-model:value="innerSearchModel[field.field]"
-            allow-clear
-            :placeholder="getPlaceholder(field)"
-            v-bind="field.props"
-          >
-            <a-select-option
-              v-for="option in field.options || []"
-              :key="String(option.value)"
-              :value="option.value"
-              :disabled="option.disabled"
+      <a-row :gutter="[24, 12]" align="middle">
+        <a-col v-for="field in visibleSearchFields" :key="field.field" :xs="24" :md="12" :xl="6">
+          <a-form-item class="super-table__search-item" :label="searchLabelVisible ? field.label : undefined">
+            <slot
+              v-if="field.component === 'slot'"
+              :name="field.slot || `search-${field.field}`"
+              :field="field"
+              :model="innerSearchModel"
+            />
+            <a-select
+              v-else-if="field.component === 'select'"
+              v-model:value="innerSearchModel[field.field]"
+              allow-clear
+              :placeholder="getPlaceholder(field)"
+              v-bind="field.props"
             >
-              {{ option.label }}
-            </a-select-option>
-          </a-select>
-          <a-range-picker
-            v-else-if="field.component === 'rangePicker'"
-            v-model:value="innerSearchModel[field.field]"
-            class="super-table__control"
-            :placeholder="getRangePlaceholder(field)"
-            v-bind="field.props"
-          />
-          <a-date-picker
-            v-else-if="field.component === 'datePicker'"
-            v-model:value="innerSearchModel[field.field]"
-            class="super-table__control"
-            :placeholder="getPlaceholder(field)"
-            v-bind="field.props"
-          />
-          <a-input-number
-            v-else-if="field.component === 'inputNumber'"
-            v-model:value="innerSearchModel[field.field]"
-            class="super-table__control"
-            :placeholder="getPlaceholder(field)"
-            v-bind="field.props"
-          />
-          <a-input
-            v-else
-            v-model:value="innerSearchModel[field.field]"
-            allow-clear
-            :placeholder="getPlaceholder(field)"
-            v-bind="field.props"
-            @press-enter="onSearch"
-          />
-        </a-form-item>
+              <a-select-option
+                v-for="option in field.options || []"
+                :key="String(option.value)"
+                :value="option.value"
+                :disabled="option.disabled"
+              >
+                {{ option.label }}
+              </a-select-option>
+            </a-select>
+            <a-range-picker
+              v-else-if="field.component === 'rangePicker'"
+              v-model:value="innerSearchModel[field.field]"
+              class="super-table__control"
+              :placeholder="getRangePlaceholder(field)"
+              v-bind="field.props"
+            />
+            <a-date-picker
+              v-else-if="field.component === 'datePicker'"
+              v-model:value="innerSearchModel[field.field]"
+              class="super-table__control"
+              :placeholder="getPlaceholder(field)"
+              v-bind="field.props"
+            />
+            <a-input-number
+              v-else-if="field.component === 'inputNumber'"
+              v-model:value="innerSearchModel[field.field]"
+              class="super-table__control"
+              :placeholder="getPlaceholder(field)"
+              v-bind="field.props"
+            />
+            <a-input
+              v-else
+              v-model:value="innerSearchModel[field.field]"
+              allow-clear
+              :placeholder="getPlaceholder(field)"
+              v-bind="field.props"
+              @press-enter="onSearch"
+            />
+          </a-form-item>
+        </a-col>
 
-        <div class="super-table__search-actions">
-          <a-space :size="12">
-            <a-button type="primary" :loading="searchLoading" @click="onSearch">
-              <template #icon>
-                <SvgIcon name="solar:magnifer-outline" />
-              </template>
-              搜索
-            </a-button>
-            <a-button @click="onReset">
-              <template #icon>
-                <SvgIcon name="solar:refresh-outline" />
-              </template>
-              重置
-            </a-button>
-          </a-space>
-        </div>
-      </div>
+        <a-col :xs="24" :md="12" :xl="6">
+          <div class="super-table__search-actions">
+            <a-space :size="12">
+              <a-button type="primary" :loading="searchLoading" @click="onSearch">
+                <template #icon>
+                  <SvgIcon name="solar:magnifer-outline" />
+                </template>
+                搜索
+              </a-button>
+              <a-button @click="onReset">
+                <template #icon>
+                  <SvgIcon name="solar:refresh-outline" />
+                </template>
+                重置
+              </a-button>
+            </a-space>
+          </div>
+        </a-col>
+      </a-row>
     </a-form>
 
     <div v-if="resolvedToolbarActions.length || $slots.toolbar" class="super-table__toolbar">
@@ -738,13 +737,6 @@ defineExpose({
   border-bottom: 1px solid var(--super-table-border);
 }
 
-.super-table__search-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px 24px;
-  align-items: center;
-}
-
 .super-table__search-item {
   margin-bottom: 0;
 }
@@ -821,19 +813,9 @@ defineExpose({
   background: var(--super-table-hover);
 }
 
-@media (max-width: 1200px) {
-  .super-table__search-grid {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
-  }
-}
-
 @media (max-width: 720px) {
   .super-table__search {
     padding: 16px;
-  }
-
-  .super-table__search-grid {
-    grid-template-columns: 1fr;
   }
 
   .super-table__toolbar {
