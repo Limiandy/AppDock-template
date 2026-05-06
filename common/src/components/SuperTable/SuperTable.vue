@@ -71,16 +71,6 @@
         <a-col :xs="24" :md="12" :xl="6">
           <div class="super-table__search-actions">
             <a-space :size="12">
-              <a-button
-                v-if="hasMoreSearchFields"
-                size="large"
-                :title="searchExpanded ? '收起更多查询条件' : '展开更多查询条件'"
-                @click="toggleSearchExpanded"
-              >
-                <template #icon>
-                  <SvgIcon :name="searchExpanded ? 'solar:alt-arrow-up-outline' : 'solar:alt-arrow-down-outline'" />
-                </template>
-              </a-button>
               <a-button type="primary" size="large" :loading="searchLoading" @click="onSearch">
                 <template #icon>
                   <SvgIcon name="solar:magnifer-outline" />
@@ -97,6 +87,17 @@
           </div>
         </a-col>
       </a-row>
+      <a-divider v-if="hasMoreSearchFields" class="super-table__search-expand">
+        <button
+          type="button"
+          class="super-table__search-expand-trigger"
+          :aria-label="searchExpanded ? '收起更多查询条件' : '展开更多查询条件'"
+          :title="searchExpanded ? '收起更多查询条件' : '展开更多查询条件'"
+          @click="toggleSearchExpanded"
+        >
+          <SvgIcon :name="searchExpanded ? 'solar:alt-arrow-up-outline' : 'solar:alt-arrow-down-outline'" />
+        </button>
+      </a-divider>
     </a-form>
 
     <div v-if="resolvedToolbarActions.length || $slots.toolbar" class="super-table__toolbar">
@@ -788,7 +789,26 @@ defineExpose({
 
 .super-table__search-actions {
   display: flex;
+  width: 100%;
+  justify-content: flex-end;
   align-items: center;
+}
+
+.super-table__search-expand {
+  margin: 16px 0 0;
+}
+
+.super-table__search-expand-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
 }
 
 .super-table__toolbar {
