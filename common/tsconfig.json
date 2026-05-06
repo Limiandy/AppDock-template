@@ -7,6 +7,7 @@
     "declarationDir": "dist",
     "outDir": "dist",
     "composite": true,
+    "tsBuildInfoFile": "../node_modules/.tmp/common.tsbuildinfo",
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -22,7 +23,7 @@
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],
       "@styles/*": ["src/styles/*"],
-      "@constant/*": ["src/constant/*"],
+      "@constant/*": ["src/constant/*"]
     }
   },
   "include": ["src", "src/**/*.json", "env.d.ts"], // ✅ 确保 env.d.ts 被包含

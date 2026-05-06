@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.app.json",
   "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "../node_modules/.tmp/main-app.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

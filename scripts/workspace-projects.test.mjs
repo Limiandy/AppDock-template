@@ -211,6 +211,11 @@ test('application scaffold picks the next available port', () => {
 
 test('application scaffold creates a runnable micro app skeleton', () => {
   withTempWorkspace((rootDir) => {
+    fs.writeFileSync(
+      path.join(rootDir, 'tsconfig.json'),
+      JSON.stringify({ files: [], references: [{ path: './main-app/tsconfig.json' }] }, null, 2),
+    )
+
     const result = createApplicationFiles(rootDir, {
       name: 'Demo App',
       title: '演示应用',
@@ -219,17 +224,33 @@ test('application scaffold creates a runnable micro app skeleton', () => {
 
     assert.equal(result.name, 'demo-app')
     assert.equal(result.port, 60020)
-    assert.deepEqual(result.files, Object.keys(createApplicationFileMap({ name: 'demo-app', title: '演示应用', port: 60020, pascalName: 'DemoApp' })).sort())
+    assert.deepEqual(
+      result.files,
+      Object.keys(
+        createApplicationFileMap({ name: 'demo-app', title: '演示应用', port: 60020, pascalName: 'DemoApp' }),
+      ).sort(),
+    )
     const packageJson = JSON.parse(fs.readFileSync(path.join(result.dir, 'package.json'), 'utf-8'))
     assert.equal(packageJson.name, 'demo-app')
     assert.equal(packageJson.scripts.build, 'vite build')
     assert.match(fs.readFileSync(path.join(result.dir, 'vite.config.ts'), 'utf-8'), /const port = 60020/)
     assert.match(fs.readFileSync(path.join(result.dir, 'src/router/index.ts'), 'utf-8'), /path: '\/demo-app'/)
+
+    const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf-8'))
+    assert.deepEqual(tsconfig.references, [
+      { path: './main-app/tsconfig.json' },
+      { path: './application/demo-app/tsconfig.json' },
+    ])
   })
 })
 
 test('application scaffold deletes app folder and generated route module', () => {
   withTempWorkspace((rootDir) => {
+    fs.writeFileSync(
+      path.join(rootDir, 'tsconfig.json'),
+      JSON.stringify({ files: [], references: [{ path: './main-app/tsconfig.json' }] }, null, 2),
+    )
+
     const result = createApplicationFiles(rootDir, {
       name: 'delete-me',
       title: '删除验证',
@@ -245,6 +266,8 @@ test('application scaffold deletes app folder and generated route module', () =>
     assert.equal(deleted.name, 'delete-me')
     assert.equal(fs.existsSync(result.dir), false)
     assert.equal(fs.existsSync(routeModulePath), false)
+    const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf-8'))
+    assert.deepEqual(tsconfig.references, [{ path: './main-app/tsconfig.json' }])
     assert.throws(() => deleteApplicationFiles(rootDir, { name: 'delete-me' }), /子项目不存在/)
   })
 })

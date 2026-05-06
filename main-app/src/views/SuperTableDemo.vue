@@ -19,7 +19,13 @@
 
 <script setup lang="ts">
 import { SuperTable } from 'common'
-import type { SuperTableColumn, SuperTableRequestParams, SuperTableRequestResult, SuperTableSearchField } from 'common'
+import type {
+  SuperTableColumn,
+  SuperTableRecord,
+  SuperTableRequestParams,
+  SuperTableRequestResult,
+  SuperTableSearchField,
+} from 'common'
 import { useGlobalStore } from '@/store/modules/global.ts'
 
 interface ShelterRecord {
@@ -48,7 +54,7 @@ const searchFields: SuperTableSearchField[] = [
   },
 ]
 
-const columns: SuperTableColumn<ShelterRecord>[] = [
+const columns: SuperTableColumn[] = [
   { key: 'shelterName', title: '应急避难所名称', dataIndex: 'shelterName', width: 200 },
   { key: 'shelterCode', title: '应急避难所编号', dataIndex: 'shelterCode', width: 200 },
   { key: 'type', title: '类型', dataIndex: 'type', width: 140 },
@@ -121,16 +127,20 @@ function onBatchDelete(keys: (string | number)[]) {
   notice(`批量删除：${keys.length} 条`)
 }
 
-function onEdit(record: ShelterRecord) {
-  notice(`编辑：${record.shelterName}`)
+function getShelterName(record: SuperTableRecord) {
+  return String(record.shelterName || '')
 }
 
-function onDetail(record: ShelterRecord) {
-  notice(`详情：${record.shelterName}`)
+function onEdit(record: SuperTableRecord) {
+  notice(`编辑：${getShelterName(record)}`)
 }
 
-function onDelete(record: ShelterRecord) {
-  notice(`删除：${record.shelterName}`)
+function onDetail(record: SuperTableRecord) {
+  notice(`详情：${getShelterName(record)}`)
+}
+
+function onDelete(record: SuperTableRecord) {
+  notice(`删除：${getShelterName(record)}`)
 }
 
 function onDownloadTemplate() {
