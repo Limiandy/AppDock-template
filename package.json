@@ -18,7 +18,7 @@
     "lint:fix": "eslint \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\" --fix",
     "format": "prettier \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs,json,md,css,less,scss,html,yml,yaml}\" \"*.{js,ts,mjs,cjs,json,md,yml,yaml}\" --write",
     "format:check": "prettier \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs,json,md,css,less,scss,html,yml,yaml}\" \"*.{js,ts,mjs,cjs,json,md,yml,yaml}\" --check",
-    "typecheck": "vue-tsc -b --noEmit --pretty false",
+    "typecheck": "pnpm --filter common build && vue-tsc -b --noEmit --pretty false",
     "supabase:start": "node scripts/supabase-local.mjs start",
     "supabase:stop": "node scripts/supabase-local.mjs stop",
     "supabase:reset": "node scripts/supabase-local.mjs reset",
