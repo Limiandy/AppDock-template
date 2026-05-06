@@ -12,6 +12,8 @@
     "delete:app": "node scripts/delete-application.mjs",
     "preview": "vite preview",
     "gen-micro-apps": "node scripts/gen-micro-apps.js",
+    "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test:scripts",
+    "fix": "pnpm run format && pnpm run lint:fix",
     "lint": "eslint \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\"",
     "lint:fix": "eslint \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\" --fix",
     "format": "prettier \"{main-app,application,common,scripts,vite}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs,json,md,css,less,scss,html,yml,yaml}\" \"*.{js,ts,mjs,cjs,json,md,yml,yaml}\" --write",
