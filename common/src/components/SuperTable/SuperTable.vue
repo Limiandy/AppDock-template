@@ -68,7 +68,7 @@
           </a-form-item>
         </a-col>
 
-        <a-col :xs="24" :md="12" :xl="6">
+        <a-col :flex="1">
           <div class="super-table__search-actions">
             <a-space :size="12">
               <a-button type="primary" size="large" :loading="searchLoading" @click="onSearch">
@@ -806,9 +806,8 @@ defineExpose({
   height: 24px;
   padding: 0;
   color: inherit;
-  background: transparent;
-  border: 0;
   cursor: pointer;
+  border-radius: 50%;
 }
 
 .super-table__toolbar {

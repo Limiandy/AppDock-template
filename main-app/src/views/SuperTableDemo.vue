@@ -48,6 +48,7 @@ const searchFields: SuperTableSearchFields = {
   ],
   moreFields: [
     { field: 'contact', label: '人防工作联系人', placeholder: '请输入人防工作联系人' },
+    { field: 'contact', label: '人防工作联系人', placeholder: '请输入人防工作联系人' },
     { field: 'phone', label: '人防工作联系电话', placeholder: '请输入人防工作联系电话' },
     {
       field: 'createdAt',
