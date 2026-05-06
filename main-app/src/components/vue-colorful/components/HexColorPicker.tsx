@@ -1,17 +1,17 @@
-import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import type { PropType } from 'vue'
+import { defineComponent } from 'vue'
 
-import { ColorPicker } from './common/ColorPicker';
-import type { ColorModel } from '../types';
-import { equalHex } from '../utils/compare';
-import { hexToHsva, hsvaToHex } from '../utils/convert';
+import { ColorPicker } from './common/ColorPicker'
+import type { ColorModel } from '../types'
+import { equalHex } from '../utils/compare'
+import { hexToHsva, hsvaToHex } from '../utils/convert'
 
 const colorModel: ColorModel<string> = {
   defaultColor: '000',
   toHsva: hexToHsva,
   fromHsva: ({ h, s, v }) => hsvaToHex({ h, s, v, a: 1 }),
   equal: equalHex,
-};
+}
 
 export const HexColorPicker = defineComponent({
   name: 'HexColorPicker',
@@ -22,6 +22,6 @@ export const HexColorPicker = defineComponent({
     onChange: { type: Function as PropType<(newColor: string) => void> },
   },
   setup(props, { attrs }) {
-    return () => <ColorPicker {...props} {...attrs} colorModel={colorModel} />;
+    return () => <ColorPicker {...(props as any)} {...attrs} colorModel={colorModel as any} />
   },
-});
+})

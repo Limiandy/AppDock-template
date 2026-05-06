@@ -1,13 +1,13 @@
-import { InputNumber, Slider } from 'ant-design-vue';
-import type { PropType } from 'vue';
-import { defineComponent, toRefs } from 'vue';
+import { InputNumber, Slider } from 'ant-design-vue'
+import type { PropType } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 
 export type InputNumberPlusProps = {
-  value?: number;
-  onChange?: (value: number | null) => void;
-  min?: number;
-  max?: number;
-};
+  value?: number
+  onChange?: (value: number | null) => void
+  min?: number
+  max?: number
+}
 
 const InputNumberPlus = defineComponent({
   name: 'InputNumberPlus',
@@ -18,7 +18,11 @@ const InputNumberPlus = defineComponent({
     max: { type: Number },
   },
   setup(props) {
-    const { value, min, max } = toRefs(props);
+    const { value, min, max } = toRefs(props)
+    const handleChange = (nextValue: unknown) => {
+      props.onChange?.(typeof nextValue === 'number' ? nextValue : null)
+    }
+
     return () => {
       return (
         <div style={{ display: 'flex', width: '200px' }}>
@@ -27,19 +31,19 @@ const InputNumberPlus = defineComponent({
             value={value.value}
             min={min.value}
             max={max.value}
-            onChange={props.onChange}
+            onChange={handleChange}
           />
           <InputNumber
             value={value.value}
             min={min.value}
             max={max.value}
-            onChange={props.onChange}
+            onChange={handleChange}
             style={{ flex: 1 }}
           />
         </div>
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default InputNumberPlus;
+export default InputNumberPlus

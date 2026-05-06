@@ -1,31 +1,31 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, watch, computed, ref } from 'vue';
-import { SearchOutlined } from '@ant-design/icons-vue';
-import { Badge, Input, Tree } from 'ant-design-vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import type { FilterMode } from '../FilterPanel';
-import makeStyle from '../utils/makeStyle';
-import { getRelatedComponents } from '../utils/statistic';
+import type { PropType } from 'vue'
+import { defineComponent, toRefs, watch, computed, ref } from 'vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
+import { Badge, Input, Tree } from 'ant-design-vue'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import type { FilterMode } from '../FilterPanel'
+import makeStyle from '../utils/makeStyle'
+import { getRelatedComponents } from '../utils/statistic'
 
-const { DirectoryTree } = Tree;
+const { DirectoryTree } = Tree
 
-const useStyle = makeStyle('ComponentTree', token => ({
+const useStyle = makeStyle('ComponentTree', (token) => ({
   '.component-tree-wrapper': {
-    minWidth: 200,
-    borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-    height: '100%',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    paddingBlock: token.paddingXS,
+    'minWidth': 200,
+    'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+    'height': '100%',
+    'overflow': 'hidden',
+    'display': 'flex',
+    'flexDirection': 'column',
+    'paddingBlock': token.paddingXS,
 
     '.component-tree-search': {
-      margin: '0 8px 12px',
-      width: 'calc(100% - 16px)',
-      backgroundColor: 'rgba(0, 0, 0, 2%)',
-      borderRadius: token.borderRadiusLG,
-      height: 24,
-      input: {
+      'margin': '0 8px 12px',
+      'width': 'calc(100% - 16px)',
+      'backgroundColor': 'rgba(0, 0, 0, 2%)',
+      'borderRadius': token.borderRadiusLG,
+      'height': 24,
+      'input': {
         fontSize: 12,
       },
       '&:hover': {
@@ -34,7 +34,7 @@ const useStyle = makeStyle('ComponentTree', token => ({
     },
 
     [`${token.rootCls}-tree.component-tree`]: {
-      fontSize: token.fontSizeSM,
+      'fontSize': token.fontSizeSM,
 
       '.component-tree-item.component-tree-item-highlight': {
         color: token.colorPrimary,
@@ -46,7 +46,7 @@ const useStyle = makeStyle('ComponentTree', token => ({
       },
 
       [`${token.rootCls}-tree-treenode-selected ${token.rootCls}-tree-node-content-wrapper`]: {
-        color: token.colorTextLightSolid,
+        'color': token.colorTextLightSolid,
 
         '.component-tree-item.component-tree-item-highlight': {
           color: token.colorTextLightSolid,
@@ -61,17 +61,17 @@ const useStyle = makeStyle('ComponentTree', token => ({
       },
     },
   },
-}));
+}))
 
 export type ComponentTreeProps = {
-  onSelect?: (component: string) => void;
-  components: Record<string, string[]>;
-  selectedTokens?: string[];
-  filterMode?: FilterMode;
-  activeComponent?: string;
-};
+  onSelect?: (component: string) => void
+  components: Record<string, string[]>
+  selectedTokens?: string[]
+  filterMode?: FilterMode
+  activeComponent?: string
+}
 
-const getTreeItemId = (component: string) => `component-tree-item-${component}`;
+const getTreeItemId = (component: string) => `component-tree-item-${component}`
 
 const ComponentTree = defineComponent({
   name: 'ComponentTree',
@@ -84,22 +84,22 @@ const ComponentTree = defineComponent({
     activeComponent: { type: String },
   },
   setup(props, { attrs }) {
-    const { components, selectedTokens, filterMode, activeComponent } = toRefs(props);
+    const { components, selectedTokens, filterMode, activeComponent } = toRefs(props)
 
-    const [wrapSSR, hashId] = useStyle();
-    const treeRef = ref<HTMLDivElement>(null);
-    const search = ref<string>('');
+    const [wrapSSR, hashId] = useStyle()
+    const treeRef = ref<HTMLDivElement>(null)
+    const search = ref<string>('')
 
     const relatedComponents = computed(() => {
-      return selectedTokens.value ? getRelatedComponents(selectedTokens.value) : [];
-    });
+      return selectedTokens.value ? getRelatedComponents(selectedTokens.value) : []
+    })
 
-    watch(activeComponent, val => {
+    watch(activeComponent, (val) => {
       treeRef.value?.querySelector<HTMLElement>(`#${getTreeItemId(val || '')}`)?.scrollIntoView({
         block: 'nearest',
         inline: 'nearest',
-      });
-    });
+      })
+    })
 
     const treeData = computed(() =>
       Object.entries(components.value)
@@ -107,22 +107,21 @@ const ComponentTree = defineComponent({
           ([, group]) =>
             (filterMode.value === 'highlight' ||
               !relatedComponents.value.length ||
-              group.some(item => relatedComponents.value.includes(item))) &&
-            (!search.value ||
-              group.some(item => item.toLowerCase().includes(search.value.toLowerCase()))),
+              group.some((item) => relatedComponents.value.includes(item))) &&
+            (!search.value || group.some((item) => item.toLowerCase().includes(search.value.toLowerCase()))),
         )
         .map(([type, group]) => ({
           title: type,
           key: `type-${type}`,
           children: group
             .filter(
-              item =>
+              (item) =>
                 (filterMode.value === 'highlight' ||
                   !relatedComponents.value.length ||
                   relatedComponents.value.includes(item)) &&
                 (!search.value || item.toLowerCase().includes(search.value.toLowerCase())),
             )
-            .map(item => ({
+            .map((item) => ({
               title: (
                 <span
                   id={getTreeItemId(item)}
@@ -148,26 +147,26 @@ const ComponentTree = defineComponent({
               key: item,
             })),
         })),
-    );
+    )
 
-    const watcher = filterMode => {
+    const watcher = (filterMode: string) => {
       if (filterMode === 'highlight') {
         setTimeout(() => {
           treeRef.value?.getElementsByClassName('component-tree-item-active')[0]?.scrollIntoView({
             block: 'start',
             inline: 'nearest',
             behavior: 'smooth',
-          });
-        }, 100);
+          })
+        }, 100)
       }
-    };
+    }
     watch(selectedTokens, () => {
-      watcher(filterMode.value);
-    });
+      watcher(filterMode.value)
+    })
 
-    watch(filterMode, val => {
-      watcher(val);
-    });
+    watch(filterMode, (val) => {
+      watcher(val)
+    })
 
     return () => {
       return wrapSSR(
@@ -176,7 +175,7 @@ const ComponentTree = defineComponent({
             allowClear
             placeholder="Type to search"
             value={search.value}
-            onChange={e => (search.value = e.target.value)}
+            onChange={(e) => (search.value = e.target.value)}
             prefix={<SearchOutlined />}
             bordered={false}
             class="component-tree-search"
@@ -188,14 +187,14 @@ const ComponentTree = defineComponent({
               defaultExpandAll
               treeData={treeData.value}
               class="component-tree"
-              onSelect={node => props.onSelect?.(node[0] as string)}
+              onSelect={(node) => props.onSelect?.(node[0] as string)}
               expandAction="doubleclick"
             />
           </div>
         </div>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export default ComponentTree;
+export default ComponentTree

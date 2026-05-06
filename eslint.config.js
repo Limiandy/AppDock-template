@@ -90,6 +90,15 @@ export default tsEslint.config(
     },
   },
 
+  {
+    files: ['**/*.{tsx,jsx}'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+      'vue/one-component-per-file': 'off',
+      'vue/require-default-prop': 'off',
+    },
+  },
+
   // ✅ 全局变量
   {
     languageOptions: {

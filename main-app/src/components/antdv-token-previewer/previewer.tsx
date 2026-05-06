@@ -1,26 +1,26 @@
-import { Button, Layout, message, theme as antdTheme } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import { defineComponent, toRefs, watchEffect, computed, ref } from 'vue';
-import type { PropType } from 'vue';
-import ComponentPanel from './component-panel';
-import type { FilterMode } from './FilterPanel';
-import FilterPanel from './FilterPanel';
-import { Arrow, CompactTheme, DarkTheme } from './icons';
-import type { MutableTheme, PreviewerProps, Theme } from './interface';
-import type { ThemeSelectProps } from './ThemeSelect';
-import ThemeSelect from './ThemeSelect';
-import type { TokenPanelRef } from './token-panel';
-import TokenPanel from './token-panel';
-import type { TokenType } from './utils/classifyToken';
-import makeStyle from './utils/makeStyle';
+import { Button, Layout, message, theme as antdTheme } from 'ant-design-vue'
+import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
+import classNames from 'ant-design-vue/es/_util/classNames'
+import { defineComponent, toRefs, watchEffect, computed, ref } from 'vue'
+import type { PropType } from 'vue'
+import ComponentPanel from './component-panel'
+import type { FilterMode } from './FilterPanel'
+import FilterPanel from './FilterPanel'
+import { Arrow, CompactTheme, DarkTheme } from './icons'
+import type { MutableTheme, PreviewerProps, Theme } from './interface'
+import type { ThemeSelectProps } from './ThemeSelect'
+import ThemeSelect from './ThemeSelect'
+import type { TokenPanelRef } from './token-panel'
+import TokenPanel from './token-panel'
+import type { TokenType } from './utils/classifyToken'
+import makeStyle from './utils/makeStyle'
 
-const { darkAlgorithm } = antdTheme;
+const { darkAlgorithm } = antdTheme
 
-const { Header, Sider, Content } = Layout;
-const SIDER_WIDTH = 340;
+const { Header, Sider, Content } = Layout
+const SIDER_WIDTH = 340
 
-const useStyle = makeStyle('layout', token => ({
+const useStyle = makeStyle('layout', (token) => ({
   [`.previewer-layout${token.rootCls}-layout`]: {
     [`${token.rootCls}-layout-header`]: {
       backgroundColor: 'white !important',
@@ -31,25 +31,23 @@ const useStyle = makeStyle('layout', token => ({
     },
 
     [`${token.rootCls}-layout-sider`]: {
-      padding: 0,
-      borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-      transition: `all ${token.motionDurationSlow}`,
-      overflow: 'visible !important',
+      'padding': 0,
+      'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      'transition': `all ${token.motionDurationSlow}`,
+      'overflow': 'visible !important',
 
       [`${token.rootCls}-btn${token.rootCls}-btn-circle.previewer-sider-collapse-btn`]: {
-        position: 'absolute',
-        transform: 'translateX(50%)',
-        border: 'none',
-        boxShadow:
-          '0 2px 8px -2px rgba(0,0,0,0.05), 0 1px 4px -1px rgba(25,15,15,0.07), 0 0 1px 0 rgba(0,0,0,0.08)',
-        marginTop: token.margin,
-        insetInlineEnd: 0,
-        color: 'rgba(0,0,0,0.25)',
+        'position': 'absolute',
+        'transform': 'translateX(50%)',
+        'border': 'none',
+        'boxShadow': '0 2px 8px -2px rgba(0,0,0,0.05), 0 1px 4px -1px rgba(25,15,15,0.07), 0 0 1px 0 rgba(0,0,0,0.08)',
+        'marginTop': token.margin,
+        'insetInlineEnd': 0,
+        'color': 'rgba(0,0,0,0.25)',
 
         '&:hover': {
           color: 'rgba(0,0,0,0.45)',
-          boxShadow:
-            '0 2px 8px -2px rgba(0,0,0,0.18), 0 1px 4px -1px rgba(25,15,15,0.18), 0 0 1px 0 rgba(0,0,0,0.18)',
+          boxShadow: '0 2px 8px -2px rgba(0,0,0,0.18), 0 1px 4px -1px rgba(25,15,15,0.18), 0 0 1px 0 rgba(0,0,0,0.18)',
         },
 
         '.previewer-sider-collapse-btn-icon': {
@@ -59,8 +57,8 @@ const useStyle = makeStyle('layout', token => ({
         },
 
         '&-collapsed': {
-          borderRadius: { _skip_check_: true, value: '0 100px 100px 0' },
-          transform: 'translateX(90%)',
+          'borderRadius': { _skip_check_: true, value: '0 100px 100px 0' },
+          'transform': 'translateX(90%)',
           '.previewer-sider-collapse-btn-icon': {
             transform: 'rotate(180deg)',
           },
@@ -79,7 +77,7 @@ const useStyle = makeStyle('layout', token => ({
       },
     },
   },
-}));
+}))
 
 const Previewer = defineComponent({
   name: 'Previewer',
@@ -91,18 +89,18 @@ const Previewer = defineComponent({
     onThemeChange: { type: Function as PropType<(config: ThemeConfig) => void> },
   },
   setup(props, { attrs }) {
-    const { showTheme, theme } = toRefs(props);
+    const { showTheme, theme } = toRefs(props)
 
-    const [wrapSSR, hashId] = useStyle();
-    const selectedTokens = ref<string[]>([]);
-    const siderVisible = ref<boolean>(true);
-    const siderWidth = ref<number>(SIDER_WIDTH);
-    const filterMode = ref<FilterMode>('filter');
-    const filterTypes = ref<TokenType[]>([]);
+    const [wrapSSR, hashId] = useStyle()
+    const selectedTokens = ref<string[]>([])
+    const siderVisible = ref<boolean>(true)
+    const siderWidth = ref<number>(SIDER_WIDTH)
+    const filterMode = ref<FilterMode>('filter')
+    const filterTypes = ref<TokenType[]>([])
 
-    const tokenPanelRef = ref<TokenPanelRef>(null);
-    const dragRef = ref(false);
-    const siderRef = ref<HTMLDivElement>(null);
+    const tokenPanelRef = ref<TokenPanelRef>(null)
+    const dragRef = ref(false)
+    const siderRef = ref<HTMLDivElement>(null)
 
     const defaultThemes = computed<ThemeSelectProps['themes']>(() => [
       {
@@ -127,7 +125,7 @@ const Previewer = defineComponent({
         icon: <CompactTheme style={{ fontSize: '16px' }} />,
         closable: true,
       },
-    ]);
+    ])
 
     const themes = ref<ThemeSelectProps['themes']>(
       theme.value
@@ -138,14 +136,10 @@ const Previewer = defineComponent({
             },
           ]
         : defaultThemes.value,
-    );
+    )
 
-    const shownThemes = ref<string[]>(
-      showTheme.value && !theme.value ? ['light', 'dark'] : [themes.value[0].key],
-    );
-    const enabledThemes = ref<string[]>(
-      showTheme.value && !theme.value ? ['light', 'dark'] : [themes.value[0].key],
-    );
+    const shownThemes = ref<string[]>(showTheme.value && !theme.value ? ['light', 'dark'] : [themes.value[0].key])
+    const enabledThemes = ref<string[]>(showTheme.value && !theme.value ? ['light', 'dark'] : [themes.value[0].key])
 
     watchEffect(() => {
       themes.value = theme.value
@@ -155,63 +149,63 @@ const Previewer = defineComponent({
               fixed: true,
             },
           ]
-        : defaultThemes.value;
-      shownThemes.value = theme.value ? [theme.value.key] : shownThemes.value;
-      enabledThemes.value = theme.value ? [theme.value.key] : enabledThemes.value;
-    });
+        : defaultThemes.value
+      shownThemes.value = theme.value ? [theme.value.key] : shownThemes.value
+      enabledThemes.value = theme.value ? [theme.value.key] : enabledThemes.value
+    })
 
     watchEffect(() => {
       const handleMouseUp = () => {
-        dragRef.value = false;
-        document.body.style.cursor = '';
+        dragRef.value = false
+        document.body.style.cursor = ''
         if (siderRef.value) {
-          siderRef.value.style.transition = 'all 0.3s';
+          siderRef.value.style.transition = 'all 0.3s'
         }
-      };
+      }
       const handleMouseMove = (e: MouseEvent) => {
         if (dragRef.value) {
-          e.preventDefault();
-          siderWidth.value = e.clientX > SIDER_WIDTH ? e.clientX : SIDER_WIDTH;
+          e.preventDefault()
+          siderWidth.value = e.clientX > SIDER_WIDTH ? e.clientX : SIDER_WIDTH
         }
-      };
+      }
 
-      window.addEventListener('mouseup', handleMouseUp);
-      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp)
+      window.addEventListener('mousemove', handleMouseMove)
 
       return () => {
-        window.removeEventListener('mouseup', handleMouseUp);
-        window.removeEventListener('mousemove', handleMouseMove);
-      };
-    });
+        window.removeEventListener('mouseup', handleMouseUp)
+        window.removeEventListener('mousemove', handleMouseMove)
+      }
+    })
 
     const handleTokenClick = (tokenName: string) => {
-      tokenPanelRef.value?.scrollToToken(tokenName);
-    };
+      tokenPanelRef.value?.scrollToToken(tokenName)
+    }
 
     const mutableThemes = computed(() =>
-      enabledThemes.value.map<MutableTheme>(item => {
-        const themeEntity = themes.value.find(themeItem => themeItem.key === item)!;
+      enabledThemes.value.map<MutableTheme>((item) => {
+        const themeEntity = themes.value.find((themeItem) => themeItem.key === item)!
         return {
           name: themeEntity.name,
           key: themeEntity.key,
           config: themeEntity.config,
-          onThemeChange: newTheme => {
+          onThemeChange: (newTheme) => {
             if (themeEntity.key === theme.value?.key) {
-              props.onThemeChange?.(newTheme);
+              props.onThemeChange?.(newTheme)
             } else {
-              themes.value = themes.value.map(themeItem =>
+              themes.value = themes.value.map((themeItem) =>
                 themeItem.key === themeEntity.key
                   ? {
                       ...themeItem,
                       config: newTheme,
                     }
                   : themeItem,
-              );
+              )
             }
           },
-        };
+        }
       }),
-    );
+    )
 
     const componentPanel = computed(() => (
       <ComponentPanel
@@ -221,15 +215,13 @@ const Previewer = defineComponent({
         onTokenClick={handleTokenClick}
         style={{ flex: 1, height: 0, marginTop: '12px' }}
       />
-    ));
+    ))
 
     return () => {
       return wrapSSR(
         <Layout {...attrs} class={classNames('previewer-layout', hashId.value, attrs.class)}>
           <Header class="previewer-header">
-            <span style={{ fontSize: '16px', fontWeight: 'bold', marginRight: '16px' }}>
-              主题预览器
-            </span>
+            <span style={{ fontSize: '16px', fontWeight: 'bold', marginRight: '16px' }}>主题预览器</span>
             {showTheme.value && (
               <div>
                 <ThemeSelect
@@ -237,20 +229,20 @@ const Previewer = defineComponent({
                   enabledThemes={enabledThemes.value}
                   shownThemes={shownThemes.value}
                   themes={themes.value}
-                  onEnabledThemeChange={value => {
+                  onEnabledThemeChange={(value) => {
                     if (value.length > 2) {
                       message.warning({
                         content: '最多同时展示两个主题',
-                      });
-                      return;
+                      })
+                      return
                     }
-                    enabledThemes.value = value;
+                    enabledThemes.value = value
                   }}
                   onShownThemeChange={(value, selectTheme, { type }) => {
                     if (type === 'select' && enabledThemes.value.length < 2) {
-                      enabledThemes.value = [...enabledThemes.value, selectTheme];
+                      enabledThemes.value = [...enabledThemes.value, selectTheme]
                     }
-                    shownThemes.value = value;
+                    shownThemes.value = value
                   }}
                 />
               </div>
@@ -282,10 +274,10 @@ const Previewer = defineComponent({
               <div
                 class="previewer-sider-handler"
                 onMousedown={() => {
-                  dragRef.value = true;
-                  document.body.style.cursor = 'ew-resize';
+                  dragRef.value = true
+                  document.body.style.cursor = 'ew-resize'
                   if (siderRef.value) {
-                    siderRef.value.style.transition = 'none';
+                    siderRef.value.style.transition = 'none'
                   }
                 }}
               />
@@ -296,24 +288,19 @@ const Previewer = defineComponent({
                   !siderVisible.value && 'previewer-sider-collapse-btn-collapsed',
                 )}
                 size="small"
-                icon={
-                  <Arrow
-                    rotate={siderVisible.value ? 0 : 180}
-                    class="previewer-sider-collapse-btn-icon"
-                  />
-                }
+                icon={<Arrow rotate={siderVisible.value ? 0 : 180} class="previewer-sider-collapse-btn-icon" />}
                 shape="circle"
               />
               <TokenPanel
                 ref={tokenPanelRef}
                 filterTypes={filterTypes.value}
-                onFilterTypesChange={types => (filterTypes.value = types)}
+                onFilterTypesChange={(types) => (filterTypes.value = types)}
                 themes={mutableThemes.value}
                 selectedTokens={selectedTokens.value}
                 enableTokenSelect
-                onTokenSelect={tokenName =>
+                onTokenSelect={(tokenName) =>
                   (selectedTokens.value = selectedTokens.value.includes(tokenName)
-                    ? selectedTokens.value.filter(item => item !== tokenName)
+                    ? selectedTokens.value.filter((item) => item !== tokenName)
                     : [...selectedTokens.value, tokenName])
                 }
               />
@@ -329,20 +316,20 @@ const Previewer = defineComponent({
             >
               <FilterPanel
                 selectedTokens={selectedTokens.value}
-                onSelectedTokensChange={tokens => (selectedTokens.value = tokens)}
+                onSelectedTokensChange={(tokens) => (selectedTokens.value = tokens)}
                 filterMode={filterMode.value}
-                onFilterModeChange={mode => (filterMode.value = mode)}
+                onFilterModeChange={(mode) => (filterMode.value = mode)}
                 onTokenClick={handleTokenClick}
               />
               {componentPanel.value}
             </Content>
           </Layout>
         </Layout>,
-      );
-    };
+      )
+    }
   },
-});
+})
 
-export { PreviewerProps };
+export type { PreviewerProps }
 
-export default Previewer;
+export default Previewer
