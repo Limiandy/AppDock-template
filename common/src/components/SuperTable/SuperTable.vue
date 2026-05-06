@@ -1,5 +1,5 @@
 <template>
-  <section class="super-table" :style="themeVars">
+  <section class="super-table">
     <a-form
       v-if="visibleSearchFields.length"
       class="super-table__search"
@@ -204,7 +204,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, useAttrs, useSlots, watch } from 'vue'
 import type { Slots } from 'vue'
-import { theme } from 'ant-design-vue'
 import type { TableProps } from 'ant-design-vue'
 import SvgIcon from '../SvgIcon.vue'
 import type {
@@ -303,7 +302,6 @@ const emit = defineEmits<{
   'requestError': [error: unknown, params: SuperTableRequestParams]
 }>()
 
-const { token } = theme.useToken()
 const innerSearchModel = reactive<SuperTableRecord>({})
 const selectedKeys = ref<(string | number)[]>([])
 const selectedRows = ref<SuperTableRecord[]>([])
@@ -351,17 +349,6 @@ watch(
   },
   { deep: true },
 )
-
-const themeVars = computed(() => ({
-  '--super-table-bg': token.value.colorBgContainer,
-  '--super-table-layout-bg': token.value.colorBgLayout,
-  '--super-table-text': token.value.colorText,
-  '--super-table-text-secondary': token.value.colorTextSecondary,
-  '--super-table-border': token.value.colorBorderSecondary,
-  '--super-table-hover': token.value.colorFillTertiary,
-  '--super-table-radius': `${token.value.borderRadius}px`,
-  '--super-table-control-height': `${token.value.controlHeightLG}px`,
-}))
 
 const visibleSearchFields = computed<SuperTableSearchField[]>(() => props.searchFields.filter((item) => !item.hidden))
 
@@ -727,14 +714,10 @@ defineExpose({
 <style lang="less" scoped>
 .super-table {
   min-height: 100%;
-  color: var(--super-table-text);
-  background: var(--super-table-layout-bg);
 }
 
 .super-table__search {
   padding: 24px 24px 18px;
-  background: var(--super-table-bg);
-  border-bottom: 1px solid var(--super-table-border);
 }
 
 .super-table__search-item {
@@ -748,7 +731,6 @@ defineExpose({
 .super-table__search-actions {
   display: flex;
   align-items: center;
-  min-height: var(--super-table-control-height);
 }
 
 .super-table__toolbar {
@@ -758,20 +740,6 @@ defineExpose({
   gap: 12px;
   min-height: 76px;
   padding: 18px 24px;
-  background: var(--super-table-bg);
-}
-
-.super-table__table {
-  background: var(--super-table-bg);
-}
-
-.super-table__upload {
-  background: var(--super-table-bg);
-}
-
-.super-table__upload-icon,
-.super-table__upload-text {
-  color: var(--ant-color-primary, #1677ff);
 }
 
 .super-table__upload-text {
@@ -782,35 +750,12 @@ defineExpose({
 
 .super-table__upload-tip {
   margin: 0;
-  color: var(--super-table-text-secondary);
 }
 
 .super-table__modal-footer {
   display: flex;
   justify-content: flex-end;
   padding-top: 16px;
-}
-
-:deep(.ant-btn .ant-btn-icon) {
-  display: inline-flex;
-  align-items: center;
-}
-
-:deep(.ant-form-item-control-input),
-:deep(.ant-input),
-:deep(.ant-select-selector),
-:deep(.ant-picker),
-:deep(.ant-input-number) {
-  min-height: var(--super-table-control-height);
-}
-
-:deep(.ant-table-wrapper .ant-table) {
-  color: var(--super-table-text);
-  background: var(--super-table-bg);
-}
-
-:deep(.ant-table-wrapper .ant-table-thead > tr > th) {
-  background: var(--super-table-hover);
 }
 
 @media (max-width: 720px) {
