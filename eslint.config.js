@@ -11,7 +11,20 @@ const cwd = process.cwd()
 
 export default tsEslint.config(
   {
-    ignores: ['node_modules', 'dist', 'public'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/dist-ssr/**',
+      '**/coverage/**',
+      '**/.cache/**',
+      '**/.vite/**',
+      '**/.vite-temp/**',
+      '**/.temp/**',
+      '**/public/**',
+      '**/docker/supabase/.generated/**',
+      '**/application/custom-comp-app/src/views/Slam/data/**',
+      'main-app/src/micro-apps.json',
+    ],
   },
 
   {
