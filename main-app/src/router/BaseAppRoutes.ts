@@ -22,6 +22,12 @@ export const asyncRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/ThemeEditor/ThemeEditor.vue'),
         meta: { title: '主题编辑器', icon: 'solar:album-outline' },
       },
+      {
+        path: 'super-table',
+        name: 'SuperTableDemo',
+        component: () => import('@/views/SuperTableDemo.vue'),
+        meta: { title: '超级表格', icon: 'solar:bill-list-outline' },
+      },
     ],
   },
 ]

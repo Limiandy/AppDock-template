@@ -19,6 +19,11 @@
       "import": "./dist/hooks/index.es.js",
       "require": "./dist/hooks/index.cjs.js"
     },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.es.js",
+      "require": "./dist/components/index.cjs.js"
+    },
     "./helper": {
       "types": "./dist/helper/index.d.ts",
       "import": "./dist/helper/index.es.js",

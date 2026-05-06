@@ -53,11 +53,13 @@ export default defineConfig({
        */
       input: [
         resolve(__dirname, 'src/index.ts'),
+        resolve(__dirname, 'src/components/index.ts'),
         resolve(__dirname, 'src/helper/index.ts'),
         resolve(__dirname, 'src/hooks/index.ts'),
         resolve(__dirname, 'src/icons/index.ts'),
       ],
-      external: ['vue'],
+      external: (id) =>
+        id === 'vue' || id.startsWith('vue/') || id === 'ant-design-vue' || id.startsWith('ant-design-vue/'),
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',

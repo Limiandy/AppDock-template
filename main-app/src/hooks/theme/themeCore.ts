@@ -38,7 +38,10 @@ export function getModeByThemeConfig(config: ThemeConfig = {}): ThemeMode {
   return 'light'
 }
 
-export function setGlobalThemeConfig(config: ThemeConfig, options: { replaceToken?: boolean; replaceComponents?: boolean } = {}) {
+export function setGlobalThemeConfig(
+  config: ThemeConfig,
+  options: { replaceToken?: boolean; replaceComponents?: boolean } = {},
+) {
   globalThemeConfig.value = {
     ...globalThemeConfig.value,
     ...config,
