@@ -213,6 +213,20 @@
         <a-button @click="importModalOpen = false">取消</a-button>
       </div>
     </a-modal>
+
+    <SuperTableFormModal
+      v-if="formConfig"
+      v-model:open="formModalOpen"
+      :mode="formMode"
+      :record="formRecord"
+      :config="formConfig"
+      :submitting="formSubmitting"
+      @submit="onFormSubmit"
+    >
+      <template v-for="slotName in forwardedFormSlotNames" :key="slotName" #[slotName]="slotProps">
+        <slot :name="slotName" v-bind="slotProps || {}" />
+      </template>
+    </SuperTableFormModal>
   </section>
 </template>
 
@@ -224,6 +238,8 @@ import SvgIcon from '../SvgIcon.vue'
 import type {
   SuperTableAction,
   SuperTableColumn,
+  SuperTableFormConfig,
+  SuperTableFormMode,
   SuperTableImportConfig,
   SuperTablePaginationConfig,
   SuperTableRecord,
@@ -236,6 +252,7 @@ import type {
   SuperTableTransformParams,
   SuperTableTransformResponse,
 } from './types'
+import SuperTableFormModal from './SuperTableFormModal.vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -243,7 +260,7 @@ defineOptions({
 
 const indexColumnKey = '__super_table_index__'
 const actionColumnKey = '__super_table_action__'
-const internalSlotPrefixes = ['cell-', 'search-']
+const internalSlotPrefixes = ['cell-', 'search-', 'form-']
 const internalSlotNames = new Set(['toolbar', 'operation', 'bodyCell'])
 
 const props = withDefaults(
@@ -269,6 +286,7 @@ const props = withDefaults(
     toolbarActions?: SuperTableAction[]
     rowActions?: SuperTableAction[]
     importConfig?: SuperTableImportConfig
+    formConfig?: SuperTableFormConfig
   }>(),
   {
     dataSource: () => [],
@@ -291,6 +309,7 @@ const props = withDefaults(
     toolbarActions: undefined,
     rowActions: undefined,
     importConfig: () => ({}),
+    formConfig: undefined,
   },
 )
 
@@ -310,6 +329,9 @@ const emit = defineEmits<{
   'edit': [record: SuperTableRecord, index: number]
   'detail': [record: SuperTableRecord, index: number]
   'delete': [record: SuperTableRecord, index: number]
+  'formSubmit': [
+    payload: { mode: Exclude<SuperTableFormMode, 'detail'>; values: SuperTableRecord; record?: SuperTableRecord },
+  ]
   'change': Parameters<NonNullable<TableProps['onChange']>>
   'uploadChange': [info: any]
   'downloadTemplate': []
@@ -324,6 +346,10 @@ const selectedRows = ref<SuperTableRecord[]>([])
 const importModalOpen = ref(false)
 const internalDataSource = ref<SuperTableRecord[]>([])
 const internalLoading = ref(false)
+const formModalOpen = ref(false)
+const formMode = ref<SuperTableFormMode>('create')
+const formRecord = ref<SuperTableRecord>()
+const formSubmitting = ref(false)
 const internalPagination = reactive({
   current: 1,
   pageSize: 10,
@@ -340,6 +366,8 @@ const forwardedTableSlotNames = computed<string[]>((): string[] => {
     return !internalSlotNames.has(name) && !internalSlotPrefixes.some((prefix) => name.startsWith(prefix))
   })
 })
+
+const forwardedFormSlotNames = computed<string[]>(() => Object.keys(slots).filter((name) => name.startsWith('form-')))
 
 watch(
   () => props.searchModel,
@@ -710,6 +738,7 @@ function onReset() {
 function onToolbarAction(key: string) {
   if (key === 'create') {
     emit('create')
+    openFormModal('create')
   } else if (key === 'import') {
     importModalOpen.value = true
     emit('import')
@@ -725,8 +754,14 @@ function onToolbarAction(key: string) {
 }
 
 function onRowAction(key: string, record: SuperTableRecord, index: number) {
-  if (key === 'edit') emit('edit', record, index)
-  if (key === 'detail') emit('detail', record, index)
+  if (key === 'edit') {
+    emit('edit', record, index)
+    openFormModal('edit', record)
+  }
+  if (key === 'detail') {
+    emit('detail', record, index)
+    openFormModal('detail', record)
+  }
   if (key === 'delete') emit('delete', record, index)
   emit('rowAction', key, record, index)
 }
@@ -757,6 +792,40 @@ function toggleSearchExpanded() {
   searchExpanded.value = !searchExpanded.value
 }
 
+function canOpenFormMode(mode: SuperTableFormMode) {
+  if (!props.formConfig) return false
+  return props.formConfig[mode] !== false
+}
+
+function openFormModal(mode: SuperTableFormMode, record?: SuperTableRecord) {
+  if (!canOpenFormMode(mode)) return
+
+  formMode.value = mode
+  formRecord.value = record
+  formModalOpen.value = true
+}
+
+async function onFormSubmit(values: SuperTableRecord) {
+  if (!props.formConfig || formMode.value === 'detail') return
+
+  const mode = formMode.value
+  const context = {
+    mode,
+    record: formRecord.value,
+  }
+
+  formSubmitting.value = true
+  try {
+    const submitValues = (await props.formConfig.transformValues?.(values, context)) ?? values
+    emit('formSubmit', { mode, values: submitValues, record: formRecord.value })
+    await props.formConfig.onSubmit?.(submitValues, context)
+    formModalOpen.value = false
+    await reload(mode === 'create' ? { current: 1 } : undefined)
+  } finally {
+    formSubmitting.value = false
+  }
+}
+
 onMounted(() => {
   if (hasDataRequest.value && props.autoRequest) {
     void reload()
@@ -766,6 +835,7 @@ onMounted(() => {
 defineExpose({
   reload,
   reset: onReset,
+  openFormModal,
   getSearchModel: () => ({ ...innerSearchModel }),
 })
 </script>

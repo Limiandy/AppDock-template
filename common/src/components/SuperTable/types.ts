@@ -1,9 +1,11 @@
-import type { TableColumnType, TablePaginationConfig } from 'ant-design-vue'
+import type { FormItemProps, FormProps, ModalProps, TableColumnType, TablePaginationConfig } from 'ant-design-vue'
 
 export type SuperTableRecord = Record<string, any>
 export type SuperTableRequestMethod = 'GET' | 'POST'
 
 export type SuperTableSearchComponent = 'input' | 'select' | 'rangePicker' | 'datePicker' | 'inputNumber' | 'slot'
+export type SuperTableFormMode = 'create' | 'edit' | 'detail'
+export type SuperTableFormComponent = 'input' | 'textarea' | 'select' | 'datePicker' | 'inputNumber' | 'switch' | 'slot'
 
 export interface SuperTableOption {
   label: string
@@ -21,6 +23,49 @@ export interface SuperTableSearchField {
   span?: number
   hidden?: boolean
   slot?: string
+}
+
+export interface SuperTableFormField<RecordType = SuperTableRecord> {
+  field: string
+  label?: string
+  component?: SuperTableFormComponent
+  placeholder?: string
+  options?: SuperTableOption[]
+  props?: Record<string, any>
+  formItemProps?: Partial<FormItemProps>
+  rules?: FormItemProps['rules']
+  span?: number
+  hidden?: boolean | ((mode: SuperTableFormMode, record?: RecordType) => boolean)
+  readonly?: boolean | ((mode: SuperTableFormMode, record?: RecordType) => boolean)
+  slot?: string
+  transformIn?: (value: any, record: RecordType | undefined, mode: SuperTableFormMode) => any
+  transformOut?: (value: any, values: SuperTableRecord, mode: SuperTableFormMode) => any
+}
+
+export interface SuperTableFormActionConfig<RecordType = SuperTableRecord> {
+  title?: string | ((record?: RecordType) => string)
+  submitText?: string
+  initialValues?: SuperTableRecord | ((record?: RecordType) => SuperTableRecord)
+  modalProps?: Partial<ModalProps>
+}
+
+export interface SuperTableFormSubmitContext<RecordType = SuperTableRecord> {
+  mode: Exclude<SuperTableFormMode, 'detail'>
+  record?: RecordType
+}
+
+export interface SuperTableFormConfig<RecordType = SuperTableRecord> {
+  fields: SuperTableFormField<RecordType>[]
+  formProps?: Partial<FormProps>
+  modalProps?: Partial<ModalProps>
+  create?: SuperTableFormActionConfig<RecordType> | false
+  edit?: SuperTableFormActionConfig<RecordType> | false
+  detail?: SuperTableFormActionConfig<RecordType> | false
+  transformValues?: (
+    values: SuperTableRecord,
+    context: SuperTableFormSubmitContext<RecordType>,
+  ) => SuperTableRecord | Promise<SuperTableRecord>
+  onSubmit?: (values: SuperTableRecord, context: SuperTableFormSubmitContext<RecordType>) => void | Promise<void>
 }
 
 export interface SuperTableSearchFieldsConfig {
