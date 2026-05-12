@@ -1,5 +1,5 @@
 <template>
-  <section class="super-table">
+  <section class="super-table" :style="superTableStyle">
     <a-form
       v-if="hasSearchFields"
       class="super-table__search"
@@ -232,7 +232,8 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, useAttrs, useSlots, watch } from 'vue'
-import type { Slots } from 'vue'
+import type { CSSProperties, Slots } from 'vue'
+import { theme } from 'ant-design-vue'
 import type { TableProps } from 'ant-design-vue'
 import SvgIcon from '../SvgIcon.vue'
 import type {
@@ -262,6 +263,8 @@ const indexColumnKey = '__super_table_index__'
 const actionColumnKey = '__super_table_action__'
 const internalSlotPrefixes = ['cell-', 'search-', 'form-']
 const internalSlotNames = new Set(['toolbar', 'operation', 'bodyCell'])
+const { useToken } = theme
+const { token } = useToken()
 
 const props = withDefaults(
   defineProps<{
@@ -368,6 +371,31 @@ const forwardedTableSlotNames = computed<string[]>((): string[] => {
 })
 
 const forwardedFormSlotNames = computed<string[]>(() => Object.keys(slots).filter((name) => name.startsWith('form-')))
+
+const superTableStyle = computed(
+  () =>
+    ({
+      '--super-table-bg': token.value.colorBgLayout,
+      '--super-table-panel-bg': token.value.colorBgContainer,
+      '--super-table-panel-border': token.value.colorBorderSecondary,
+      '--super-table-split': token.value.colorSplit,
+      '--super-table-text': token.value.colorText,
+      '--super-table-text-secondary': token.value.colorTextSecondary,
+      '--super-table-icon': token.value.colorIcon,
+      '--super-table-icon-hover': token.value.colorIconHover,
+      '--super-table-hover-bg': token.value.colorFillTertiary,
+      '--super-table-shadow': token.value.boxShadowTertiary,
+      '--super-table-radius': `${token.value.borderRadiusLG}px`,
+      '--super-table-line-width': `${token.value.lineWidth}px`,
+      '--super-table-line-type': token.value.lineType,
+      '--super-table-padding': `${token.value.paddingLG}px`,
+      '--super-table-padding-sm': `${token.value.paddingSM}px`,
+      '--super-table-padding-md': `${token.value.paddingMD}px`,
+      '--super-table-gap': `${token.value.marginMD}px`,
+      '--super-table-motion': token.value.motionDurationMid,
+      '--super-table-toolbar-min-height': `${token.value.controlHeightLG + token.value.paddingSM * 2}px`,
+    }) as CSSProperties,
+)
 
 watch(
   () => props.searchModel,
@@ -843,10 +871,20 @@ defineExpose({
 <style lang="less" scoped>
 .super-table {
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--super-table-gap);
+  padding: var(--super-table-padding);
+  color: var(--super-table-text);
+  background: var(--super-table-bg);
 }
 
 .super-table__search {
-  padding: 24px 24px 18px;
+  padding: var(--super-table-padding);
+  background: var(--super-table-panel-bg);
+  border: var(--super-table-line-width) var(--super-table-line-type) var(--super-table-panel-border);
+  border-radius: var(--super-table-radius);
+  box-shadow: var(--super-table-shadow);
 }
 
 .super-table__search-item {
@@ -865,7 +903,8 @@ defineExpose({
 }
 
 .super-table__search-expand {
-  margin: 16px 0 0;
+  margin: var(--super-table-padding-sm) 0 0;
+  color: var(--super-table-icon);
 }
 
 .super-table__search-expand-trigger {
@@ -876,47 +915,81 @@ defineExpose({
   height: 24px;
   padding: 0;
   color: inherit;
+  background: transparent;
+  border: 0;
   cursor: pointer;
   border-radius: 50%;
+  transition:
+    color var(--super-table-motion),
+    background-color var(--super-table-motion);
+}
+
+.super-table__search-expand-trigger:hover {
+  color: var(--super-table-icon-hover);
+  background: var(--super-table-hover-bg);
+}
+
+.super-table__search-expand-trigger:focus-visible {
+  outline: var(--super-table-line-width) var(--super-table-line-type) var(--super-table-icon-hover);
+  outline-offset: 2px;
 }
 
 .super-table__toolbar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
-  min-height: 76px;
-  padding: 18px 24px;
+  gap: var(--super-table-padding-sm);
+  min-height: var(--super-table-toolbar-min-height);
+  padding: var(--super-table-padding-md) var(--super-table-padding);
+  background: var(--super-table-panel-bg);
+  border: var(--super-table-line-width) var(--super-table-line-type) var(--super-table-panel-border);
+  border-radius: var(--super-table-radius);
+  box-shadow: var(--super-table-shadow);
 }
 
 .super-table__table {
-  padding: 0 24px;
+  overflow: hidden;
+  padding: var(--super-table-padding);
+  background: var(--super-table-panel-bg);
+  border: var(--super-table-line-width) var(--super-table-line-type) var(--super-table-panel-border);
+  border-radius: var(--super-table-radius);
+  box-shadow: var(--super-table-shadow);
 }
 
 .super-table__upload-text {
   margin: 10px 0 8px;
+  color: var(--super-table-text);
   font-size: 18px;
   font-weight: 600;
 }
 
 .super-table__upload-tip {
   margin: 0;
+  color: var(--super-table-text-secondary);
 }
 
 .super-table__modal-footer {
   display: flex;
   justify-content: flex-end;
-  padding-top: 16px;
+  padding-top: var(--super-table-padding-md);
 }
 
 @media (max-width: 720px) {
+  .super-table {
+    padding: var(--super-table-padding-sm);
+  }
+
   .super-table__search {
-    padding: 16px;
+    padding: var(--super-table-padding-sm);
   }
 
   .super-table__toolbar {
     justify-content: flex-start;
-    padding: 16px;
+    padding: var(--super-table-padding-sm);
+  }
+
+  .super-table__table {
+    padding: var(--super-table-padding-sm);
   }
 }
 </style>

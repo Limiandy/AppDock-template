@@ -29,18 +29,28 @@
         :class="{ 'is-fixed': fixedSider }"
         :collapsed="collapsed"
         collapsible
+        :trigger="null"
         breakpoint="lg"
         @breakpoint="onBreakpoint"
         @collapse="onCollapse"
       >
         <a-menu
+          class="basic-layout-sider__menu"
           mode="inline"
           :open-keys="openKeys"
           :selected-keys="selectedKeys"
           :items="sideMenusComputed"
-          style="height: 100%"
           @click="onSideMenuClick"
         ></a-menu>
+        <button
+          type="button"
+          class="basic-layout-sider__trigger"
+          :aria-label="collapsed ? '展开侧边栏' : '折叠侧边栏'"
+          :title="collapsed ? '展开侧边栏' : '折叠侧边栏'"
+          @click="toggleCollapsed"
+        >
+          <SvgIcon :name="collapsed ? 'solar:alt-arrow-right-outline' : 'solar:alt-arrow-left-outline'" />
+        </button>
       </a-layout-sider>
       <div v-if="fixedSider && sideMenusComputed?.length" style="height: 100%" :style="fixedSiderStyle"></div>
 
@@ -195,6 +205,10 @@ function onCollapse(v: boolean) {
   collapsed.value = v
 }
 
+function toggleCollapsed() {
+  collapsed.value = !collapsed.value
+}
+
 function onBreakpoint(v: boolean) {
   collapsed.value = v
 }
@@ -297,6 +311,10 @@ function syncMenuByRoute() {
    样式管理
 ------------------------- */
 const [className, scopeClass] = useStyle('basic-layout', (token) => {
+  const rootCls = (token as any).rootCls ?? '.ant'
+  const siderPadding = token.paddingXS
+  const triggerSize = token.controlHeightLG
+
   return {
     'width': '100%',
     'height': '100%',
@@ -316,9 +334,93 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
 
     '.basic-layout-sider': {
       'background': token.colorBgContainer,
+      'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      'boxShadow': token.boxShadowTertiary,
+      'transition': `background-color ${token.motionDurationMid}, border-color ${token.motionDurationMid}, box-shadow ${token.motionDurationMid}`,
 
       '&.is-fixed': {
         top: `${48 + token.size}px`,
+        bottom: 0,
+        height: `calc(100vh - ${48 + token.size}px)`,
+      },
+
+      [`${rootCls}-layout-sider-children`]: {
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+        height: '100%',
+        padding: `${siderPadding}px`,
+        overflow: 'hidden',
+        borderRadius: `${token.borderRadiusLG}px`,
+      },
+
+      '.basic-layout-sider__menu': {
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+      },
+
+      [`${rootCls}-menu`]: {
+        background: 'transparent',
+        borderInlineEnd: 0,
+        paddingBlock: `${token.paddingXS}px`,
+
+        [`${rootCls}-menu-item`]: {
+          height: `${token.controlHeightLG}px`,
+          lineHeight: `${token.controlHeightLG}px`,
+          marginInline: 0,
+          marginBlock: `${token.marginXXS}px`,
+          borderRadius: `${token.borderRadius}px`,
+          transition: `background-color ${token.motionDurationMid}, color ${token.motionDurationMid}`,
+        },
+
+        [`${rootCls}-menu-item-selected`]: {
+          fontWeight: token.fontWeightStrong,
+          backgroundColor: token.colorPrimaryBg,
+          color: token.colorPrimary,
+        },
+
+        [`${rootCls}-menu-item:not(${rootCls}-menu-item-selected):hover`]: {
+          backgroundColor: token.colorFillTertiary,
+        },
+
+        [`${rootCls}-menu-item-icon`]: {
+          color: 'inherit',
+        },
+      },
+
+      [`${rootCls}-layout-sider-trigger`]: {
+        display: 'none',
+      },
+
+      '.basic-layout-sider__trigger': {
+        'display': 'inline-flex',
+        'flexShrink': 0,
+        'alignItems': 'center',
+        'justifyContent': 'center',
+        'width': '100%',
+        'height': `${triggerSize}px`,
+        'marginTop': `${token.marginXS}px`,
+        'lineHeight': `${triggerSize}px`,
+        'color': token.colorIcon,
+        'background': token.colorFillAlter,
+        'border': `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
+        'borderRadius': `${token.borderRadiusLG}px`,
+        'boxShadow': token.boxShadowTertiary,
+        'cursor': 'pointer',
+        'transition': `color ${token.motionDurationMid}, background-color ${token.motionDurationMid}, border-color ${token.motionDurationMid}, box-shadow ${token.motionDurationMid}`,
+
+        '&:hover': {
+          color: token.colorPrimary,
+          background: token.colorPrimaryBg,
+          borderColor: token.colorPrimaryBorder,
+          boxShadow: token.boxShadowSecondary,
+        },
+
+        '&:focus-visible': {
+          outline: `${token.lineWidth}px ${token.lineType} ${token.colorPrimary}`,
+          outlineOffset: `${token.marginXXS}px`,
+        },
       },
     },
   }

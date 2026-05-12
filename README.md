@@ -229,3 +229,35 @@ Storage 的本地 bucket 已配置匿名读写策略，方便调试导入、导�
 - `main-app/src/micro-apps.json` 是生成文件，不要提交
 - `dist/`、`node_modules/`、各子应用独立生成的 `dist/` 不要提交
 - 模板分支暂时只作为空壳模板使用，需要同步能力时再单独整理
+
+## 当前进度
+
+记录时间：2026-05-12
+
+已完成：
+
+- 已建立 Vue monorepo 的 ESLint、Prettier、TypeScript 检查命令，`pnpm run fix` 和 `pnpm run check` 是当前默认质量入口。
+- 已将 `main-app/src/components/antdv-token-previewer` 和 `main-app/src/components/vue-colorful` 纳入格式化/检查范围。
+- 已修复 TypeScript project references，使 `common`、`main-app` 和 `application/*` 子应用能被根级 `typecheck` 覆盖。
+- 已完成 SuperTable 的基础 CRUD 表单弹窗封装，并接入本地 Supabase `public.shelters` 接口做新增、编辑、详情、删除测试。
+- 本地 Supabase 已准备约 500 条 `public.shelters` 测试数据，供 SuperTable 分页、查询和 CRUD 调试。
+- 已根据 Ant Design Vue token 优化 SuperTable 外层 UI，减少硬编码样式并提升与主题编辑器的兼容性。
+- 已优化主布局侧栏样式，折叠按钮改为侧栏内部自定义触发器，并跟随 Ant Design token。
+- 已抽取全局 Codex skill：`vue-quality-config`，用于后续新 Vue 项目快速配置 ESLint、Prettier、TypeScript、`fix/check`
+  命令。
+
+暂停点：
+
+- 当前视觉优化仍处于评审阶段，后续恢复时建议先打开 `http://localhost:5173/base-app/super-table`
+  检查 SuperTable 和侧栏视觉效果。
+- 本次 SuperTable token 化与侧栏样式优化提交在 `master`，尚未同步到 `template` 分支。
+- 如果继续做全局 UI 规范，应优先使用 Ant Design Vue 组件能力和 token，避免深度覆盖组件库内部样式。
+
+建议恢复流程：
+
+```bash
+pnpm install
+pnpm supabase:start
+pnpm dev
+pnpm run check
+```
