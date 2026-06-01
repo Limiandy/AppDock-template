@@ -22,7 +22,7 @@ function createJwt(secret, role) {
   const payload = base64Url(
     JSON.stringify({
       iss: 'supabase',
-      ref: 'vue-playground-local',
+      ref: 'app-dock-local',
       role,
       iat: 1700000000,
       exp: 4102444800,
@@ -93,7 +93,7 @@ function runDockerCompose(args) {
   ensureGeneratedSql()
   const result = spawnSync(
     'docker',
-    ['compose', '--env-file', envPath, '-f', composePath, '--project-name', 'vue-playground-supabase', ...args],
+    ['compose', '--env-file', envPath, '-f', composePath, '--project-name', 'app-dock-supabase', ...args],
     {
       cwd: rootDir,
       stdio: 'inherit',

@@ -1,7 +1,7 @@
 services:
   db:
     image: supabase/postgres:15.8.1.060
-    container_name: vue-playground-supabase-db
+    container_name: app-dock-supabase-db
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -21,7 +21,7 @@ services:
 
   rest:
     image: postgrest/postgrest:v12.2.12
-    container_name: vue-playground-supabase-rest
+    container_name: app-dock-supabase-rest
     restart: unless-stopped
     depends_on:
       db:
@@ -35,7 +35,7 @@ services:
 
   auth:
     image: supabase/gotrue:v2.177.0
-    container_name: vue-playground-supabase-auth
+    container_name: app-dock-supabase-auth
     restart: unless-stopped
     depends_on:
       db:
@@ -57,7 +57,7 @@ services:
 
   storage:
     image: supabase/storage-api:v1.29.0
-    container_name: vue-playground-supabase-storage
+    container_name: app-dock-supabase-storage
     restart: unless-stopped
     depends_on:
       db:
@@ -86,7 +86,7 @@ services:
 
   imgproxy:
     image: darthsim/imgproxy:v3.8.0
-    container_name: vue-playground-supabase-imgproxy
+    container_name: app-dock-supabase-imgproxy
     restart: unless-stopped
     environment:
       IMGPROXY_BIND: ':5001'
@@ -97,7 +97,7 @@ services:
 
   gateway:
     image: nginx:1.27-alpine
-    container_name: vue-playground-supabase-gateway
+    container_name: app-dock-supabase-gateway
     restart: unless-stopped
     depends_on:
       auth:

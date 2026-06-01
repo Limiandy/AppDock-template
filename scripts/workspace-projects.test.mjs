@@ -36,7 +36,7 @@ function makeProject(rootDir, relativeDir, pkgName) {
 }
 
 function withTempWorkspace(callback) {
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vue-playground-runner-'))
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'app-dock-runner-'))
   try {
     return callback(rootDir)
   } finally {

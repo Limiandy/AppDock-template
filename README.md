@@ -1,6 +1,6 @@
-# VuePlayground
+# AppDock
 
-VuePlayground 是一个基于 Vue 3、Vite、TypeScript、Ant Design Vue 和 qiankun 的微前端实验项目。
+AppDock 是一个基于 Vue 3、Vite、TypeScript、Ant Design Vue 和 qiankun 的微前端实验项目。
 
 当前项目包含一个主应用、一个公共库，以及多个可独立运行和打包的子应用。项目提供了脚本来创建子应用、删除子应用、选择运行子应用、选择打包子应用，并自动维护主应用需要的微应用配置。
 
@@ -164,8 +164,8 @@ main-app/src/router/modules/<app-name>.ts
 可以用 nginx 容器挂载构建后的 `dist`：
 
 ```bash
-docker rm -f vue-playground-dist 2>/dev/null || true
-docker run -d --name vue-playground-dist -p 18080:80 \
+docker rm -f app-dock-dist 2>/dev/null || true
+docker run -d --name app-dock-dist -p 18080:80 \
   -v "$PWD/dist:/usr/share/nginx/html:ro" \
   nginx:alpine
 ```
