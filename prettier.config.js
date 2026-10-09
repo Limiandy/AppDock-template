@@ -9,7 +9,7 @@ export default {
   printWidth: 120,
   arrowParens: 'always',
   proseWrap: 'always',
-  endOfLine: 'auto',
+  endOfLine: 'lf',
   experimentalTernaries: false,
   tabWidth: 2,
   useTabs: false,

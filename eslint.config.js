@@ -28,6 +28,9 @@ export default tsEslint.config(
     plugins: {
       prettier: eslintPluginPrettier,
     },
+    rules: {
+      'linebreak-style': ['error', 'unix'],
+    },
   },
 
   // ✅ JavaScript 配置
