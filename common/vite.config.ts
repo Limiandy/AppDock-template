@@ -40,7 +40,7 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       name: 'Common',
       formats: ['es', 'cjs'],
       fileName: (format) => `[name].${format}.js`,
@@ -52,11 +52,11 @@ export default defineConfig({
        * 调整输入文件，将需要按目录暴露的入口文件单独打包在自己的目录中。例如：import { xxx } from 'common/utils'
        */
       input: [
-        resolve(__dirname, 'src/index.ts'),
-        resolve(__dirname, 'src/components/index.ts'),
-        resolve(__dirname, 'src/helper/index.ts'),
-        resolve(__dirname, 'src/hooks/index.ts'),
-        resolve(__dirname, 'src/icons/index.ts'),
+        resolve(import.meta.dirname, 'src/index.ts'),
+        resolve(import.meta.dirname, 'src/components/index.ts'),
+        resolve(import.meta.dirname, 'src/helper/index.ts'),
+        resolve(import.meta.dirname, 'src/hooks/index.ts'),
+        resolve(import.meta.dirname, 'src/icons/index.ts'),
       ],
       external: (id) =>
         id === 'vue' || id.startsWith('vue/') || id === 'ant-design-vue' || id.startsWith('ant-design-vue/'),

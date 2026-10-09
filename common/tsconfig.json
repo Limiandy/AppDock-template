@@ -13,19 +13,18 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
     "typeRoots": ["./types", "./node_modules/@types/", "../node_modules/@types/"],
 
     // ✅ 添加 Vite 类型支持
     "types": ["vite/client"],
 
     "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@styles/*": ["src/styles/*"],
-      "@constant/*": ["src/constant/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@constant/*": ["./src/constant/*"]
     }
   },
-  "include": ["src", "src/**/*.json", "env.d.ts"], // ✅ 确保 env.d.ts 被包含
+  "include": ["src", "src/**/*.json", "types/**/*.d.ts", "env.d.ts"], // ✅ 确保 env.d.ts 被包含
   "exclude": ["node_modules", "dist"]
 }

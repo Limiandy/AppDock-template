@@ -126,6 +126,8 @@ async function runDev() {
   writeMicroApps(rootDir, selectedMicroApps, 'dev')
   console.log(`\n已生成 dev 微应用配置，共 ${selectedMicroApps.length} 个子应用`)
 
+  await runCommand({ name: 'common', dir: path.join(rootDir, 'common') }, 'pnpm', ['run', 'build'])
+
   const [command, args] = createViteCommand('dev', viteArgs)
   await Promise.all(selectedProjects.map((project) => runCommand(project, command, args)))
 }

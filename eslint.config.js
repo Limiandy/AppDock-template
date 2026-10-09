@@ -2,13 +2,8 @@ import jsEslint from '@eslint/js'
 import globals from 'globals'
 import tsEslint from 'typescript-eslint'
 import eslintPluginVue from 'eslint-plugin-vue'
-import eslintPluginImport from 'eslint-plugin-import'
 import eslintPluginPrettier from 'eslint-plugin-prettier'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
-import { resolve } from 'path'
-
-const cwd = process.cwd()
-
 export default tsEslint.config(
   {
     ignores: [
@@ -24,22 +19,14 @@ export default tsEslint.config(
       '**/docker/supabase/.generated/**',
       '**/application/custom-comp-app/src/views/Slam/data/**',
       'main-app/src/micro-apps.json',
+      'packages/create-app-dock/template/**',
     ],
   },
 
   {
     files: ['**/*.{js,jsx,ts,tsx,mjs,cjs,vue}'],
     plugins: {
-      import: eslintPluginImport,
       prettier: eslintPluginPrettier,
-    },
-    settings: {
-      'import/resolver': {
-        alias: {
-          map: [['@', resolve(cwd, 'src')]],
-          extensions: ['.js', '.jsx', '.vue', '.ts', '.tsx'],
-        },
-      },
     },
   },
 

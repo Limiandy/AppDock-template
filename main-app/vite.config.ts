@@ -1,6 +1,6 @@
 // @ts-ignore
 import merge from 'lodash.merge'
-import ViteConfigBase from '../vite.config.base'
+import ViteConfigBase from '../vite.config.base.ts'
 import vueDevTools from 'vite-plugin-vue-devtools'
 // @ts-ignore
 import vuePlugin from '@vitejs/plugin-vue'

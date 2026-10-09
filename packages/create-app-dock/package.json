@@ -1,0 +1,32 @@
+{
+  "name": "create-app-dock",
+  "version": "0.1.0",
+  "description": "Create an AppDock micro-frontend workspace.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Limiandy/AppDock-template.git",
+    "directory": "packages/create-app-dock"
+  },
+  "homepage": "https://github.com/Limiandy/AppDock-template/tree/master/packages/create-app-dock#readme",
+  "bugs": {
+    "url": "https://github.com/Limiandy/AppDock-template/issues"
+  },
+  "type": "module",
+  "bin": "./bin/create-app-dock.mjs",
+  "files": [
+    "bin",
+    "src",
+    "template",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "node ../../scripts/sync-cli-template.mjs",
+    "test": "node ../../scripts/sync-cli-template.mjs && node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

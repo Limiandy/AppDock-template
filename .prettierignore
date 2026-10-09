@@ -10,4 +10,5 @@
 **/docker/supabase/.generated/**
 **/application/custom-comp-app/src/views/Slam/data/**
 main-app/src/micro-apps.json
+packages/create-app-dock/template/
 pnpm-lock.yaml

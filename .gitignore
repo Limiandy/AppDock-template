@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+packages/create-app-dock/template/
 dist
 dist-ssr
 *.local
@@ -26,4 +27,3 @@ main-app/src/micro-apps.json
 *.njsproj
 *.sln
 *.sw?
-pnpm-lock.yaml

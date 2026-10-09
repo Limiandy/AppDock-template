@@ -2,3 +2,4 @@ packages:
   - 'main-app'
   - 'common'
   - 'application/*'
+  - 'packages/*'

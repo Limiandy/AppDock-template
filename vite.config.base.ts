@@ -3,8 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
 import qiankun from 'vite-plugin-qiankun'
 import path from 'path'
-import routeSyncPlugin from './vite/plugins/routeSyncPlugin'
-import rawJSPlugin from './vite/plugins/rawJSPlugin'
+import routeSyncPlugin from './vite/plugins/routeSyncPlugin.ts'
+import rawJSPlugin from './vite/plugins/rawJSPlugin.ts'
 import chalk from 'chalk'
 import simpleHtmlPlugin from 'vite-plugin-simple-html'
 import autoprefixer from 'autoprefixer'
@@ -65,7 +65,7 @@ export default defineConfig(({ mode, command }) => {
     plugins.push(
       routeSyncPlugin(
         path.resolve(process.cwd(), 'src/router/index.ts'),
-        path.resolve(__dirname, `main-app/src/router/modules/${appName}.ts`),
+        path.resolve(import.meta.dirname, `main-app/src/router/modules/${appName}.ts`),
       ),
     )
   }

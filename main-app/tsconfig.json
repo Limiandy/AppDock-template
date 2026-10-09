@@ -4,9 +4,8 @@
     "composite": true,
     "tsBuildInfoFile": "../node_modules/.tmp/main-app.tsbuildinfo",
     "strictNullChecks": false,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"]
