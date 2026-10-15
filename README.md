@@ -2,16 +2,13 @@
 
 AppDock 是一个基于 Vue 3、Vite、TypeScript、Ant Design Vue 和 qiankun 的微前端实验项目。
 
-当前项目包含一个主应用、一个公共库，以及多个可独立运行和打包的子应用。项目提供了脚本来创建子应用、删除子应用、选择运行子应用、选择打包子应用，并自动维护主应用需要的微应用配置。
+仓库默认包含一个主应用和一个公共库；子应用通过脚手架创建，可独立运行和打包。项目提供了脚本来创建子应用、删除子应用、选择运行子应用、选择打包子应用，并自动维护主应用需要的微应用配置与路由。
 
 ## 项目结构
 
 ```text
 .
-├── application/              # 子应用
-│   ├── css-app/
-│   ├── custom-comp-app/
-│   └── test-app/
+├── application/              # 子应用（通过 pnpm create:app 生成）
 ├── common/                   # 公共库
 ├── main-app/                 # 主应用
 ├── scripts/                  # 项目脚本
@@ -41,7 +38,8 @@ pnpm build            # 生成 build 微应用配置并构建主应用
 pnpm build:select     # 选择要参与打包的子应用
 pnpm create:app       # 创建子应用
 pnpm delete:app       # 删除子应用
-pnpm gen-micro-apps   # 手动生成 dev 微应用配置
+pnpm gen-micro-apps   # 手动生成微应用配置
+pnpm sync:tsconfig    # 手动同步根 tsconfig 的项目引用（dev/build 会自动执行）
 pnpm test:scripts     # 运行脚本单元测试
 ```
 
@@ -92,12 +90,16 @@ pnpm delete:app -- --name demo-app --yes
 
 ## 微应用配置
 
-`main-app/src/micro-apps.json` 是生成文件，已加入 `.gitignore`，不要手动维护。
+`main-app/src/micro-apps.json` 由脚手架扫描 `application/*` 生成，作为子应用注册清单入库，不要手动维护。
 
-不同命令会生成不同环境的入口：
+文件只记录子应用名称、开发端口和挂载约定；主应用在运行时按当前模式推导 qiankun 入口：
 
-- `pnpm dev` / `pnpm dev:select`：生成开发态入口，例如 `//localhost:60012`
-- `pnpm build` / `pnpm build:select`：生成部署态入口，例如 `/css-app/`
+- 开发态：`//localhost:<port>`
+- 构建产物：`/<app-name>/`
+
+因此切换 dev/build 不会反复改写该文件，只有新增、删除子应用或修改端口时才会更新。
+
+`pnpm dev` / `pnpm dev:select` / `pnpm build` / `pnpm build:select` 会按扫描或选择结果重写该文件。
 
 ## 开发运行
 
@@ -157,7 +159,8 @@ dist/
 main-app/src/router/modules/<app-name>.ts
 ```
 
-这些路由模块会被主应用自动加载，用于菜单和路由展示。
+这些路由模块会被主应用自动加载，用于菜单和路由展示。生成的 `main-app/src/router/modules/<app-name>.ts`
+随子应用一起入库，`modules/` 目录通过 `.gitkeep` 保留。
 
 ## 本地部署验证
 
@@ -220,15 +223,41 @@ Storage bucket: super-table-files
 public.shelters
 ```
 
+## 静态 Mock 模式
+
+默认的前端数据源是浏览器 IndexedDB
+Mock：它随静态前端产物部署，不需要网关、数据库或运行时 Secret，数据仅保留在当前浏览器。
+
+```bash
+pnpm dev:mock
+pnpm build:mock
+```
+
+Mock 模式支持演示数据的筛选、分页、新增、编辑、删除与重置。需要联调本地 Supabase 时，先启动本地服务，再使用 Supabase 模式：
+
+```bash
+pnpm supabase:start
+pnpm dev:supabase
+pnpm build:supabase
+```
+
+线上静态站点如需共享数据、跨设备访问或服务端文件存储，应切换到 Supabase 或其他部署后的后端服务。
+
+Mock 环境内置模拟管理员、业务录入员和只读审计员，可在顶部选择器切换，并将当前身份保存到浏览器。默认身份可在
+`main-app/.env.mock` 的 `VITE_MOCK_ACCESS_PROFILE` 配置。实际登录完成后，应用应调用
+`useAccess().setPermissions(identity.permissions)` 覆盖模拟权限集；未写入权限时，受权限控制的工具栏和行操作默认不展示。
+
 Storage 的本地 bucket 已配置匿名读写策略，方便调试导入、导出、上传和下载流程。生产环境不要沿用这组策略。
 
 ## 注意事项
 
 - 子应用名称建议使用小写字母、数字和中划线，例如 `demo-app`
 - 子应用端口在 `application/<app-name>/vite.config.ts` 中定义
-- `main-app/src/micro-apps.json` 是生成文件，不要提交
+- `main-app/src/micro-apps.json` 由脚本生成并已入库，不要手动编辑
+- `main-app/.env.mock`、`main-app/.env.supabase` 只包含数据源开关和模拟身份，已入库，不含密钥
 - `dist/`、`node_modules/`、各子应用独立生成的 `dist/` 不要提交
-- 模板分支暂时只作为空壳模板使用，需要同步能力时再单独整理
+- 仓库当前只有 `master` 分支；`create-app-dock` 的模板快照在打包时由 `scripts/sync-cli-template.mjs`
+  生成，不再维护独立的 `template` 分支
 
 ## 当前进度
 
@@ -245,12 +274,20 @@ Storage 的本地 bucket 已配置匿名读写策略，方便调试导入、导�
 - 已优化主布局侧栏样式，折叠按钮改为侧栏内部自定义触发器，并跟随 Ant Design token。
 - 已抽取全局 Codex skill：`vue-quality-config`，用于后续新 Vue 项目快速配置 ESLint、Prettier、TypeScript、`fix/check`
   命令。
+- 已默认使用 IndexedDB Mock 数据源，可在顶部切换模拟管理员/录入员/审计员，权限通过 `common` 的 `useAccess`
+  控制；Supabase 模式保持可选。
+- 已补齐 `create-app-dock` 初始化 CLI 与 npm 发布工作流（GitHub Actions OIDC），当前发布版本 `0.1.1`。
+- 已清理 `main-app/vite.config.ts` 中遗留的内网代理，仅保留 Supabase 代理。
+- `main-app/src/micro-apps.json` 与 `main-app/src/router/modules/*.ts`
+  已入库；注册清单只记录名称、端口和挂载约定，入口在运行时按 dev/build 推导。
+- 已新增 `pnpm sync:tsconfig`，并在 `gen-micro-apps`、`dev:select`、`build:select` 和子应用增删时自动同步根
+  `tsconfig.json` 的 `application/*` 引用。
+- 已移除根 `package.json` 中无效的 npm `workspaces` 字段，并入库 `.env.mock`、`.env.supabase` 两个数据源配置。
 
 暂停点：
 
 - 当前视觉优化仍处于评审阶段，后续恢复时建议先打开 `http://localhost:5173/base-app/super-table`
   检查 SuperTable 和侧栏视觉效果。
-- 本次 SuperTable token 化与侧栏样式优化提交在 `master`，尚未同步到 `template` 分支。
 - 如果继续做全局 UI 规范，应优先使用 Ant Design Vue 组件能力和 token，避免深度覆盖组件库内部样式。
 
 建议恢复流程：

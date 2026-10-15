@@ -182,7 +182,7 @@ export const rgbaToHsva = ({ r, g, b, a }: RgbaColor): HsvaColor => {
       : max === g
         ? 2 + (b - r) / delta
         : 4 + (r - g) / delta
-    : 0;
+    : 0
 
   return {
     h: round(60 * (hh < 0 ? hh + 6 : hh)),

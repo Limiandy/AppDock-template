@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import test from 'node:test'
@@ -27,6 +27,10 @@ test('creates an AppDock project from the packaged template', async () => {
     assert.match(workspace, /main-app/)
     assert.doesNotMatch(workspace, /packages\/\*/)
     assert.match(result.stdout, /pnpm install/)
+    await access(resolve(testRoot, 'demo-app/main-app/.env.mock'))
+    await access(resolve(testRoot, 'demo-app/main-app/.env.supabase'))
+    const microApps = JSON.parse(await readFile(resolve(testRoot, 'demo-app/main-app/src/micro-apps.json'), 'utf8'))
+    assert.deepEqual(microApps, [])
   } finally {
     await rm(testRoot, { recursive: true, force: true })
   }

@@ -14,6 +14,7 @@ import {
   normalizeForwardedArgs,
   parseSelection,
   readProjectPort,
+  syncRootTsConfigReferences,
   uniqueProjects,
   writeMicroApps,
 } from './workspace-projects.mjs'
@@ -148,26 +149,17 @@ test('build command writes main-app output directly under root dist folder', () 
   })
 })
 
-test('micro app config uses localhost entries for dev and deployed paths for build', () => {
+test('micro app config keeps a mode independent registration entry', () => {
   withTempWorkspace((rootDir) => {
     const projectDir = makeProject(rootDir, 'application/css-app', 'css-app')
     fs.writeFileSync(path.join(projectDir, 'vite.config.ts'), 'const port = 60012\nexport default {}\n')
     const project = { name: 'css-app', dir: projectDir }
 
     assert.equal(readProjectPort(projectDir), '60012')
-    assert.deepEqual(createMicroApps([project], 'dev'), [
+    assert.deepEqual(createMicroApps([project]), [
       {
         name: 'css-app',
-        entry: '//localhost:60012',
-        container: '#qiankun-container',
-        activeRule: '/css-app',
-        props: {},
-      },
-    ])
-    assert.deepEqual(createMicroApps([project], 'build'), [
-      {
-        name: 'css-app',
-        entry: '/css-app/',
+        port: 60012,
         container: '#qiankun-container',
         activeRule: '/css-app',
         props: {},
@@ -182,12 +174,40 @@ test('micro app config is written into main-app source', () => {
     const projectDir = makeProject(rootDir, 'application/custom-comp-app', 'custom-comp-app')
     const project = { name: 'custom-comp-app', dir: projectDir }
 
-    writeMicroApps(rootDir, [project], 'build')
+    writeMicroApps(rootDir, [project])
 
     assert.equal(
       fs.readFileSync(path.join(rootDir, 'main-app/src/micro-apps.json'), 'utf-8'),
-      `${JSON.stringify(createMicroApps([project], 'build'), null, 2)}\n`,
+      `${JSON.stringify(createMicroApps([project]), null, 2)}\n`,
     )
+  })
+})
+
+test('root tsconfig references follow application projects automatically', () => {
+  withTempWorkspace((rootDir) => {
+    assert.equal(syncRootTsConfigReferences(rootDir), null)
+
+    fs.writeFileSync(
+      path.join(rootDir, 'tsconfig.json'),
+      JSON.stringify(
+        {
+          files: [],
+          references: [{ path: './main-app/tsconfig.json' }, { path: './application/stale/tsconfig.json' }],
+        },
+        null,
+        2,
+      ),
+    )
+    const aliveDir = makeProject(rootDir, 'application/alive', 'alive')
+    fs.writeFileSync(path.join(aliveDir, 'tsconfig.json'), '{}\n')
+
+    const config = syncRootTsConfigReferences(rootDir)
+
+    assert.deepEqual(config.references, [
+      { path: './main-app/tsconfig.json' },
+      { path: './application/alive/tsconfig.json' },
+    ])
+    assert.deepEqual(syncRootTsConfigReferences(rootDir).references, config.references)
   })
 })
 

@@ -13,6 +13,7 @@ import {
   getProjectDistDir,
   getRequiredBuildProjects,
   parseSelection,
+  syncRootTsConfigReferences,
   uniqueProjects,
   writeMicroApps,
 } from './workspace-projects.mjs'
@@ -92,8 +93,9 @@ async function runBuild() {
   })
   const buildMicroApps = uniqueProjects(selectedOptionalProjects)
 
-  writeMicroApps(rootDir, buildMicroApps, 'build')
-  console.log(`\n已生成 build 微应用配置，共 ${buildMicroApps.length} 个子应用`)
+  syncRootTsConfigReferences(rootDir)
+  writeMicroApps(rootDir, buildMicroApps)
+  console.log(`\n已生成微应用配置，共 ${buildMicroApps.length} 个子应用`)
 
   console.log('\n> vue-tsc -b')
   await runCommand({ name: 'root', dir: rootDir }, 'pnpm', ['exec', 'vue-tsc', '-b'])
@@ -123,8 +125,9 @@ async function runDev() {
   }
 
   const selectedMicroApps = selectedProjects.filter((project) => project.name !== 'main-app')
-  writeMicroApps(rootDir, selectedMicroApps, 'dev')
-  console.log(`\n已生成 dev 微应用配置，共 ${selectedMicroApps.length} 个子应用`)
+  syncRootTsConfigReferences(rootDir)
+  writeMicroApps(rootDir, selectedMicroApps)
+  console.log(`\n已生成微应用配置，共 ${selectedMicroApps.length} 个子应用`)
 
   await runCommand({ name: 'common', dir: path.join(rootDir, 'common') }, 'pnpm', ['run', 'build'])
 

@@ -44,16 +44,6 @@ export default defineConfig((config) => {
   return merge(baseConfig, {
     server: {
       proxy: {
-        '/community/nursing': {
-          target: 'http://172.25.211.48:9210',
-          // target: 'http://10.64.12.209:9210',
-          changeOrigin: true,
-        },
-        '/publish_content': {
-          target: 'http://172.25.211.48:8891',
-          // target: 'http://10.64.12.209:9210',
-          changeOrigin: true,
-        },
         '/supabase/rest': {
           target: supabaseUrl,
           changeOrigin: true,

@@ -55,7 +55,7 @@ async function promptMissingOptions(options) {
 try {
   const options = await promptMissingOptions(readArgs(process.argv.slice(2)))
   const result = createApplicationFiles(rootDir, options)
-  const microApps = writeMicroApps(rootDir, getApplicationProjects(rootDir), 'dev')
+  const microApps = writeMicroApps(rootDir, getApplicationProjects(rootDir))
 
   console.log(`已生成 application/${result.name}`)
   console.log(`开发端口: ${result.port}`)

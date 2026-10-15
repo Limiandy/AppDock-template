@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { getApplicationProjects, readProjectPort } from './workspace-projects.mjs'
+import { getApplicationProjects, readProjectPort, syncRootTsConfigReferences } from './workspace-projects.mjs'
 
 const defaultPortStart = 60010
 
@@ -61,9 +61,7 @@ export function createApplicationFiles(rootDir, options) {
     fs.writeFileSync(targetPath, content)
   }
 
-  updateRootTsConfigReferences(rootDir, {
-    add: [`./application/${name}/tsconfig.json`],
-  })
+  syncRootTsConfigReferences(rootDir)
 
   return {
     name,
@@ -87,52 +85,13 @@ export function deleteApplicationFiles(rootDir, options) {
 
   fs.rmSync(appDir, { recursive: true, force: true })
   fs.rmSync(routeModulePath, { force: true })
-  updateRootTsConfigReferences(rootDir, {
-    remove: [`./application/${name}/tsconfig.json`],
-  })
+  syncRootTsConfigReferences(rootDir)
 
   return {
     name,
     dir: appDir,
     removedRouteModule: routeModulePath,
   }
-}
-
-function normalizeReferencePath(value) {
-  return value.replaceAll('\\', '/')
-}
-
-function sortReferencePaths(paths) {
-  const priority = (value) => {
-    if (value === './common/tsconfig.json') return 0
-    if (value === './main-app/tsconfig.json') return 1
-    if (value.startsWith('./application/')) return 2
-    if (value === './tsconfig.node.json') return 3
-    return 4
-  }
-
-  return [...paths].sort((left, right) => priority(left) - priority(right) || left.localeCompare(right))
-}
-
-export function updateRootTsConfigReferences(rootDir, { add = [], remove = [] } = {}) {
-  const tsconfigPath = path.join(rootDir, 'tsconfig.json')
-  if (!fs.existsSync(tsconfigPath)) return null
-
-  const config = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'))
-  const removedPaths = new Set(remove.map(normalizeReferencePath))
-  const referencePaths = new Set(
-    (config.references || [])
-      .map((reference) => normalizeReferencePath(reference.path))
-      .filter((referencePath) => !removedPaths.has(referencePath)),
-  )
-
-  for (const referencePath of add.map(normalizeReferencePath)) {
-    referencePaths.add(referencePath)
-  }
-
-  config.references = sortReferencePaths(referencePaths).map((referencePath) => ({ path: referencePath }))
-  fs.writeFileSync(tsconfigPath, `${JSON.stringify(config, null, 2)}\n`)
-  return config
 }
 
 export function createApplicationFileMap({ name, title, port, pascalName }) {

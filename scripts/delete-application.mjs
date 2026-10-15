@@ -84,7 +84,7 @@ try {
   }
 
   const result = deleteApplicationFiles(rootDir, { name })
-  const microApps = writeMicroApps(rootDir, getApplicationProjects(rootDir), 'dev')
+  const microApps = writeMicroApps(rootDir, getApplicationProjects(rootDir))
 
   console.log(`已删除 application/${result.name}`)
   console.log(`已删除路由模块 ${path.relative(rootDir, result.removedRouteModule)}`)

@@ -78,3 +78,77 @@ do not require publication.
 - Verified the packed tarball creates a project that passes frozen installation and its script test suite.
 - Published `create-app-dock@0.1.0` with the `latest` dist-tag.
 - Prepared the GitHub Actions OIDC workflow locally; it awaits a repository push and npm Trusted Publisher binding.
+
+# Static Mock Data Plan
+
+## Outcome
+
+Make the deployed static AppDock frontend usable without a backend by routing demo CRUD through an IndexedDB mock
+adapter, while preserving the Supabase adapter for local integration and future hosted backends.
+
+## Verification surface
+
+- Mock mode is the default with no runtime secret or server dependency.
+- Supabase mode remains selectable through a Vite mode.
+- The SuperTable demo supports filtering, pagination, create, edit, delete, and resetting browser-local seed data in
+  mock mode.
+- Static production build, type checking, scripts, and browser interaction checks pass.
+
+## Constraints / boundaries
+
+- Mock data remains browser-local; it does not create shared persistence or a server API.
+- Do not expose a service-role key, deploy a backend, or change the existing local Supabase stack.
+- Preserve the existing untracked `.build/` cache.
+
+## Iteration policy
+
+Introduce a repository interface first, implement both adapters behind it, then verify the same table workflow against
+IndexedDB in a browser.
+
+## Blocked condition
+
+Stop only if the user requires shared, cross-browser data or server-side upload behavior; that requires a deployed
+backend and is outside a static-only package.
+
+## Status
+
+- Added an IndexedDB-backed shelter repository and retained the Supabase repository behind the same interface.
+- Added explicit mock and Supabase development and build modes.
+- Verified both build modes, then exercised Mock filtering, create persistence, and reset in a browser.
+
+# Template Maintenance Plan
+
+## Outcome
+
+Turn the template repository into a clean baseline that a fresh clone can install, check, build, and publish without
+manual generation steps or leftover environment-specific configuration.
+
+## Verification surface
+
+- `pnpm run check` passes, covering formatting, linting, type checking, and script tests.
+- A fresh clone only needs `pnpm install` before `pnpm dev` or `pnpm build`; generated files are already present.
+- `main-app/src/micro-apps.json` and `main-app/src/router/modules/*.ts` are tracked, and the registration manifest no
+  longer changes when switching between dev and build.
+- Root `tsconfig.json` references for `application/*` stay aligned with the projects that actually exist.
+
+## Constraints / boundaries
+
+- IndexedDB Mock stays the default data source; Supabase stays optional.
+- Sub-application scaffolding and build output layout are unchanged.
+- No local secrets are committed; `docker/supabase/.env.local` stays ignored.
+
+## Iteration policy
+
+Fix the generated-artifact contract and automation first, then remove leftover configuration, then align documentation
+and commit the result.
+
+## Status
+
+- Removed the leftover intranet proxies from `main-app/vite.config.ts` and the ineffective npm `workspaces` field from
+  the root manifest.
+- Tracked `micro-apps.json` and the generated route modules; the manifest now stores name, port, and mounting
+  conventions, while `registerMicroApp` derives dev/build entries at runtime.
+- Added `pnpm sync:tsconfig` and wired automatic `application/*` reference syncing into micro-app generation, project
+  selection, and application add/delete flows.
+- Committed `.env.mock` and `.env.supabase`, and made the `create-app-dock` template snapshot include them plus the
+  default `micro-apps.json`.

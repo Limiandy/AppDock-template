@@ -59,6 +59,59 @@ export function getRequiredBuildProjects(rootDir) {
   })
 }
 
+function normalizeReferencePath(value) {
+  return value.replaceAll('\\', '/')
+}
+
+function sortReferencePaths(paths) {
+  const priority = (value) => {
+    if (value === './common/tsconfig.json') return 0
+    if (value === './main-app/tsconfig.json') return 1
+    if (value.startsWith('./application/')) return 2
+    if (value === './tsconfig.node.json') return 3
+    return 4
+  }
+
+  return [...paths].sort((left, right) => priority(left) - priority(right) || left.localeCompare(right))
+}
+
+export function getApplicationTsConfigReferences(rootDir) {
+  return getApplicationProjects(rootDir)
+    .filter((project) => fs.existsSync(path.join(project.dir, 'tsconfig.json')))
+    .map((project) => `./${path.relative(rootDir, project.dir).split(path.sep).join('/')}/tsconfig.json`)
+}
+
+/**
+ * 让根 tsconfig 的 application 引用与 application/* 实际项目保持一致。
+ * 只替换 application 引用，保留 common、main-app、tsconfig.node 等其他引用。
+ */
+export function syncRootTsConfigReferences(rootDir) {
+  const tsconfigPath = path.join(rootDir, 'tsconfig.json')
+  if (!fs.existsSync(tsconfigPath)) return null
+
+  const config = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'))
+  const referencePaths = new Set(
+    (config.references ?? [])
+      .map((reference) => normalizeReferencePath(reference.path))
+      .filter((referencePath) => !referencePath.startsWith('./application/')),
+  )
+
+  for (const referencePath of getApplicationTsConfigReferences(rootDir)) {
+    referencePaths.add(referencePath)
+  }
+
+  const references = sortReferencePaths(referencePaths)
+  config.references = references.map((referencePath) => ({ path: referencePath }))
+
+  // 保持引用对象单行输出，与 Prettier 对 tsconfig.json 的格式化结果一致。
+  const content = JSON.stringify(config, null, 2).replace(
+    /\{\n(\s*)"path": ("(?:[^"\\]|\\.)*")\n\s*\}/g,
+    '{ "path": $2 }',
+  )
+  fs.writeFileSync(tsconfigPath, `${content}\n`)
+  return config
+}
+
 export function getDevProjects(rootDir) {
   return [
     {
@@ -119,14 +172,13 @@ export function getProjectDistArgs(rootDir, project) {
   return ['--outDir', path.relative(project.dir, getProjectDistDir(rootDir, project)), '--emptyOutDir']
 }
 
-export function createMicroApps(projects, target) {
+export function createMicroApps(projects) {
   return projects.map((project) => {
     const port = readProjectPort(project.dir)
-    const entry = target === 'build' ? `/${project.name}/` : `//localhost:${port}`
 
     return {
       name: project.name,
-      entry,
+      port: port === null ? null : Number(port),
       container: '#qiankun-container',
       activeRule: `/${project.name}`,
       props: {},
@@ -134,9 +186,9 @@ export function createMicroApps(projects, target) {
   })
 }
 
-export function writeMicroApps(rootDir, projects, target) {
+export function writeMicroApps(rootDir, projects) {
   const microAppsPath = path.join(rootDir, 'main-app/src/micro-apps.json')
-  const microApps = createMicroApps(projects, target)
+  const microApps = createMicroApps(projects)
 
   fs.writeFileSync(microAppsPath, `${JSON.stringify(microApps, null, 2)}\n`)
   return microApps

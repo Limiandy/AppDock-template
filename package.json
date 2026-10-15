@@ -7,13 +7,18 @@
     "build:common": "pnpm --filter common build",
     "postinstall": "pnpm run build:common",
     "dev": "pnpm run build:common && node scripts/gen-micro-apps.js && npm run dev --workspace=main-app",
-    "build": "node scripts/gen-micro-apps.js --build && vue-tsc -b && pnpm --filter common build && pnpm --filter main-app build",
+    "dev:mock": "pnpm run build:common && node scripts/gen-micro-apps.js && pnpm --filter main-app exec vite --mode mock",
+    "dev:supabase": "pnpm run build:common && node scripts/gen-micro-apps.js && pnpm --filter main-app exec vite --mode supabase",
+    "build": "node scripts/gen-micro-apps.js && vue-tsc -b && pnpm --filter common build && pnpm --filter main-app build",
+    "build:mock": "node scripts/gen-micro-apps.js && vue-tsc -b && pnpm --filter common build && pnpm --filter main-app exec vite build --mode mock",
+    "build:supabase": "node scripts/gen-micro-apps.js && vue-tsc -b && pnpm --filter common build && pnpm --filter main-app exec vite build --mode supabase",
     "build:select": "node scripts/select-projects.mjs build",
     "dev:select": "node scripts/select-projects.mjs dev",
     "create:app": "node scripts/create-application.mjs",
     "delete:app": "node scripts/delete-application.mjs",
     "preview": "vite preview",
     "gen-micro-apps": "node scripts/gen-micro-apps.js",
+    "sync:tsconfig": "node scripts/sync-tsconfig-references.mjs",
     "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test:scripts",
     "fix": "pnpm run format && pnpm run lint:fix",
     "lint": "eslint \"{main-app,application,common,scripts,vite,packages}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\"",
@@ -27,11 +32,6 @@
     "supabase:status": "node scripts/supabase-local.mjs status",
     "test:scripts": "node scripts/sync-cli-template.mjs && node --test scripts/*.test.mjs packages/create-app-dock/test/*.test.mjs"
   },
-  "workspaces": [
-    "main-app",
-    "application/*",
-    "common"
-  ],
   "packageManager": "pnpm@9.14.1",
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

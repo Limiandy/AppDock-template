@@ -1,4 +1,4 @@
-import microApps from './micro-apps.json'
+import registeredMicroApps from './micro-apps.json'
 import { registerMicroApps, start, initGlobalState } from 'qiankun'
 import { useEvent } from '@/hooks/useEvent.ts'
 
@@ -13,6 +13,13 @@ export function registerMicroApp() {
   actions.onGlobalStateChange((state, prev) => {
     console.log('[onGlobalStateChange - 基座]:', state, prev)
   })
+
+  // micro-apps.json 只记录子应用名称、开发端口和挂载约定；入口按运行模式推导，
+  // 保证入库的生成文件不会在 dev/build 之间来回变化。
+  const microApps = registeredMicroApps.map((app) => ({
+    ...app,
+    entry: import.meta.env.DEV ? `//localhost:${app.port}` : `/${app.name}/`,
+  }))
 
   microApps.forEach((app) => {
     app.props = Object.assign({}, app.props, { actions })

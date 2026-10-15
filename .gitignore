@@ -12,9 +12,9 @@ packages/create-app-dock/template/
 dist
 dist-ssr
 *.local
+.build/
 docker/supabase/.env.local
 docker/supabase/.generated/
-main-app/src/micro-apps.json
 
 # Editor directories and files
 .vscode/*

@@ -43,7 +43,6 @@ function shouldCopy(source) {
   const fileName = pathFromRoot.split('/').at(-1)
 
   if (excludedNames.has(fileName)) return false
-  if (pathFromRoot === 'main-app/src/micro-apps.json') return false
   if (pathFromRoot === 'scripts/sync-cli-template.mjs') return false
   if (pathFromRoot.endsWith('/.env.local')) return false
 
