@@ -66,8 +66,11 @@
 
       <!-- Content -->
       <a-layout-content class="basic-layout-content">
-        <router-view v-if="isBaseRoutePath" />
-        <div v-else id="qiankun-container" />
+        <BasicLayoutBreadcrumb />
+        <div class="basic-layout-content__body">
+          <router-view v-if="isBaseRoutePath" />
+          <div v-else id="qiankun-container" />
+        </div>
       </a-layout-content>
     </a-layout>
 
@@ -77,8 +80,11 @@
       class="basic-layout-content"
       :class="{ 'is-fixed-header': fixedHeader }"
     >
-      <router-view v-if="isBaseRoutePath" />
-      <div v-else id="qiankun-container" />
+      <BasicLayoutBreadcrumb />
+      <div class="basic-layout-content__body">
+        <router-view v-if="isBaseRoutePath" />
+        <div v-else id="qiankun-container" />
+      </div>
     </a-layout-content>
 
     <a-float-button-group
@@ -111,6 +117,7 @@ import { type ItemType, type MenuProps } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { SvgIcon } from 'common'
 import { useMockAccess } from '@/access.ts'
+import BasicLayoutBreadcrumb from '@/layout/BasicLayoutBreadcrumb.vue'
 import { baseAppDevEntries, constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
@@ -522,9 +529,16 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
 
 /* content */
 .basic-layout-content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   min-width: 0;
+}
+
+.basic-layout-content__body {
+  flex: 1;
+  min-height: 0;
 }
 
 #qiankun-container {
