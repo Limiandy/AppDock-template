@@ -63,8 +63,9 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 4. **不提交构建与本地产物：**
    `dist/`、`node_modules/`、`packages/create-app-dock/template/`、`docker/supabase/.env.local`、`.build/`。
 5. **提交前 `pnpm run check` 必须通过。** 不允许用“本地看起来没问题”代替门禁。
-6. **样式优先使用 Ant Design Vue token。** 主题相关样式走 `useStyle` 或 `var(--ant-*)`；`scoped less`
-   只做结构与布局，禁止深度覆盖组件库内部样式。
+6. **样式优先使用 Ant Design Vue token。** 主题相关样式走 `useStyle` 的 token 参数；`scoped less`
+   只做结构与布局；禁止硬编码颜色与深度覆盖组件库内部样式。全局色板以
+   `main-app/src/hooks/theme/presets/managementSystem.ts`（`docs/design-tokens.md`）为准，明暗切换用 `applyThemeMode`。
 7. **权限统一走 `useAccess`。** 权限命名 `资源:动作`（如 `shelter:update`），支持 `资源:*` 与
    `*`；未授权时默认隐藏入口。
 8. **数据访问走 `main-app/src/data/<domain>` 的 repository 接口**，不要直接在页面里散写

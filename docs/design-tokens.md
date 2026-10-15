@@ -67,6 +67,22 @@
 
 深色侧栏/大面积色块的导航字色介于 `#20294A`~`#2D3654`，属于同一深蓝灰的明暗层次，token 统一取 `#20294A`。
 
+## 2.5 深色扩展（提案）
+
+参考作品只做浅色，暗色中性阶按同色相蓝灰推导，保留品牌蓝与青色，供仓库的暗色模式使用：
+
+| 语义       | 值                              |
+| ---------- | ------------------------------- |
+| 页面背景   | `#0E1322`                       |
+| 容器/卡片  | `#151A2E`                       |
+| 浮层       | `#1A2140`                       |
+| 主文字     | `#E9ECF8`                       |
+| 次级文字   | `#A6ADC4`                       |
+| 辅助文字   | `#7B84A3`                       |
+| 描边/分割  | `#2C3556` / `#232C4A`           |
+| 选中底     | `#25305C`                       |
+| 主色文字态 | `#8FA2FF`（主色仍为 `#546FFD`） |
+
 ## 3. 排版
 
 | 用途           | 字号 | 字重                 | 行高 |
@@ -163,26 +179,27 @@ Ant Design Vue 4.2 中 `Layout`、`Menu` 可配置组件 token（`Table`、`Card
 | Menu   | `colorGroupTitle` / `colorSubItemBg`                                        | `#A6ADC4` / `transparent`             |
 | Menu   | `colorActiveBarWidth` / `colorActiveBarHeight` / `colorActiveBarBorderSize` | `3` / `16` / `0`                      |
 
-## 7. 落地
+## 7. 落地（已全局接入）
 
-实现见 `main-app/src/hooks/theme/presets/managementSystem.ts`，可直接套用：
+实现见 `main-app/src/hooks/theme/presets/managementSystem.ts`，并已作为 `themeCore` 的默认主题：
+
+- `globalThemeConfig` 初始化即合并 seed + light 中性层，布局、SuperTable、表单、表格等全局生效；
+- 明暗切换调用 `applyThemeMode(mode)`：整层替换 light / dark 中性 token，品牌种子与主题编辑器自定义保持不变；
+- 需要单独复用（例如给独立页面做主题预览）时：
 
 ```ts
-import { managementSystemTheme } from '@/hooks/theme/presets/managementSystem'
-import { setGlobalThemeConfig } from '@/hooks/theme/themeCore'
+import { getManagementSystemTheme } from '@/hooks/theme/presets/managementSystem'
 
-setGlobalThemeConfig(managementSystemTheme)
+const themeConfig = getManagementSystemTheme({ dark: false })
 ```
-
-或在主题编辑器/`App.vue` 的 `themeChange` 流程中作为可选预设接入。
 
 ## 8. 覆盖缺口与后续
 
-| 项              | 状态                                                       |
-| --------------- | ---------------------------------------------------------- |
-| 暗色模式        | 参考作品只做了浅色，未覆盖；如需暗色，需重新推导深色中性阶 |
-| 错误/危险语义色 | 设计稿未出现，`#E5484D` 为协调提案                         |
-| 成功绿          | 设计语言刻意不用绿色，统一用青色表达正向状态               |
-| 图表与状态色    | 已取主系列，缺完整 8~10 色扩展色阶                         |
-| 字重与字距      | 仅按界面比例推断，缺设计稿标注                             |
-| 动效            | 参考作品为静态稿，未提取；沿用 Antd 默认动效时长           |
+| 项              | 状态                                                                |
+| --------------- | ------------------------------------------------------------------- |
+| 暗色模式        | 参考作品未覆盖，已按 §2.5 蓝灰阶扩展到 `managementSystemDarkTokens` |
+| 错误/危险语义色 | 设计稿未出现，`#E5484D` 为协调提案                                  |
+| 成功绿          | 设计语言刻意不用绿色，统一用青色表达正向状态                        |
+| 图表与状态色    | 已取主系列，缺完整 8~10 色扩展色阶                                  |
+| 字重与字距      | 仅按界面比例推断，缺设计稿标注                                      |
+| 动效            | 参考作品为静态稿，未提取；沿用 Antd 默认动效时长                    |

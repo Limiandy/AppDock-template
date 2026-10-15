@@ -13,10 +13,10 @@
     @row-action="onRowAction"
   >
     <template #cell-permissions="{ record }">
-      <a-tag color="blue">{{ record.permissions?.length || 0 }} 项</a-tag>
+      <a-tag color="geekblue">{{ record.permissions?.length || 0 }} 项</a-tag>
     </template>
     <template #cell-status="{ record }">
-      <a-tag :color="record.status ? 'success' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
+      <a-tag :color="record.status ? 'cyan' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
     </template>
   </SuperTable>
 

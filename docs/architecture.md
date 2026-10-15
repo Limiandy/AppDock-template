@@ -183,8 +183,10 @@ SuperTable 的 toolbarActions[].visible 与 columns[].actions[].visible
 ## 10. 主题流
 
 ```text
-BasicLayout / ThemeEditor 选择主题
-  → eventBus.emit('themeChange', themeConfig, info)
+全局默认 = presets/managementSystem（seed + light 中性层）
+BasicLayout / ThemeEditor 切换主题
+  → applyThemeMode(mode)：整层替换 light/dark 中性 token（保留品牌种子与编辑器自定义）
+  → eventBus.emit('themeChange', 完整 themeConfig, info)
   → App.vue 监听并 setGlobalThemeConfig(...)（replaceToken / replaceComponents）
   → Antd ConfigProvider 响应式更新
   → InjectApply 把 token 写入 :root CSS 变量（color/font-size/background）
@@ -192,7 +194,8 @@ BasicLayout / ThemeEditor 选择主题
 ```
 
 `main-app/src/hooks/theme/themeCore.ts` 提供
-`globalThemeMode/globalThemeConfig/setGlobalThemeConfig/getAlgorithmsByMode/getModeByThemeConfig`。
+`globalThemeMode/globalThemeConfig/setGlobalThemeConfig/applyThemeMode/getAlgorithmsByMode/getModeByThemeConfig`。色板与 token 说明见
+`docs/design-tokens.md`。
 
 ## 11. common 的构建形态
 

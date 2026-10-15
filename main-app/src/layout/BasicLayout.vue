@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, ref, watch } from 'vue'
+import { computed, h, ref, toRaw, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
@@ -121,13 +121,7 @@ import BasicLayoutBreadcrumb from '@/layout/BasicLayoutBreadcrumb.vue'
 import { baseAppDevEntries, constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
-import {
-  getAlgorithmsByMode,
-  getModeByThemeConfig,
-  globalThemeMode,
-  setGlobalThemeConfig,
-  type ThemeMode,
-} from '@/hooks/theme/themeCore.ts'
+import { applyThemeMode, getModeByThemeConfig, globalThemeMode, type ThemeMode } from '@/hooks/theme/themeCore.ts'
 
 const { eventBus } = useEvent()
 const isDevelopment = import.meta.env.DEV
@@ -168,11 +162,8 @@ function getBaseAppRoutePaths(routes: any[], parentPath = ''): string[] {
  */
 const currentTheme = ref<ThemeMode>(globalThemeMode.value)
 watch(currentTheme, (theme) => {
-  const themeConfig = {
-    algorithm: getAlgorithmsByMode(theme),
-  }
-  setGlobalThemeConfig(themeConfig)
-  eventBus.emit('themeChange', themeConfig, { mode: theme, source: 'layout-theme-select' })
+  const themeConfig = applyThemeMode(theme)
+  eventBus.emit('themeChange', toRaw(themeConfig), { mode: theme, source: 'layout-theme-select' })
 })
 
 eventBus.on('themeChange', (themeConfig: ThemeConfig, info?: { mode?: ThemeMode; source?: string }) => {

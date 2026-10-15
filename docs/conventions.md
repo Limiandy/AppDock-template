@@ -136,12 +136,13 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 ```
 
 - 静态 `scoped less` 只写结构与布局；颜色、间距、圆角、动效必须来自 token。
-- 需要 CSS 变量时使用 Antd 注入的 `var(--ant-*)`（如 `IconsRender.vue`），不新增自定义全局变量。
+- 需要跨组件 CSS 变量时使用 `InjectApply` 写入的根变量或组件自身的 token 样式，不新增自定义全局色值。
 - 禁止使用 `:deep()` 大面积覆盖 `ant-*` 组件内部样式；优先使用组件 props、slots 与 token。
 - 主题模式：`light` / `dark` / `light,compact` / `dark,compact`；切换通过
   `eventBus.emit('themeChange')`，不要直接改 Antd 配置。
 - 图标统一 `<SvgIcon name="solar:xxx" />`；新增图标后执行 `node common/scripts/gen-icons.mjs` 并提交 `icons.json`。
 - 主题预设放在 `main-app/src/hooks/theme/presets/`，导出 `ThemeConfig`；新增预设同步 `docs/design-tokens.md`。
+- 全局默认视觉以 `presets/managementSystem.ts` 为准；不要另起一套色板，确需扩展时在预设中补层并同步 token 文档。
 
 ## 7. common 公共库约定
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="icons-render">
+  <div class="icons-render" :class="[scopeClass, className]">
     <section v-for="(value, key) in iconGroup" :key="key">
       <h3>{{ key }}</h3>
       <div class="icons-container">
@@ -23,8 +23,28 @@
 import { getIconsGrouped } from 'common/icons'
 import { ref } from 'vue'
 import { useGlobalStore } from '@/store/modules/global.ts'
+import useStyle from '@/hooks/style/useStyle.ts'
 
 const global = useGlobalStore()
+
+const [className, scopeClass] = useStyle('icons-render', (token) => ({
+  'margin': `${token.marginLG}px`,
+  'padding': `${token.padding}px`,
+  'borderRadius': `${token.borderRadiusLG}px`,
+  'backgroundColor': token.colorBgContainer,
+
+  '.icons-item': {
+    'transition': `background-color ${token.motionDurationMid} linear`,
+    '&:hover': {
+      backgroundColor: token.colorPrimaryBgHover,
+      borderRadius: `${token.borderRadiusSM}px`,
+    },
+  },
+
+  '.is-mask': {
+    color: token.colorTextLightSolid,
+  },
+}))
 
 const iconGroup = getIconsGrouped()
 const copiedIndex = ref<number | undefined>(undefined)
@@ -86,13 +106,6 @@ let handleClick = (fullName: string, dir: string, index: number) => {
 </script>
 
 <style lang="less" scoped>
-.icons-render {
-  margin: 24px;
-  padding: 16px;
-  border-radius: 16px;
-  background-color: #fff;
-}
-
 .icons-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -107,20 +120,13 @@ let handleClick = (fullName: string, dir: string, index: number) => {
   gap: 10px;
   padding: 16px;
   cursor: pointer;
-  transition: background-color 0.2s linear;
   overflow: hidden;
   position: relative;
-
-  &:hover {
-    background-color: var(--ant-color-primary-bg-hover);
-    border-radius: 6px;
-  }
 
   .is-mask {
     position: absolute;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.6);
-    color: var(--ant-color-primary-text);
     display: flex;
     justify-content: center;
     align-items: center;

@@ -12,7 +12,7 @@
     @delete="onDelete"
   >
     <template #cell-status="{ record }">
-      <a-tag :color="record.status ? 'success' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
+      <a-tag :color="record.status ? 'cyan' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
     </template>
   </SuperTable>
 </template>

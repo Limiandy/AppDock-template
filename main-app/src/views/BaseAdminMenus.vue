@@ -34,7 +34,7 @@
       <a-tag :color="getMenuTypeColor(record.type)">{{ record.type }}</a-tag>
     </template>
     <template #cell-status="{ record }">
-      <a-tag :color="record.status ? 'success' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
+      <a-tag :color="record.status ? 'cyan' : 'default'">{{ record.status ? '启用' : '停用' }}</a-tag>
     </template>
   </SuperTable>
 </template>
@@ -84,9 +84,9 @@ const parentOptions = [
   { label: '用户管理', value: '用户管理' },
 ]
 const typeColors: Record<MenuRecord['type'], string> = {
-  目录: 'blue',
+  目录: 'geekblue',
   菜单: 'purple',
-  按钮: 'orange',
+  按钮: 'volcano',
 }
 
 function getMenuTypeColor(type: MenuRecord['type']) {

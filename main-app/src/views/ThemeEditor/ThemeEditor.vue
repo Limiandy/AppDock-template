@@ -47,8 +47,8 @@ function handleGlobalThemeChange(themeConfig: ThemeConfig, info?: { mode?: Theme
     config: {
       ...editorTheme.value.config,
       ...toRaw(themeConfig),
-      token: toRaw(themeConfig.token ?? {}),
-      components: toRaw(themeConfig.components ?? {}),
+      token: { ...toRaw(globalThemeConfig.value.token ?? {}), ...toRaw(themeConfig.token ?? {}) },
+      components: { ...toRaw(globalThemeConfig.value.components ?? {}), ...toRaw(themeConfig.components ?? {}) },
     },
   }
 }
