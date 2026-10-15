@@ -20,6 +20,7 @@
       <a-menu
         class="basic-layout-sider__menu"
         mode="inline"
+        :inline-indent="16"
         :open-keys="openKeys"
         :selected-keys="selectedKeys"
         :items="menus"
@@ -187,8 +188,8 @@ function routesToMenu(routes: any[], parentPath = ''): MenuProps['items'] {
 const headerHeight = 36
 
 const menus = ref<MenuProps['items']>([])
-const siderWidth = 228
-const collapsedWidth = 80
+const siderWidth = 152
+const collapsedWidth = 64
 const loading = ref<boolean>(false)
 const hasMenus = computed(() => Boolean(menus.value?.length))
 
@@ -355,8 +356,19 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
           lineHeight: `${token.controlHeightLG}px`,
           marginInline: 0,
           marginBlock: `${token.marginXXS}px`,
+          // 参考稿侧栏仅 152px：压缩右内边距，保证中文菜单不截断
+          paddingInlineEnd: `${token.paddingSM}px`,
           borderRadius: `${token.borderRadius}px`,
           transition: `background-color ${token.motionDurationMid}, color ${token.motionDurationMid}`,
+        },
+
+        [`${rootCls}-menu-title-content`]: {
+          // antd 默认图标后间距 18px，窄侧栏下调小
+          marginInlineStart: `${token.marginXS}px`,
+        },
+
+        [`${rootCls}-menu-submenu-title`]: {
+          paddingInlineEnd: `${token.paddingSM}px`,
         },
 
         [`${rootCls}-menu-item-selected`]: {

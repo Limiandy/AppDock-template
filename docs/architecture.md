@@ -59,7 +59,7 @@ createApp(App)
 
 `BasicLayout.vue` 是与参考稿对齐的后台壳层：
 
-- 整高侧栏（228px，折叠 80px）：顶部 Logo 区 + 内联菜单（可滚动），选中项为浅蓝底（`colorPrimaryBg`）+ 主色文字；折叠状态持久化到
+- 整高侧栏（152px，折叠 64px）：顶部 Logo 区 + 内联菜单（可滚动），选中项为浅蓝底（`colorPrimaryBg`）+ 主色文字；折叠状态持久化到
   `localStorage`。
 - 顶栏（36px）：折叠按钮 + 面包屑（当前位置）+ 右侧控件（mock 权限身份切换、主题切换）。
 - 内容区：独立滚动，渲染 `router-view`（基座页面）或 `#qiankun-container`（qiankun 子应用）。
