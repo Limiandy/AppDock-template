@@ -62,7 +62,7 @@ onBeforeUnmount(() => {
 
 <style lang="less" scoped>
 .theme-editor-page {
-  height: calc(100vh - 64px);
+  height: 100%;
   overflow: auto;
 }
 

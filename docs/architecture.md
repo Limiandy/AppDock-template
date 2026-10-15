@@ -57,11 +57,12 @@ createApp(App)
 
 ## 3. 布局与渲染分流
 
-`BasicLayout.vue` 支持 `SideMenu | TopMenu | Mixed` 三种菜单模式（当前默认 `Mixed`），职责：
+`BasicLayout.vue` 是与参考稿对齐的后台壳层：
 
-- 顶栏：LOGO、一级菜单（Mixed/TopMenu）、mock 权限身份切换（仅 mock 模式）、主题切换。
-- 侧栏：二级菜单 + 折叠触发器（状态持久化到 `localStorage`）。
-- 内容区：`BasicLayoutBreadcrumb` +（`router-view` 或 qiankun 容器）。
+- 整高侧栏（228px，折叠 80px）：顶部 Logo 区 + 内联菜单（可滚动），选中项为浅蓝底（`colorPrimaryBg`）+ 主色文字；折叠状态持久化到
+  `localStorage`。
+- 顶栏（36px）：折叠按钮 + 面包屑（当前位置）+ 右侧控件（mock 权限身份切换、主题切换）。
+- 内容区：独立滚动，渲染 `router-view`（基座页面）或 `#qiankun-container`（qiankun 子应用）。
 
 主应用根据当前路径决定内容渲染方式：
 
@@ -74,8 +75,11 @@ const isBaseRoutePath = computed(() => baseAppRoutePaths.includes(route.fullPath
 
 面包屑数据来自 `route.matched` 中带 `meta.title` 的记录：
 
-- 仅当前页为纯文本，父级只有在“有真实组件”时才渲染为可点击链接（`component: null` 的父级保持文本，避免跳到空页面）。
+- 仅当前页为纯文本且加粗，父级只有在“有真实组件”时才渲染为可点击链接（`component: null`
+  的父级保持文本，避免跳到空页面）。
 - 不显示图标（按设计约定）。
+
+布局尺寸（顶栏 36px、侧栏 228/80px）由 `BasicLayout.vue` 固定，顶栏高度不再跟随 Antd 的 `controlHeight * 2` 推导。
 
 ## 4. 路由体系
 

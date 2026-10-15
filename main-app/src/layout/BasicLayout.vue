@@ -1,91 +1,76 @@
 <template>
   <a-layout v-loading="loading" :class="[scopeClass, className]">
-    <!-- Header -->
-    <a-layout-header class="basic-layout-header" :class="{ 'is-fixed': fixedHeader }">
-      <!-- Logo -->
-      <div class="basic-layout-header__logo">LOGO</div>
-
-      <!-- Top Menu -->
-      <div v-if="mode !== 'SideMenu'" class="basic-layout-header__menu">
-        <a-menu :selected-keys="activeTopKeys" mode="horizontal" :items="topMenus" @click="onTopMenuClick" />
+    <!-- Sider：整高，顶部 Logo + 菜单，跟随参考稿 -->
+    <a-layout-sider
+      v-if="hasMenus"
+      class="basic-layout-sider"
+      :collapsed="collapsed"
+      collapsible
+      :trigger="null"
+      :width="siderWidth"
+      :collapsed-width="collapsedWidth"
+      breakpoint="lg"
+      @breakpoint="onBreakpoint"
+      @collapse="onCollapse"
+    >
+      <div class="basic-layout-sider__logo" :class="{ 'is-collapsed': collapsed }">
+        <SvgIcon name="solar:widget-2-outline" />
+        <span v-if="!collapsed" class="basic-layout-sider__logo-text">LOGO</span>
       </div>
+      <a-menu
+        class="basic-layout-sider__menu"
+        mode="inline"
+        :open-keys="openKeys"
+        :selected-keys="selectedKeys"
+        :items="menus"
+        @click="onSideMenuClick"
+      />
+    </a-layout-sider>
 
-      <div class="basic-layout-header__controls">
-        <a-select
-          v-if="mockAccess.enabled"
-          v-model:value="selectedMockAccessProfileId"
-          aria-label="模拟权限身份"
-          :dropdown-style="{ zIndex: 9999 }"
-          style="width: 190px"
-        >
-          <a-select-option v-for="profile in mockAccess.profiles" :key="profile.id" :value="profile.id">
-            {{ profile.name }} · {{ profile.role }}
-          </a-select-option>
-        </a-select>
-        <a-select v-model:value="currentTheme" :dropdown-style="{ zIndex: 9999 }" style="width: 120px">
-          <a-select-option value="light">亮色</a-select-option>
-          <a-select-option value="dark">暗色</a-select-option>
-          <a-select-option value="light,compact">亮色+紧凑</a-select-option>
-          <a-select-option value="dark,compact">暗色+紧凑</a-select-option>
-        </a-select>
-      </div>
-    </a-layout-header>
-
-    <a-layout v-if="mode !== 'TopMenu'" class="basic-layout-body" :class="{ 'is-fixed-header': fixedHeader }">
-      <!-- Sider -->
-      <a-layout-sider
-        v-if="sideMenusComputed?.length"
-        class="basic-layout-sider"
-        :class="{ 'is-fixed': fixedSider }"
-        :collapsed="collapsed"
-        collapsible
-        :trigger="null"
-        breakpoint="lg"
-        @breakpoint="onBreakpoint"
-        @collapse="onCollapse"
-      >
-        <a-menu
-          class="basic-layout-sider__menu"
-          mode="inline"
-          :open-keys="openKeys"
-          :selected-keys="selectedKeys"
-          :items="sideMenusComputed"
-          @click="onSideMenuClick"
-        ></a-menu>
+    <a-layout class="basic-layout-body">
+      <!-- Header：折叠按钮 + 当前位置 + 右侧控件 -->
+      <a-layout-header class="basic-layout-header">
         <button
+          v-if="hasMenus"
           type="button"
-          class="basic-layout-sider__trigger"
-          :aria-label="collapsed ? '展开侧边栏' : '折叠侧边栏'"
-          :title="collapsed ? '展开侧边栏' : '折叠侧边栏'"
+          class="basic-layout-header__collapse"
+          :aria-label="collapsed ? '展开菜单' : '折叠菜单'"
+          :title="collapsed ? '展开菜单' : '折叠菜单'"
           @click="toggleCollapsed"
         >
-          <SvgIcon :name="collapsed ? 'solar:alt-arrow-right-outline' : 'solar:alt-arrow-left-outline'" />
+          <SvgIcon :name="collapsed ? 'solar:hamburger-menu-outline' : 'solar:sidebar-minimalistic-outline'" />
         </button>
-      </a-layout-sider>
-      <div v-if="fixedSider && sideMenusComputed?.length" style="height: 100%" :style="fixedSiderStyle"></div>
 
-      <!-- Content -->
-      <a-layout-content class="basic-layout-content">
         <BasicLayoutBreadcrumb />
-        <div class="basic-layout-content__body">
-          <router-view v-if="isBaseRoutePath" />
-          <div v-else id="qiankun-container" />
-        </div>
-      </a-layout-content>
-    </a-layout>
 
-    <!--    TopMenu   -->
-    <a-layout-content
-      v-if="mode === 'TopMenu'"
-      class="basic-layout-content"
-      :class="{ 'is-fixed-header': fixedHeader }"
-    >
-      <BasicLayoutBreadcrumb />
-      <div class="basic-layout-content__body">
+        <div class="basic-layout-header__controls">
+          <a-select
+            v-if="mockAccess.enabled"
+            v-model:value="selectedMockAccessProfileId"
+            aria-label="模拟权限身份"
+            size="small"
+            :dropdown-style="{ zIndex: 9999 }"
+            style="width: 190px"
+          >
+            <a-select-option v-for="profile in mockAccess.profiles" :key="profile.id" :value="profile.id">
+              {{ profile.name }} · {{ profile.role }}
+            </a-select-option>
+          </a-select>
+          <a-select v-model:value="currentTheme" size="small" :dropdown-style="{ zIndex: 9999 }" style="width: 120px">
+            <a-select-option value="light">亮色</a-select-option>
+            <a-select-option value="dark">暗色</a-select-option>
+            <a-select-option value="light,compact">亮色+紧凑</a-select-option>
+            <a-select-option value="dark,compact">暗色+紧凑</a-select-option>
+          </a-select>
+        </div>
+      </a-layout-header>
+
+      <!-- Content：独立滚动，基座页面与 qiankun 容器二选一 -->
+      <a-layout-content class="basic-layout-content">
         <router-view v-if="isBaseRoutePath" />
         <div v-else id="qiankun-container" />
-      </div>
-    </a-layout-content>
+      </a-layout-content>
+    </a-layout>
 
     <a-float-button-group
       v-if="isDevelopment"
@@ -198,13 +183,14 @@ function routesToMenu(routes: any[], parentPath = ''): MenuProps['items'] {
     })
 }
 
-const mode = ref<'TopMenu' | 'SideMenu' | 'Mixed'>('Mixed')
+/** 顶栏高度：Antd 默认由 controlHeight * 2 推导，这里按设计固定为 36px */
+const headerHeight = 36
+
 const menus = ref<MenuProps['items']>([])
-const fixedHeader = ref<boolean>(true)
-const fixedSider = ref<boolean>(true)
-const siderWidth = ref<number>(200)
-const collapsedWidth = ref<number>(80)
+const siderWidth = 228
+const collapsedWidth = 80
 const loading = ref<boolean>(false)
+const hasMenus = computed(() => Boolean(menus.value?.length))
 
 const baseAppRoutePaths = getBaseAppRoutePaths(asyncRoutes.concat(constantRoutes))
 const isBaseRoutePath = computed(() => {
@@ -213,16 +199,6 @@ const isBaseRoutePath = computed(() => {
 
 eventBus.on('microLoad', (val: boolean) => {
   loading.value = val
-})
-
-const fixedSiderStyle = computed(() => {
-  const width = collapsed.value ? collapsedWidth.value : siderWidth.value
-  return {
-    'flex': `0 0 ${width}px`,
-    'max-width': `${width}px`,
-    'min-width': `${width}px`,
-    'width': `${width}px`,
-  }
 })
 
 const route = useRoute()
@@ -250,52 +226,12 @@ function onBreakpoint(v: boolean) {
   collapsed.value = v
 }
 
-/* ------------------------
-   顶部菜单（一级）
-   区分是纯 TopMenu 还是 混合模式
-------------------------- */
-const topMenus = computed(() => {
-  if (mode.value === 'Mixed') {
-    return menus.value?.map((m: any) => ({
-      key: m!.key,
-      label: m!.label,
-      title: m!.title,
-      icon: m!.icon,
-    }))
-  }
-
-  if (mode.value === 'TopMenu') {
-    return menus.value
-  }
-  return []
-})
-
-const activeTopKeys = ref<string[]>(['index'] as string[])
-
-function onTopMenuClick({ key }: any) {
-  router.push(key)
-}
-
 function onBaseAppEntryClick(path: string) {
   router.push(path)
 }
 
 /* ------------------------
-   侧边菜单
-------------------------- */
-const sideMenusComputed = computed(() => {
-  if (mode.value === 'SideMenu') return menus.value
-
-  if (mode.value === 'Mixed') {
-    const top = menus.value!.find((m) => m!.key === activeTopKeys.value[0]) as any
-    return top?.children || []
-  }
-
-  return []
-})
-
-/* ------------------------
-   选中 / 展开状态
+   菜单选中 / 展开状态
 ------------------------- */
 const selectedKeys = ref<string[]>([])
 const openKeys = ref<string[]>([])
@@ -304,9 +240,6 @@ function onSideMenuClick({ key }: any) {
   router.push(key)
 }
 
-/* ------------------------
-   自动联动路由
-------------------------- */
 watch(
   () => route.fullPath,
   () => syncMenuByRoute(),
@@ -330,22 +263,9 @@ function getMenuKeys(path: string) {
 }
 
 function syncMenuByRoute() {
-  const path = route.path
-  const currentMode = mode.value
-  if (currentMode === 'TopMenu') {
-    activeTopKeys.value = [path]
-  }
-  if (currentMode === 'SideMenu') {
-    const { openKeys: opKeys, selectKeys: stKeys } = getMenuKeys(path)
-    openKeys.value = opKeys
-    selectedKeys.value = stKeys
-  }
-  if (currentMode === 'Mixed') {
-    const { openKeys: opKeys, selectKeys: stKeys } = getMenuKeys(path)
-    activeTopKeys.value = opKeys.splice(0, 1)
-    openKeys.value = opKeys
-    selectedKeys.value = stKeys
-  }
+  const { openKeys: opKeys, selectKeys: stKeys } = getMenuKeys(route.path)
+  openKeys.value = opKeys
+  selectedKeys.value = stKeys
 }
 
 /* ------------------------
@@ -354,12 +274,11 @@ function syncMenuByRoute() {
 const [className, scopeClass] = useStyle('basic-layout', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
   const siderPadding = token.paddingXS
-  const triggerSize = token.controlHeightLG
 
   return {
     'width': '100%',
     'height': '100%',
-    'overflow': 'auto',
+    'overflow': 'hidden',
 
     '.basic-layout-header': {
       background: token.colorBgContainer,
@@ -367,37 +286,62 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
       boxShadow: `inset 0 -1px 0 0 ${token.colorSplit}`,
     },
 
-    '.basic-layout-body': {
-      '&.is-fixed-header': {
-        paddingTop: `${48 + token.size}px`,
+    '.basic-layout-header__collapse': {
+      'display': 'inline-flex',
+      'flexShrink': 0,
+      'alignItems': 'center',
+      'justifyContent': 'center',
+      'width': `${token.controlHeightSM}px`,
+      'height': `${token.controlHeightSM}px`,
+      'color': token.colorIcon,
+      'background': 'transparent',
+      'border': 'none',
+      'borderRadius': `${token.borderRadius}px`,
+      'cursor': 'pointer',
+      'transition': `color ${token.motionDurationMid}, background-color ${token.motionDurationMid}`,
+
+      '&:hover': {
+        color: token.colorPrimary,
+        background: token.colorFillTertiary,
+      },
+
+      '&:focus-visible': {
+        outline: `${token.lineWidth}px ${token.lineType} ${token.colorPrimary}`,
+        outlineOffset: `${token.marginXXS}px`,
       },
     },
 
     '.basic-layout-sider': {
       'background': token.colorBgContainer,
       'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-      'boxShadow': token.boxShadowTertiary,
-      'transition': `background-color ${token.motionDurationMid}, border-color ${token.motionDurationMid}, box-shadow ${token.motionDurationMid}`,
-
-      '&.is-fixed': {
-        top: `${48 + token.size}px`,
-        bottom: 0,
-        height: `calc(100vh - ${48 + token.size}px)`,
-      },
 
       [`${rootCls}-layout-sider-children`]: {
         display: 'flex',
         flexDirection: 'column',
         minHeight: 0,
         height: '100%',
-        padding: `${siderPadding}px`,
         overflow: 'hidden',
-        borderRadius: `${token.borderRadiusLG}px`,
+      },
+
+      '.basic-layout-sider__logo': {
+        display: 'flex',
+        flexShrink: 0,
+        alignItems: 'center',
+        gap: `${token.marginXS}px`,
+        height: `${headerHeight}px`,
+        paddingInline: `${token.padding}px`,
+        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        color: token.colorText,
+        fontSize: `${token.fontSizeLG}px`,
+        fontWeight: token.fontWeightStrong,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
       },
 
       '.basic-layout-sider__menu': {
         flex: 1,
         minHeight: 0,
+        padding: `${siderPadding}px`,
         overflowY: 'auto',
       },
 
@@ -429,107 +373,46 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
           color: 'inherit',
         },
       },
-
-      [`${rootCls}-layout-sider-trigger`]: {
-        display: 'none',
-      },
-
-      '.basic-layout-sider__trigger': {
-        'display': 'inline-flex',
-        'flexShrink': 0,
-        'alignItems': 'center',
-        'justifyContent': 'center',
-        'width': '100%',
-        'height': `${triggerSize}px`,
-        'marginTop': `${token.marginXS}px`,
-        'lineHeight': `${triggerSize}px`,
-        'color': token.colorIcon,
-        'background': token.colorFillAlter,
-        'border': `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
-        'borderRadius': `${token.borderRadiusLG}px`,
-        'boxShadow': token.boxShadowTertiary,
-        'cursor': 'pointer',
-        'transition': `color ${token.motionDurationMid}, background-color ${token.motionDurationMid}, border-color ${token.motionDurationMid}, box-shadow ${token.motionDurationMid}`,
-
-        '&:hover': {
-          color: token.colorPrimary,
-          background: token.colorPrimaryBg,
-          borderColor: token.colorPrimaryBorder,
-          boxShadow: token.boxShadowSecondary,
-        },
-
-        '&:focus-visible': {
-          outline: `${token.lineWidth}px ${token.lineType} ${token.colorPrimary}`,
-          outlineOffset: `${token.marginXXS}px`,
-        },
-      },
     },
   }
 })
 </script>
 
 <style lang="less" scoped>
+/* sider */
+.basic-layout-sider {
+  height: 100%;
+}
+
+.basic-layout-sider__logo.is-collapsed {
+  justify-content: center;
+  padding-inline: 0;
+}
+
 /* header */
 .basic-layout-header {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-inline: 20px;
-  z-index: 100;
-
-  &.is-fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-  }
-}
-
-.basic-layout-header__logo {
-  width: 200px;
   flex-shrink: 0;
-}
-
-.basic-layout-header__menu {
-  flex: 1;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+  line-height: 36px;
+  padding-inline: 16px;
 }
 
 .basic-layout-header__controls {
   display: flex;
-  gap: 12px;
   flex-shrink: 0;
+  gap: 12px;
   margin-left: auto;
 }
 
-/* body layout */
-.basic-layout-body {
-  display: flex;
-}
-
-/* sider */
-.basic-layout-sider {
-  height: 100%;
-
-  &.is-fixed {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-  }
-}
-
-/* content */
+/* content：独立滚动区域 */
 .basic-layout-content {
-  display: flex;
-  flex-direction: column;
   flex: 1;
   min-height: 0;
   min-width: 0;
-}
-
-.basic-layout-content__body {
-  flex: 1;
-  min-height: 0;
+  overflow: auto;
 }
 
 #qiankun-container {

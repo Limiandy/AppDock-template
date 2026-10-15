@@ -283,7 +283,7 @@ Storage 的本地 bucket 已配置匿名读写策略，方便调试导入、导�
 - 已完成 SuperTable 的基础 CRUD 表单弹窗封装，并接入本地 Supabase `public.shelters` 接口做新增、编辑、详情、删除测试。
 - 本地 Supabase 已准备约 500 条 `public.shelters` 测试数据，供 SuperTable 分页、查询和 CRUD 调试。
 - 已根据 Ant Design Vue token 优化 SuperTable 外层 UI，减少硬编码样式并提升与主题编辑器的兼容性。
-- 已优化主布局侧栏样式，折叠按钮改为侧栏内部自定义触发器，并跟随 Ant Design token。
+- 主布局已对齐参考稿：整高侧栏（Logo + 菜单）、顶栏折叠按钮 + 面包屑 + 右侧控件、内容区独立滚动；顶栏高度 36px，侧栏 228px。
 - 已抽取全局 Codex skill：`vue-quality-config`，用于后续新 Vue 项目快速配置 ESLint、Prettier、TypeScript、`fix/check`
   命令。
 - 已默认使用 IndexedDB Mock 数据源，可在顶部切换模拟管理员/录入员/审计员，权限通过 `common` 的 `useAccess`

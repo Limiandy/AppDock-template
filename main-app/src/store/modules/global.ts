@@ -6,7 +6,7 @@ import type { ModalStaticFunctions } from 'ant-design-vue/es/modal/confirm'
 import type { NotificationInstance } from 'ant-design-vue/es/notification/interface'
 import { ref } from 'vue'
 
-const FIXED_HEADER_HEIGHT = 64
+const FIXED_HEADER_HEIGHT = 36
 const FEEDBACK_TOP_GAP = 16
 const feedbackTop = `${FIXED_HEADER_HEIGHT + FEEDBACK_TOP_GAP}px`
 

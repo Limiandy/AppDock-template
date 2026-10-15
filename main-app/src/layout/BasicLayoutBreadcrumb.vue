@@ -47,10 +47,10 @@ const [className, scopeClass] = useStyle('basic-layout-breadcrumb', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
-    'flexShrink': 0,
-    'padding': `${token.padding}px ${token.paddingLG}px ${token.paddingXS}px`,
     'fontSize': `${token.fontSize}px`,
-    'lineHeight': `${token.lineHeight}px`,
+    'lineHeight': token.lineHeight,
+    'whiteSpace': 'nowrap',
+    'overflow': 'hidden',
 
     '.basic-layout-breadcrumb__link': {
       'color': token.colorTextSecondary,
@@ -62,6 +62,7 @@ const [className, scopeClass] = useStyle('basic-layout-breadcrumb', (token) => {
 
     '.basic-layout-breadcrumb__current': {
       color: token.colorText,
+      fontWeight: token.fontWeightStrong,
     },
 
     [`${rootCls}-breadcrumb-separator`]: {
