@@ -27,6 +27,8 @@ test('creates an AppDock project from the packaged template', async () => {
     assert.match(workspace, /main-app/)
     assert.doesNotMatch(workspace, /packages\/\*/)
     assert.match(result.stdout, /pnpm install/)
+    await access(resolve(testRoot, 'demo-app/AGENTS.md'))
+    await access(resolve(testRoot, 'demo-app/docs/scaffold.md'))
     await access(resolve(testRoot, 'demo-app/main-app/.env.mock'))
     await access(resolve(testRoot, 'demo-app/main-app/.env.supabase'))
     const microApps = JSON.parse(await readFile(resolve(testRoot, 'demo-app/main-app/src/micro-apps.json'), 'utf8'))

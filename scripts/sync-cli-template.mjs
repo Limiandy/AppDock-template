@@ -8,10 +8,12 @@ const templateDir = join(packageDir, 'template')
 
 const templateEntries = [
   '.gitignore',
+  'AGENTS.md',
   'README.md',
   'application',
   'common',
   'docker',
+  'docs',
   'eslint.config.js',
   'main-app',
   'package.json',
