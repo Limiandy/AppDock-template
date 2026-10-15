@@ -6,14 +6,15 @@ AppDock 是一个基于 Vue 3、Vite、TypeScript、Ant Design Vue 和 qiankun �
 
 ## 文档导航
 
-| 文档                   | 内容                                                          |
-| ---------------------- | ------------------------------------------------------------- |
-| `AGENTS.md`            | Agent/贡献者入口契约：硬性规则、常用命令、验证责任、提交约定  |
-| `docs/architecture.md` | 架构与运行机制：启动链路、qiankun、路由同步、数据/权限/主题流 |
-| `docs/scaffold.md`     | 脚手架使用手册：命令、子应用增删、构建、本地 Supabase、CLI    |
-| `docs/conventions.md`  | 工程约定：命名、路由、SuperTable、权限、数据层、样式、生成物  |
-| `common/README.md`     | 共享库公开入口与 API                                          |
-| `PLANS.md`             | 计划与决策记录                                                |
+| 文档                    | 内容                                                             |
+| ----------------------- | ---------------------------------------------------------------- |
+| `AGENTS.md`             | Agent/贡献者入口契约：硬性规则、常用命令、验证责任、提交约定     |
+| `docs/architecture.md`  | 架构与运行机制：启动链路、qiankun、路由同步、数据/权限/主题流    |
+| `docs/scaffold.md`      | 脚手架使用手册：命令、子应用增删、构建、本地 Supabase、CLI       |
+| `docs/conventions.md`   | 工程约定：命名、路由、SuperTable、权限、数据层、样式、生成物     |
+| `docs/design-tokens.md` | 视觉 token 提炼：色板、排版、尺寸/圆角/阴影、Antd 映射与落地预设 |
+| `common/README.md`      | 共享库公开入口与 API                                             |
+| `PLANS.md`              | 计划与决策记录                                                   |
 
 ## 项目结构
 

@@ -141,6 +141,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 - 主题模式：`light` / `dark` / `light,compact` / `dark,compact`；切换通过
   `eventBus.emit('themeChange')`，不要直接改 Antd 配置。
 - 图标统一 `<SvgIcon name="solar:xxx" />`；新增图标后执行 `node common/scripts/gen-icons.mjs` 并提交 `icons.json`。
+- 主题预设放在 `main-app/src/hooks/theme/presets/`，导出 `ThemeConfig`；新增预设同步 `docs/design-tokens.md`。
 
 ## 7. common 公共库约定
 

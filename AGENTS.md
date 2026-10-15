@@ -25,9 +25,10 @@ docs/                     Agent 与工程文档
 | 2    | `docs/architecture.md`               | 运行机制：启动链路、qiankun、路由同步、数据/权限/主题流        |
 | 3    | `docs/scaffold.md`                   | 脚手架使用手册：命令、子应用增删、构建、本地 Supabase、CLI     |
 | 4    | `docs/conventions.md`                | 工程约定与任务配方：命名、路由、SuperTable、权限、数据层、样式 |
-| 5    | `common/README.md`                   | 共享库公开入口与 API                                           |
-| 6    | `packages/create-app-dock/README.md` | 初始化 CLI 用法                                                |
-| 7    | `PLANS.md`                           | 历史计划与状态，判断“为什么这样设计”时查阅                     |
+| 5    | `docs/design-tokens.md`              | 视觉 token：色板、排版、组件规则、Antd 映射与预设              |
+| 6    | `common/README.md`                   | 共享库公开入口与 API                                           |
+| 7    | `packages/create-app-dock/README.md` | 初始化 CLI 用法                                                |
+| 8    | `PLANS.md`                           | 历史计划与状态，判断“为什么这样设计”时查阅                     |
 
 ## 常用命令
 
@@ -84,6 +85,7 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 | 新增数据域        | 建 `main-app/src/data/<domain>/{types,index,mock,supabase}.ts`，导出 repository 接口与工厂                                    |
 | 调整权限          | 在 `main-app/src/access.ts` 的 mock profiles 增加权限；页面用 `can/canAny/canAll`                                             |
 | 调整主题/布局     | `main-app/src/layout/BasicLayout*.vue` + `main-app/src/hooks/theme/themeCore.ts`，样式走 token                                |
+| 套用/扩展视觉规范 | 见 `docs/design-tokens.md`；主题预设放 `main-app/src/hooks/theme/presets/`                                                    |
 
 ## 验证责任
 
