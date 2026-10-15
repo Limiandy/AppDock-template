@@ -16,7 +16,16 @@
 ## 主入口能力
 
 ```ts
-import { DirectivesPlugin, EventEmitter, registerQiankun, store, SuperTable, SvgIcon, WorkerPool } from 'common'
+import {
+  DirectivesPlugin,
+  EventEmitter,
+  registerQiankun,
+  store,
+  SuperTable,
+  SvgIcon,
+  useAccess,
+  WorkerPool,
+} from 'common'
 ```
 
 - `registerQiankun`：封装 `vite-plugin-qiankun` 生命周期，负责创建 Vue 应用、注册 Pinia、注册
@@ -28,6 +37,7 @@ import { DirectivesPlugin, EventEmitter, registerQiankun, store, SuperTable, Svg
 - `EventEmitter`：轻量事件总线，支持 `on`、`off`、`once`、`emit`、`clear`。
 - `WorkerPool`：Web Worker 池封装，支持按名称注册 worker 代码并提交任务。
 - `store`：公共 Pinia 实例。
+- `useAccess`：应用级权限集与权限判断。默认无权限，支持精确权限、`资源:*` 和全局 `*`。
 
 ## 子入口能力
 
@@ -37,9 +47,8 @@ import { DirectivesPlugin, EventEmitter, registerQiankun, store, SuperTable, Svg
 import { SuperTable, SvgIcon } from 'common/components'
 ```
 
-`SuperTable` 通过 `columns`、`searchFields`、`toolbarActions`、`rowActions` 等配置组织常见列表页能力。组件会透传 Ant
-Design Vue Table 的 attrs、`tableProps` 和常用 slots；如果需要定制单元格，优先使用 `cell-字段名` slot，也可以使用
-`bodyCell` slot。
+`SuperTable` 通过 `columns`、`searchFields`、`toolbarActions` 等配置组织常见列表页能力。组件会透传 Ant Design Vue
+Table 的 attrs、`tableProps` 和常用 slots；如果需要定制单元格，优先使用 `cell-字段名` slot，也可以使用 `bodyCell` slot。
 
 最小使用方式推荐把分页请求交给组件，页面只提供列、查询项和请求函数：
 
@@ -49,7 +58,9 @@ Design Vue Table 的 attrs、`tableProps` 和常用 slots；如果需要定制�
 </template>
 
 <script setup lang="ts">
-import { SuperTable } from 'common'
+import { SuperTable, useAccess } from 'common'
+
+const { can } = useAccess()
 import type { SuperTableRequestParams, SuperTableRequestResult } from 'common'
 
 async function getPage(params: SuperTableRequestParams): Promise<SuperTableRequestResult> {
@@ -70,6 +81,52 @@ async function getPage(params: SuperTableRequestParams): Promise<SuperTableReque
 如果后端分页字段不统一，可以用 `transformParams` 和 `transformResponse` 适配；静态数据场景继续使用
 `dataSource`、`loading`、`pagination` 即可。
 
+### 配置操作列
+
+操作列及其行操作按钮都在 `columns` 中配置。加入固定的 `key: 'action'` 后，可统一声明位置、宽度、固定方式、对齐方式和
+`actions`：
+
+```ts
+import { SuperTable } from 'common'
+
+const columns = [
+  { key: 'name', title: '名称', dataIndex: 'name', width: 200 },
+  {
+    key: 'action',
+    title: '操作',
+    width: 300,
+    fixed: 'right',
+    align: 'center',
+    actions: [
+      { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline', visible: () => can('shelter:update') },
+      { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
+      { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+      {
+        key: 'archive',
+        label: '归档',
+        icon: 'solar:archive-outline',
+        visible: (record) => record.type !== '室外',
+      },
+    ],
+  },
+]
+```
+
+未声明 `key: 'action'` 时，组件会在最后自动补一个包含编辑、详情、删除按钮的默认操作列。
+
+工具栏通过既有的 `toolbarActions` 配置权限，不需要为组件增加额外 props：
+
+```ts
+const toolbarActions = [
+  { key: 'create', label: '新建', type: 'primary', visible: () => can('shelter:create') },
+  { key: 'import', label: '导入', visible: () => can('shelter:import') },
+  { key: 'export', label: '导出', visible: () => can('shelter:export') },
+  { key: 'batchDelete', label: '批量删除', danger: true, visible: () => can('shelter:delete') },
+]
+```
+
+`visible` 可传函数；工具栏与行操作都会实时按其结果隐藏无权限项。
+
 ### helper
 
 ```ts
@@ -81,10 +138,23 @@ import { classNames, EventEmitter, setupStore, WorkerPool } from 'common/helper'
 ### hooks
 
 ```ts
-import { useWorkerPool } from 'common/hooks'
+import { useAccess, useWorkerPool } from 'common/hooks'
 ```
 
 `hooks` 用于放置 Vue 组合式 API。当前 `useWorkerPool` 返回共享的 `WorkerPool` 实例。
+
+`useAccess` 不依赖 SuperTable props。认证完成后写入权限集，随后页面和操作列可直接使用 `can`：
+
+```ts
+const { can, canAll, canAny, setPermissions } = useAccess()
+
+setPermissions(identity.permissions)
+can('shelter:update')
+canAny(['shelter:update', 'shelter:delete'])
+canAll(['shelter:read', 'shelter:update'])
+```
+
+未写入权限时所有权限判断均为 `false`；`setPermissions(['shelter:*'])` 可匹配 `shelter:` 前缀的权限，`*` 匹配全部权限。
 
 ### icons
 

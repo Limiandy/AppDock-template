@@ -90,6 +90,8 @@ export interface SuperTableAction<RecordType = SuperTableRecord> {
 
 export type SuperTableColumn<RecordType = SuperTableRecord> = TableColumnType<RecordType> & {
   key: string
+  /** 仅 key 为 action 时生效，用于配置该行的操作按钮。 */
+  actions?: SuperTableAction<RecordType>[]
 }
 
 export interface SuperTableImportConfig {

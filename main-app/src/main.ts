@@ -8,11 +8,13 @@ import 'ant-design-vue/dist/reset.css'
 import '@/styles/reset.less'
 import { SvgIcon, DirectivesPlugin } from 'common'
 
+import { initializeAccess } from './access.ts'
 import { registerMicroApp } from './registerMicroApp.ts'
 
 async function bootstrap() {
   const app = createApp(App)
 
+  initializeAccess()
   setupStore(app)
   setupRouter(app)
   app.component('SvgIcon', SvgIcon)

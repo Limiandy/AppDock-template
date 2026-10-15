@@ -10,8 +10,18 @@
         <a-menu :selected-keys="activeTopKeys" mode="horizontal" :items="topMenus" @click="onTopMenuClick" />
       </div>
 
-      <!-- Dropdown -->
-      <div class="basic-layout-header__dropdown">
+      <div class="basic-layout-header__controls">
+        <a-select
+          v-if="mockAccess.enabled"
+          v-model:value="selectedMockAccessProfileId"
+          aria-label="模拟权限身份"
+          :dropdown-style="{ zIndex: 9999 }"
+          style="width: 190px"
+        >
+          <a-select-option v-for="profile in mockAccess.profiles" :key="profile.id" :value="profile.id">
+            {{ profile.name }} · {{ profile.role }}
+          </a-select-option>
+        </a-select>
         <a-select v-model:value="currentTheme" :dropdown-style="{ zIndex: 9999 }" style="width: 120px">
           <a-select-option value="light">亮色</a-select-option>
           <a-select-option value="dark">暗色</a-select-option>
@@ -70,6 +80,27 @@
       <router-view v-if="isBaseRoutePath" />
       <div v-else id="qiankun-container" />
     </a-layout-content>
+
+    <a-float-button-group
+      v-if="isDevelopment"
+      trigger="click"
+      type="primary"
+      :style="{ insetInlineEnd: '24px', bottom: '24px' }"
+    >
+      <template #icon>
+        <SvgIcon name="solar:dumbbell-large-minimalistic-outline" />
+      </template>
+      <a-float-button
+        v-for="entry in baseAppDevEntries"
+        :key="entry.path"
+        :tooltip="entry.title"
+        @click="onBaseAppEntryClick(entry.path)"
+      >
+        <template #icon>
+          <SvgIcon :name="entry.icon" />
+        </template>
+      </a-float-button>
+    </a-float-button-group>
   </a-layout>
 </template>
 
@@ -79,7 +110,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { type ItemType, type MenuProps } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { SvgIcon } from 'common'
-import { constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
+import { useMockAccess } from '@/access.ts'
+import { baseAppDevEntries, constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
 import {
@@ -91,6 +123,12 @@ import {
 } from '@/hooks/theme/themeCore.ts'
 
 const { eventBus } = useEvent()
+const isDevelopment = import.meta.env.DEV
+const mockAccess = useMockAccess()
+const selectedMockAccessProfileId = computed({
+  get: () => mockAccess.currentProfile.value?.id,
+  set: (profileId: string) => mockAccess.selectProfile(profileId),
+})
 
 function normalizePath(parent: string, path: string): string {
   if (!parent) return path.startsWith('/') ? path : '/' + path
@@ -143,6 +181,7 @@ eventBus.on('themeChange', (themeConfig: ThemeConfig, info?: { mode?: ThemeMode;
 function routesToMenu(routes: any[], parentPath = ''): MenuProps['items'] {
   return routes
     .filter((r) => r.path !== '/' && r.path !== '/:catchAll(.*)') // 可过滤根路由和 404
+    .filter((r) => !r.meta?.hideInMenu)
     .filter((r) => r.path.split('/').filter(Boolean).length === 1)
     .map((r) => {
       const fullPath = normalizePath(parentPath, r.path)
@@ -237,6 +276,10 @@ const activeTopKeys = ref<string[]>(['index'] as string[])
 
 function onTopMenuClick({ key }: any) {
   router.push(key)
+}
+
+function onBaseAppEntryClick(path: string) {
+  router.push(path)
 }
 
 /* ------------------------
@@ -454,7 +497,9 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
   flex: 1;
 }
 
-.basic-layout-header__dropdown {
+.basic-layout-header__controls {
+  display: flex;
+  gap: 12px;
   flex-shrink: 0;
   margin-left: auto;
 }

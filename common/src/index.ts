@@ -7,7 +7,9 @@ import DirectivesPlugin from './directives/index'
 import EventEmitter from './helper/EventEmitter'
 import { store } from './helper'
 import { WorkerPool } from './helper'
+import { useAccess } from './hooks'
 
 export * from './components/SuperTable'
 
-export { registerQiankun, SvgIcon, SuperTable, DirectivesPlugin, EventEmitter, store, WorkerPool }
+export { registerQiankun, SvgIcon, SuperTable, DirectivesPlugin, EventEmitter, store, useAccess, WorkerPool }
+export type { AccessPermission } from './hooks'

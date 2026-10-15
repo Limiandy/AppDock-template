@@ -3,6 +3,8 @@
     <SuperTable
       ref="superTableRef"
       :columns="columns"
+      :toolbar-actions="toolbarActions"
+      :show-selection="can('shelter:delete')"
       :search-fields="searchFields"
       :form-config="formConfig"
       :request="getShelterPage"
@@ -17,8 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import { SuperTable } from 'common'
+import { SuperTable, useAccess } from 'common'
 import type {
+  SuperTableAction,
   SuperTableColumn,
   SuperTableFormConfig,
   SuperTableRecord,
@@ -27,20 +30,12 @@ import type {
   SuperTableSearchFields,
 } from 'common'
 import { ref } from 'vue'
+import { shelterRepository, toShelterInput, type ShelterRecord } from '@/data/shelters'
 import { useGlobalStore } from '@/store/modules/global.ts'
-
-interface ShelterRecord {
-  id: string
-  shelterName: string
-  shelterCode: string
-  type: string
-  totalArea: number
-  contact: string
-  phone: string
-}
 
 const global = useGlobalStore()
 const superTableRef = ref<InstanceType<typeof SuperTable>>()
+const { can } = useAccess()
 
 const searchFields: SuperTableSearchFields = {
   fields: [
@@ -62,12 +57,49 @@ const searchFields: SuperTableSearchFields = {
 }
 
 const columns: SuperTableColumn[] = [
-  { key: 'shelterName', title: '应急避难所名称', dataIndex: 'shelterName', width: 200 },
-  { key: 'shelterCode', title: '应急避难所编号', dataIndex: 'shelterCode', width: 200 },
-  { key: 'type', title: '类型', dataIndex: 'type', width: 140 },
-  { key: 'totalArea', title: '总面积', dataIndex: 'totalArea', width: 140 },
-  { key: 'contact', title: '人防工作联系人', dataIndex: 'contact', width: 190 },
-  { key: 'phone', title: '人防工作联系电话', dataIndex: 'phone', width: 190 },
+  { key: 'shelterName', title: '应急避难所名称', dataIndex: 'shelterName', width: 200, align: 'center' },
+  { key: 'shelterCode', title: '应急避难所编号', dataIndex: 'shelterCode', width: 140, align: 'center' },
+  { key: 'type', title: '类型', dataIndex: 'type', width: 80, align: 'center' },
+  { key: 'totalArea', title: '总面积', dataIndex: 'totalArea', width: 120, align: 'center' },
+  { key: 'contact', title: '人防工作联系人', dataIndex: 'contact', width: 120, align: 'center' },
+  { key: 'phone', title: '人防工作联系电话', dataIndex: 'phone', width: 180, align: 'center' },
+  {
+    key: 'action',
+    title: '操作',
+    width: 180,
+    fixed: 'right',
+    align: 'center',
+    actions: [
+      { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline', visible: () => can('shelter:update') },
+      { key: 'detail', label: '详情', icon: 'solar:file-text-outline', visible: () => can('shelter:read') },
+      {
+        key: 'delete',
+        label: '删除',
+        danger: true,
+        icon: 'solar:trash-bin-trash-outline',
+        visible: () => can('shelter:delete'),
+      },
+    ],
+  },
+]
+
+const toolbarActions: SuperTableAction[] = [
+  {
+    key: 'create',
+    label: '新建',
+    type: 'primary',
+    icon: 'solar:add-circle-outline',
+    visible: () => can('shelter:create'),
+  },
+  { key: 'import', label: '导入', icon: 'solar:upload-outline', visible: () => can('shelter:import') },
+  { key: 'export', label: '导出', icon: 'solar:download-outline', visible: () => can('shelter:export') },
+  {
+    key: 'batchDelete',
+    label: '批量删除',
+    danger: true,
+    icon: 'solar:trash-bin-trash-outline',
+    visible: () => can('shelter:delete'),
+  },
 ]
 
 const formConfig: SuperTableFormConfig = {
@@ -134,115 +166,24 @@ function notice(content: string) {
   global.message.info(content)
 }
 
-function appendLikeFilter(searchParams: URLSearchParams, field: string, value: unknown) {
-  if (!value) return
-  searchParams.set(field, `ilike.*${String(value)}*`)
-}
-
-function getDateValue(value: unknown) {
-  if (!value) return ''
-  if (typeof value === 'object' && 'toISOString' in value && typeof value.toISOString === 'function') {
-    return value.toISOString()
-  }
-  return String(value)
-}
-
-function appendDateRangeFilter(searchParams: URLSearchParams, field: string, value: unknown) {
-  if (!Array.isArray(value)) return
-  const [start, end] = value
-  if (start) searchParams.append(field, `gte.${getDateValue(start)}`)
-  if (end) searchParams.append(field, `lte.${getDateValue(end)}`)
-}
-
-async function getShelterPage(params: SuperTableRequestParams): Promise<SuperTableRequestResult<ShelterRecord>> {
-  const { current, pageSize, search } = params
-  const from = (current - 1) * pageSize
-  const to = from + pageSize - 1
-  const searchParams = new URLSearchParams({
-    select: '*',
-    order: 'created_at.desc',
-    limit: String(pageSize),
-    offset: String(from),
-  })
-
-  appendLikeFilter(searchParams, 'shelter_name', search.shelterName)
-  appendLikeFilter(searchParams, 'shelter_code', search.shelterCode)
-  appendLikeFilter(searchParams, 'type', search.type)
-  appendLikeFilter(searchParams, 'contact', search.contact)
-  appendLikeFilter(searchParams, 'phone', search.phone)
-  appendDateRangeFilter(searchParams, 'created_at', search.createdAt)
-
-  const response = await fetch(`/supabase/rest/shelters?${searchParams.toString()}`, {
-    headers: {
-      Prefer: 'count=exact',
-      Range: `${from}-${to}`,
-    },
-  })
-  if (!response.ok) {
-    throw new Error(`查询失败：${response.status} ${response.statusText}`)
-  }
-
-  const rows = await response.json()
-  return {
-    list: rows.map((row: any) => ({
-      id: row.id,
-      shelterName: row.shelter_name,
-      shelterCode: row.shelter_code,
-      type: row.type,
-      totalArea: row.total_area,
-      contact: row.contact,
-      phone: row.phone,
-    })),
-    total: Number(response.headers.get('content-range')?.split('/')?.[1] || rows.length),
-  }
-}
-
-function toShelterPayload(values: SuperTableRecord) {
-  return {
-    shelter_name: values.shelterName,
-    shelter_code: values.shelterCode,
-    type: values.type,
-    total_area: values.totalArea,
-    contact: values.contact,
-    phone: values.phone,
-  }
-}
-
-async function requestShelter(url: string, init: RequestInit) {
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
-      ...init.headers,
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(`操作失败：${response.status} ${await response.text()}`)
-  }
-
-  return response
+function getShelterPage(params: SuperTableRequestParams): Promise<SuperTableRequestResult<ShelterRecord>> {
+  return shelterRepository.list(params)
 }
 
 async function submitShelterForm(
   values: SuperTableRecord,
   context: { mode: 'create' | 'edit'; record?: SuperTableRecord },
 ) {
+  const input = toShelterInput(values)
+
   if (context.mode === 'create') {
-    await requestShelter('/supabase/rest/shelters', {
-      method: 'POST',
-      body: JSON.stringify(toShelterPayload(values)),
-    })
+    await shelterRepository.create(input)
     global.message.success('新建成功')
     return
   }
 
   if (!context.record?.id) return
-  await requestShelter(`/supabase/rest/shelters?id=eq.${context.record.id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(toShelterPayload(values)),
-  })
+  await shelterRepository.update(String(context.record.id), input)
   global.message.success('保存成功')
 }
 
@@ -260,10 +201,7 @@ function getShelterName(record: SuperTableRecord) {
 
 async function deleteShelters(ids: (string | number)[]) {
   if (!ids.length) return
-  const params = ids.map((id) => String(id)).join(',')
-  await requestShelter(`/supabase/rest/shelters?id=in.(${params})`, {
-    method: 'DELETE',
-  })
+  await shelterRepository.remove(ids.map(String))
   global.message.success(`已删除 ${ids.length} 条`)
   await superTableRef.value?.reload()
 }

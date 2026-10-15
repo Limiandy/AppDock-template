@@ -6,6 +6,7 @@
       :model="innerSearchModel"
       :colon="false"
       :layout="searchLabelVisible ? 'vertical' : 'horizontal'"
+      size="middle"
     >
       <a-row :gutter="[24, 12]" align="middle">
         <a-col v-for="field in visibleSearchFields" :key="field.field" :xs="24" :md="12" :xl="6">
@@ -21,7 +22,7 @@
               v-model:value="innerSearchModel[field.field]"
               allow-clear
               :placeholder="getPlaceholder(field)"
-              size="large"
+              size="middle"
               v-bind="field.props"
             >
               <a-select-option
@@ -38,7 +39,7 @@
               v-model:value="innerSearchModel[field.field]"
               class="super-table__control"
               :placeholder="getRangePlaceholder(field)"
-              size="large"
+              size="middle"
               v-bind="field.props"
             />
             <a-date-picker
@@ -46,6 +47,7 @@
               v-model:value="innerSearchModel[field.field]"
               class="super-table__control"
               :placeholder="getPlaceholder(field)"
+              size="middle"
               v-bind="field.props"
             />
             <a-input-number
@@ -53,7 +55,7 @@
               v-model:value="innerSearchModel[field.field]"
               class="super-table__control"
               :placeholder="getPlaceholder(field)"
-              size="large"
+              size="middle"
               v-bind="field.props"
             />
             <a-input
@@ -61,7 +63,7 @@
               v-model:value="innerSearchModel[field.field]"
               allow-clear
               :placeholder="getPlaceholder(field)"
-              size="large"
+              size="middle"
               v-bind="field.props"
               @press-enter="onSearch"
             />
@@ -71,13 +73,13 @@
         <a-col :flex="1">
           <div class="super-table__search-actions">
             <a-space :size="12">
-              <a-button type="primary" size="large" :loading="searchLoading" @click="onSearch">
+              <a-button type="primary" size="middle" :loading="searchLoading" @click="onSearch">
                 <template #icon>
                   <SvgIcon name="solar:magnifer-outline" />
                 </template>
                 搜索
               </a-button>
-              <a-button size="large" @click="onReset">
+              <a-button size="middle" @click="onReset">
                 <template #icon>
                   <SvgIcon name="solar:refresh-outline" />
                 </template>
@@ -102,7 +104,7 @@
 
     <div v-if="resolvedToolbarActions.length || $slots.toolbar" class="super-table__toolbar">
       <slot name="toolbar" :selected-row-keys="selectedKeys" :selected-rows="selectedRows" />
-      <a-space v-if="resolvedToolbarActions.length" :size="12" wrap>
+      <div v-if="resolvedToolbarActions.length" class="super-table__toolbar-actions">
         <a-button
           v-for="action in resolvedToolbarActions"
           :key="action.key"
@@ -118,7 +120,7 @@
           </template>
           {{ action.label }}
         </a-button>
-      </a-space>
+      </div>
     </div>
 
     <a-table
@@ -260,7 +262,7 @@ defineOptions({
 })
 
 const indexColumnKey = '__super_table_index__'
-const actionColumnKey = '__super_table_action__'
+const actionColumnKey = 'action'
 const internalSlotPrefixes = ['cell-', 'search-', 'form-']
 const internalSlotNames = new Set(['toolbar', 'operation', 'bodyCell'])
 const { useToken } = theme
@@ -287,7 +289,6 @@ const props = withDefaults(
     tableProps?: Partial<TableProps>
     pagination?: false | SuperTablePaginationConfig
     toolbarActions?: SuperTableAction[]
-    rowActions?: SuperTableAction[]
     importConfig?: SuperTableImportConfig
     formConfig?: SuperTableFormConfig
   }>(),
@@ -310,7 +311,6 @@ const props = withDefaults(
     tableProps: () => ({}),
     pagination: undefined,
     toolbarActions: undefined,
-    rowActions: undefined,
     importConfig: () => ({}),
     formConfig: undefined,
   },
@@ -393,7 +393,7 @@ const superTableStyle = computed(
       '--super-table-padding-md': `${token.value.paddingMD}px`,
       '--super-table-gap': `${token.value.marginMD}px`,
       '--super-table-motion': token.value.motionDurationMid,
-      '--super-table-toolbar-min-height': `${token.value.controlHeightLG + token.value.paddingSM * 2}px`,
+      '--super-table-toolbar-min-height': `${token.value.controlHeight + token.value.paddingSM * 2}px`,
     }) as CSSProperties,
 )
 
@@ -481,24 +481,47 @@ const resolvedToolbarActions = computed<SuperTableAction[]>(() => {
     { key: 'batchDelete', label: '批量删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
   ]
 
-  return actions.filter((action) => action.visible !== false)
+  return actions.filter((action) => getActionVisible(action))
 })
 
+const defaultRowActions: SuperTableAction[] = [
+  { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+  { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
+  { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+]
+
+const configuredActionColumn = computed(() => props.columns.find((column) => column.key === actionColumnKey))
+
 const resolvedRowActions = computed<SuperTableAction[]>(() => {
-  return (
-    props.rowActions ?? [
-      { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
-      { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
-      { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
-    ]
-  )
+  return configuredActionColumn.value?.actions ?? defaultRowActions
+})
+
+const hasVisibleRowActions = computed(() => {
+  return resolvedDataSource.value.some((record) => getVisibleRowActions(record).length > 0)
 })
 
 const resolvedColumns = computed(() => {
-  const columns: SuperTableColumn[] = props.columns.map((column) => ({
-    ellipsis: true,
-    ...column,
-  }))
+  const hasConfiguredActionColumn = Boolean(configuredActionColumn.value)
+  const columns: SuperTableColumn[] = props.columns
+    .filter((column) => column.key !== actionColumnKey || hasVisibleRowActions.value)
+    .map((column) => {
+      if (column.key === actionColumnKey) {
+        const actionColumn = { ...column }
+        delete actionColumn.actions
+        return {
+          ellipsis: true,
+          title: '操作',
+          width: 260,
+          fixed: 'right',
+          ...actionColumn,
+        }
+      }
+
+      return {
+        ellipsis: true,
+        ...column,
+      }
+    })
 
   if (props.showIndex) {
     columns.unshift({
@@ -509,7 +532,7 @@ const resolvedColumns = computed(() => {
     })
   }
 
-  if (resolvedRowActions.value.length) {
+  if (hasVisibleRowActions.value && !hasConfiguredActionColumn) {
     columns.push({
       key: actionColumnKey,
       title: '操作',
@@ -545,6 +568,10 @@ const paginationConfig = computed(() => {
 const mergedTableProps = computed(() => ({
   ...attrs,
   ...props.tableProps,
+  scroll: {
+    x: 'max-content',
+    ...props.tableProps.scroll,
+  },
 }))
 
 const rowSelectionConfig = computed(() => {
@@ -940,11 +967,18 @@ defineExpose({
   align-items: center;
   gap: var(--super-table-padding-sm);
   min-height: var(--super-table-toolbar-min-height);
-  padding: var(--super-table-padding-md) var(--super-table-padding);
+  padding: var(--super-table-padding-sm) var(--super-table-padding);
   background: var(--super-table-panel-bg);
   border: var(--super-table-line-width) var(--super-table-line-type) var(--super-table-panel-border);
   border-radius: var(--super-table-radius);
   box-shadow: var(--super-table-shadow);
+}
+
+.super-table__toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--super-table-padding-sm);
 }
 
 .super-table__table {
