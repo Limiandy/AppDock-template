@@ -192,8 +192,7 @@ const companyRoutes: RouteRecordRaw[] = [
       {
         path: 'org',
         name: 'CompanyOrg',
-        component: () => import('@/views/SimpleListPage.vue'),
-        props: { configKey: 'companyOrg' },
+        component: () => import('@/views/company/CompanyOrg.vue'),
         meta: { title: '组织架构' },
       },
       {

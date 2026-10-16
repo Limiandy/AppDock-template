@@ -197,35 +197,15 @@ export const listPageConfigs: Partial<Record<DatasetKey, ListPageConfig>> = {
     },
     toolbarActions: [{ key: 'create', label: '创建对接会', type: 'primary', icon: 'solar:add-circle-outline' }],
   },
-  companyOrg: {
-    title: '组织架构',
-    columns: [
-      { key: 'name', title: '部门/组织', dataIndex: 'name', width: 200 },
-      { key: 'parent', title: '上级组织', dataIndex: 'parent', width: 160 },
-      { key: 'owner', title: '负责人', dataIndex: 'owner', width: 120 },
-      { key: 'members', title: '成员数', dataIndex: 'members', width: 100, align: 'right' },
-      {
-        key: 'action',
-        title: '操作',
-        width: 150,
-        fixed: 'right',
-        align: 'center',
-        actions: [
-          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
-          { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
-        ],
-      },
-    ],
-    searchFields: { fields: [{ field: 'name', label: '部门名称', placeholder: '请输入部门名称' }] },
-    toolbarActions: [{ key: 'create', label: '新增组织', type: 'primary', icon: 'solar:add-circle-outline' }],
-  },
   companyProjects: {
     title: '项目设置',
     columns: [
-      { key: 'name', title: '项目名称', dataIndex: 'name', width: 240 },
-      { key: 'region', title: '所在城市', dataIndex: 'region', width: 120 },
-      { key: 'type', title: '项目类型', dataIndex: 'type', width: 140 },
-      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      { key: 'name', title: '项目名称', dataIndex: 'name', width: 220 },
+      { key: 'company', title: '所属公司', dataIndex: 'company', width: 240 },
+      { key: 'owner', title: '项目负责人', dataIndex: 'owner', width: 130 },
+      { key: 'creator', title: '创建人', dataIndex: 'creator', width: 120 },
+      { key: 'stage', title: '项目阶段', dataIndex: 'stage', width: 120, align: 'center' },
+      { key: 'publishedAt', title: '发布时间', dataIndex: 'publishedAt', width: 160 },
       {
         key: 'action',
         title: '操作',
@@ -238,8 +218,16 @@ export const listPageConfigs: Partial<Record<DatasetKey, ListPageConfig>> = {
         ],
       },
     ],
-    searchFields: { fields: [{ field: 'name', label: '项目名称', placeholder: '请输入项目名称' }] },
-    toolbarActions: [{ key: 'create', label: '新增项目', type: 'primary', icon: 'solar:add-circle-outline' }],
+    searchFields: {
+      fields: [
+        { field: 'name', label: '项目名称', placeholder: '搜索项目名称' },
+        { field: 'company', label: '所属公司', placeholder: '请选择所属公司' },
+      ],
+    },
+    toolbarActions: [
+      { key: 'batchDelete', label: '批量删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+      { key: 'create', label: '新增项目', type: 'primary', icon: 'solar:add-circle-outline' },
+    ],
   },
   companyZone: {
     title: '企业专区',

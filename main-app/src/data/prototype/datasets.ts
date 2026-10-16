@@ -93,17 +93,14 @@ export interface SourcingRecord extends SuperTableRecord {
   status: '进行中' | '已结束'
 }
 
-export interface CompanyOrgRecord extends SuperTableRecord {
-  id: string
-  name: string
-  parent: string
-  owner: string
-  members: number
-}
-
 export interface CompanyProjectRecord extends SuperTableRecord {
   id: string
   name: string
+  company: string
+  owner: string
+  creator: string
+  stage: string
+  publishedAt: string
   region: string
   type: string
   status: '建设中' | '已竣工'
@@ -648,16 +645,214 @@ export const sourcing: SourcingRecord[] = [
   },
 ]
 
-export const companyOrg: CompanyOrgRecord[] = [
-  { id: 'org-001', name: '招采中心', parent: '公司总部', owner: '尹先森', members: 12 },
-  { id: 'org-002', name: '成本管理部', parent: '公司总部', owner: '吴兴江', members: 8 },
-  { id: 'org-003', name: '工程管理部', parent: '公司总部', owner: '李工', members: 21 },
+export interface OrgUserRecord extends SuperTableRecord {
+  id: string
+  type: 'user'
+  name: string
+  company: string
+  position: string
+  phone: string
+}
+
+export interface OrgNodeRecord extends SuperTableRecord {
+  id: string
+  type: 'org'
+  name: string
+  children?: OrgNodeRecord[] | OrgUserRecord[]
+}
+
+export const companyOrgTree: OrgNodeRecord[] = [
+  {
+    id: 'org-root',
+    type: 'org',
+    name: '明源地产广东区域公司',
+    children: [
+      {
+        id: 'org-001',
+        type: 'org',
+        name: '明源中欧国际采购有限公司',
+        children: [
+          {
+            id: 'u-001',
+            type: 'user',
+            name: '周茂银',
+            company: '明源中欧国际采购有限公司',
+            position: '总经理',
+            phone: '15900000032',
+          },
+          {
+            id: 'u-002',
+            type: 'user',
+            name: '雷建敏',
+            company: '明源中欧国际采购有限公司',
+            position: '招标总监',
+            phone: '15900000033',
+          },
+          {
+            id: 'u-003',
+            type: 'user',
+            name: '余章华',
+            company: '明源中欧国际采购有限公司',
+            position: '采购主管',
+            phone: '15900000035',
+          },
+        ],
+      },
+      {
+        id: 'org-002',
+        type: 'org',
+        name: '明源中城集团有限公司',
+        children: [
+          {
+            id: 'u-004',
+            type: 'user',
+            name: '邢老宝',
+            company: '明源中城集团有限公司',
+            position: '招标总监',
+            phone: '15900000036',
+          },
+          {
+            id: 'u-005',
+            type: 'user',
+            name: '吴光进',
+            company: '明源中城集团有限公司',
+            position: '产品经理',
+            phone: '15900000037',
+          },
+          {
+            id: 'u-006',
+            type: 'user',
+            name: '张丽',
+            company: '明源中城集团有限公司',
+            position: '开发工程师',
+            phone: '15900000038',
+          },
+        ],
+      },
+      {
+        id: 'org-003',
+        type: 'org',
+        name: '浙江三雄门业有限公司',
+        children: [
+          {
+            id: 'u-007',
+            type: 'user',
+            name: '曾立龙',
+            company: '浙江三雄门业有限公司',
+            position: '成本管理',
+            phone: '15900000039',
+          },
+          {
+            id: 'u-008',
+            type: 'user',
+            name: '田海兰',
+            company: '浙江三雄门业有限公司',
+            position: '采购员',
+            phone: '15900000040',
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export const companyProjects: CompanyProjectRecord[] = [
-  { id: 'prj-001', name: '明源云谷产业园', region: '深圳', type: '产业园区', status: '建设中' },
-  { id: 'prj-002', name: '广州智慧城公寓', region: '广州', type: '住宅', status: '建设中' },
-  { id: 'prj-003', name: '长沙梅溪湖商业综合体', region: '长沙', type: '商业', status: '已竣工' },
+  {
+    id: 'prj-001',
+    name: '天津-津半岛',
+    company: '明源云采购科技有限公司',
+    owner: '熊雅莹',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '天津',
+    type: '产业园区',
+    status: '建设中',
+  },
+  {
+    id: 'prj-002',
+    name: '融创-君澜',
+    company: '阿里巴巴本地生活',
+    owner: '王晓光',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '杭州',
+    type: '住宅',
+    status: '建设中',
+  },
+  {
+    id: 'prj-003',
+    name: '融创-长滩壹号',
+    company: '广东东鹏控股股份有限公司',
+    owner: '周士胜',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '广州',
+    type: '住宅',
+    status: '建设中',
+  },
+  {
+    id: 'prj-004',
+    name: '北京紫禁壹号院',
+    company: '浙江三雄门业有限公司',
+    owner: '张承才',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '北京',
+    type: '住宅',
+    status: '已竣工',
+  },
+  {
+    id: 'prj-005',
+    name: '深圳湾一号',
+    company: '广东顶固集创家居股份有限公司',
+    owner: '李元',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '深圳',
+    type: '商业',
+    status: '建设中',
+  },
+  {
+    id: 'prj-006',
+    name: '宝安中心壹方城',
+    company: '贝朗（中国）卫浴有限公司',
+    owner: '许理莱',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '深圳',
+    type: '商业',
+    status: '已竣工',
+  },
+  {
+    id: 'prj-007',
+    name: '邵阳恒大未来城',
+    company: '青岛鼎信通讯消防安全有限公司',
+    owner: '任国',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '邵阳',
+    type: '住宅',
+    status: '建设中',
+  },
+  {
+    id: 'prj-008',
+    name: '长沙梅溪湖商业综合体',
+    company: '明源云采购科技有限公司',
+    owner: '尹先森',
+    creator: '招标总监',
+    stage: '已立项',
+    publishedAt: '2014-11-06 11:32',
+    region: '长沙',
+    type: '商业',
+    status: '已竣工',
+  },
 ]
 
 export const companyZone: CompanyZoneRecord[] = [
@@ -917,7 +1112,6 @@ export const datasets = {
   tenderDrafts: tenders.slice(0, 2),
   meetingList: meetings,
   messageCenter,
-  companyOrg,
   companyProjects,
   companyZone,
   companyAccounts,
