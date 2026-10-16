@@ -39,7 +39,7 @@ export default defineConfig(({ mode, command }) => {
     simpleHtmlPlugin({
       inject: {
         data: {
-          title: `Vue 游乐场`,
+          title: `AppDock`,
         },
         /*tags: [
           {

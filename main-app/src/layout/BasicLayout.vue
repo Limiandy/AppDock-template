@@ -14,8 +14,8 @@
       @collapse="onCollapse"
     >
       <div class="basic-layout-sider__logo" :class="{ 'is-collapsed': collapsed }">
-        <SvgIcon name="solar:widget-2-outline" />
-        <span v-if="!collapsed" class="basic-layout-sider__logo-text">LOGO</span>
+        <SvgIcon name="app:logo" width="24px" height="24px" />
+        <span v-if="!collapsed" class="basic-layout-sider__logo-text">AppDock</span>
       </div>
       <a-menu
         class="basic-layout-sider__menu"
@@ -453,6 +453,20 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         fontWeight: token.fontWeightStrong,
         whiteSpace: 'nowrap',
         overflow: 'hidden',
+      },
+
+      '.basic-layout-sider__logo-text': {
+        'fontSize': `${token.fontSizeLG + 1}px`,
+        'fontWeight': 800,
+        'fontStyle': 'italic',
+        'letterSpacing': '-0.3px',
+        'paddingInlineEnd': '2px',
+        'background': 'linear-gradient(92deg, #546FFD 0%, #6C5EE7 46%, #F85300 100%)',
+        'backgroundClip': 'text',
+        '-webkit-background-clip': 'text',
+        'color': 'transparent',
+        'transform': 'skewX(-6deg)',
+        'transformOrigin': 'left center',
       },
 
       '.basic-layout-sider__menu': {
