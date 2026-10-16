@@ -19,6 +19,7 @@ export const routes: RouteWithoutChildren[] = [
     path: '/',
     name: 'ROOT',
     component: BasicLayout,
+    redirect: '/workbench',
     meta: {},
     children: [...asyncRoutes, ...microAppRoutes],
   },

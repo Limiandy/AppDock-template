@@ -85,14 +85,18 @@ const isBaseRoutePath = computed(() => baseAppRoutePaths.includes(route.fullPath
 
 `main-app/src/router/index.ts` 聚合三类路由：
 
-| 来源             | 说明                                                                                                                   |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `constantRoutes` | 404 兜底，永远注册                                                                                                     |
-| `asyncRoutes`    | `systemManagementRoutes`（/system 用户/角色/菜单）+ 仅 DEV 的 `baseAppDevRoutes`（/base-app 图标/主题编辑器/超级表格） |
-| `microAppRoutes` | `import.meta.glob('./modules/*.ts', { eager: true })`，由路由同步插件生成                                              |
+| 来源             | 说明                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constantRoutes` | 404 兜底，永远注册                                                                                                                                                               |
+| `asyncRoutes`    | 原型菜单：工作台/寻源/招募管理/供应商考察/供应商管理/招标管理/对接会/公司设置/个人设置；DEV 下额外挂载 `baseAppDevRoutes`（图标/主题编辑器/超级表格）与 `systemManagementRoutes` |
+| `microAppRoutes` | `import.meta.glob('./modules/*.ts', { eager: true })`，由路由同步插件生成                                                                                                        |
 
 菜单由 `router.getRoutes()` 转换而来：`meta.title` 作为标签、`meta.icon` 作为图标、`meta.hideInMenu` 控制隐藏。
-`component: null` 的父路由只作为菜单容器，最终跳转由子路由承担。
+`component: null` 的父路由只作为菜单容器，最终跳转由子路由承担；根路由重定向到 `/workbench`。
+
+原型中的列表页大量复用 `SimpleListPage.vue`：路由 props 传入 `configKey`，列/查询配置在
+`main-app/src/views/list-page-configs.ts`，数据来自 `main-app/src/data/prototype/datasets.ts`。正式项目应将原型数据按
+`data/<domain>/` 拆为带 mock/supabase 双实现的领域 repository。
 
 ## 5. 微应用注册契约
 

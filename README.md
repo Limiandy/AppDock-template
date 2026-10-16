@@ -285,6 +285,8 @@ Storage 的本地 bucket 已配置匿名读写策略，方便调试导入、导�
 - 已根据 Ant Design Vue token 优化 SuperTable 外层 UI，减少硬编码样式并提升与主题编辑器的兼容性。
 - 主布局已对齐参考稿：整高侧栏（Logo + 菜单，152px
   / 折叠 64px）、顶栏折叠按钮 + 面包屑 + 右侧控件、内容区独立滚动；顶栏高度 36px。
+- 已按参考稿还原原型：自定义图标（`app:*`，品牌橙点缀）、参考菜单结构（工作台 / 寻源 / 招募管理 / 供应商考察 / 供应商管理 / 招标管理 / 对接会 / 公司设置 / 个人设置），并实现工作台、招募列表、储备供应商、名片交换、发布招标、公司资料、个人设置等页面；演示数据在
+  `main-app/src/data/prototype/datasets.ts`。
 - 已抽取全局 Codex skill：`vue-quality-config`，用于后续新 Vue 项目快速配置 ESLint、Prettier、TypeScript、`fix/check`
   命令。
 - 已默认使用 IndexedDB Mock 数据源，可在顶部切换模拟管理员/录入员/审计员，权限通过 `common` 的 `useAccess`

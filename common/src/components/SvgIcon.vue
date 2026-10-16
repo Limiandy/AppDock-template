@@ -45,7 +45,6 @@ const symbolId = computed(() => {
 .anticon {
   display: inline-flex;
   align-items: center;
-  color: inherit;
   font-style: normal;
   line-height: 0;
   text-align: center;

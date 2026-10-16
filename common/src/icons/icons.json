@@ -1,5 +1,22 @@
 {
   "root": ["location"],
+  "app": [
+    "company",
+    "help",
+    "home",
+    "inspection",
+    "meeting",
+    "message",
+    "mobile",
+    "profile",
+    "publish",
+    "recruitment",
+    "removal",
+    "sourcing",
+    "supplier",
+    "tender",
+    "workbench"
+  ],
   "solar": [
     "4k-outline",
     "accessibility-outline",

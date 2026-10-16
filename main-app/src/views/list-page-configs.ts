@@ -1,0 +1,379 @@
+import type { SuperTableAction, SuperTableColumn, SuperTableSearchFields } from 'common'
+import { queryDataset, type DatasetKey } from '@/data/prototype'
+
+/**
+ * 原型通用列表页配置：SimpleListPage 按 key 取用，走 SuperTable + 原型数据集。
+ */
+export interface ListPageConfig {
+  title: string
+  description?: string
+  columns: SuperTableColumn[]
+  searchFields: SuperTableSearchFields
+  toolbarActions?: SuperTableAction[]
+  showSelection?: boolean
+}
+
+const supplierColumns: SuperTableColumn[] = [
+  { key: 'name', title: '公司名称', dataIndex: 'name', width: 260 },
+  { key: 'certified', title: '认证', dataIndex: 'certified', width: 90, align: 'center' },
+  { key: 'erpImported', title: 'ERP', dataIndex: 'erpImported', width: 110, align: 'center' },
+  { key: 'honors', title: '荣誉', dataIndex: 'honors', width: 220 },
+  { key: 'tags', title: '标签', dataIndex: 'tags', width: 260 },
+  { key: 'capital', title: '注册资本', dataIndex: 'capital', width: 140, align: 'right' },
+  { key: 'areas', title: '服务地区', dataIndex: 'areas', width: 140 },
+  { key: 'inspectResult', title: '考察结果', dataIndex: 'inspectResult', width: 110, align: 'center' },
+  {
+    key: 'action',
+    title: '操作',
+    width: 150,
+    fixed: 'right',
+    align: 'center',
+    actions: [
+      { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
+      { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+    ],
+  },
+]
+
+const supplierSearch: SuperTableSearchFields = {
+  fields: [
+    { field: 'name', label: '公司名称', placeholder: '搜索供应商名称' },
+    { field: 'areas', label: '服务地区', placeholder: '如：上海' },
+    { field: 'capital', label: '注册资本', placeholder: '如：2000万' },
+  ],
+  moreFields: [
+    { field: 'tags', label: '标签', placeholder: '如：防水工程' },
+    { field: 'cases', label: '案例', placeholder: '如：上海虹桥' },
+  ],
+}
+
+const supplierToolbar: SuperTableAction[] = [
+  { key: 'import', label: '批量导入供应商', icon: 'solar:upload-outline' },
+  { key: 'export', label: '导出到Excel', icon: 'solar:download-outline' },
+]
+
+export const listPageConfigs: Record<DatasetKey, ListPageConfig> = {
+  sourcing: {
+    title: '寻源',
+    description: '按区域与品类发布寻源需求，等待供应商响应',
+    columns: [
+      { key: 'title', title: '寻源标题', dataIndex: 'title', width: 280 },
+      { key: 'category', title: '品类', dataIndex: 'category', width: 140 },
+      { key: 'area', title: '区域', dataIndex: 'area', width: 120 },
+      { key: 'publishedAt', title: '发布时间', dataIndex: 'publishedAt', width: 140 },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 140,
+        fixed: 'right',
+        align: 'center',
+        actions: [{ key: 'detail', label: '详情', icon: 'solar:file-text-outline' }],
+      },
+    ],
+    searchFields: {
+      fields: [
+        { field: 'title', label: '寻源标题', placeholder: '请输入寻源标题' },
+        { field: 'category', label: '品类', placeholder: '请输入品类' },
+        { field: 'area', label: '区域', placeholder: '请输入区域' },
+      ],
+    },
+  },
+  recruitmentRejected: {
+    title: '不合格供应商',
+    description: '招募与考察环节被判定不合格的供应商',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+  },
+  recruitmentDrafts: {
+    title: '草稿箱',
+    description: '未发布的招募草稿',
+    columns: [
+      { key: 'title', title: '招募标题', dataIndex: 'title', width: 320 },
+      { key: 'requirement', title: '招募要求', dataIndex: 'requirement', width: 360 },
+      { key: 'publishedAt', title: '创建时间', dataIndex: 'publishedAt', width: 140 },
+      {
+        key: 'action',
+        title: '操作',
+        width: 170,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '继续编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+        ],
+      },
+    ],
+    searchFields: { fields: [{ field: 'title', label: '招募标题', placeholder: '请输入招募标题' }] },
+  },
+  inspectionTasks: {
+    title: '考察任务',
+    columns: [
+      { key: 'supplier', title: '供应商', dataIndex: 'supplier', width: 280 },
+      { key: 'type', title: '考察类型', dataIndex: 'type', width: 120 },
+      { key: 'inspector', title: '考察负责人', dataIndex: 'inspector', width: 120 },
+      { key: 'deadline', title: '截止时间', dataIndex: 'deadline', width: 140 },
+      { key: 'result', title: '考察结果', dataIndex: 'result', width: 110, align: 'center' },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 150,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+        ],
+      },
+    ],
+    searchFields: {
+      fields: [
+        { field: 'supplier', label: '供应商', placeholder: '请输入供应商名称' },
+        { field: 'inspector', label: '考察负责人', placeholder: '请输入负责人' },
+        {
+          field: 'type',
+          label: '考察类型',
+          component: 'select',
+          options: [
+            { label: '工厂考察', value: '工厂考察' },
+            { label: '项目考察', value: '项目考察' },
+          ],
+        },
+      ],
+    },
+    toolbarActions: [{ key: 'create', label: '新建考察任务', type: 'primary', icon: 'solar:add-circle-outline' }],
+  },
+  inspectionRecords: {
+    title: '考察记录',
+    columns: [
+      { key: 'supplier', title: '供应商', dataIndex: 'supplier', width: 280 },
+      { key: 'type', title: '考察类型', dataIndex: 'type', width: 120 },
+      { key: 'inspector', title: '考察负责人', dataIndex: 'inspector', width: 120 },
+      { key: 'deadline', title: '完成时间', dataIndex: 'deadline', width: 140 },
+      { key: 'result', title: '考察结果', dataIndex: 'result', width: 110, align: 'center' },
+    ],
+    searchFields: { fields: [{ field: 'supplier', label: '供应商', placeholder: '请输入供应商名称' }] },
+  },
+  supplierScreening: {
+    title: '初筛供应商',
+    description: '招募报名后进入初筛的供应商',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+    toolbarActions: supplierToolbar,
+  },
+  supplierReserve: {
+    title: '储备供应商',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+    toolbarActions: supplierToolbar,
+  },
+  supplierFavorites: {
+    title: '收藏供应商',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+    toolbarActions: supplierToolbar,
+  },
+  supplierRecycle: {
+    title: '回收站',
+    description: '被移除的供应商，可恢复或彻底删除',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+    toolbarActions: [
+      { key: 'restore', label: '批量恢复', icon: 'solar:refresh-outline' },
+      { key: 'delete', label: '彻底删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+    ],
+  },
+  supplierSupplement: {
+    title: '补充资料',
+    description: '待补充资质与联系资料的供应商',
+    columns: supplierColumns,
+    searchFields: supplierSearch,
+    toolbarActions: [{ key: 'notify', label: '批量通知补充', icon: 'solar:bell-outline' }],
+  },
+  tenderList: {
+    title: '招标列表',
+    columns: [
+      { key: 'title', title: '招标名称', dataIndex: 'title', width: 300 },
+      { key: 'method', title: '招标方式', dataIndex: 'method', width: 120 },
+      { key: 'category', title: '招标类别', dataIndex: 'category', width: 120 },
+      { key: 'deadline', title: '报名截止', dataIndex: 'deadline', width: 160 },
+      { key: 'applied', title: '已报名', dataIndex: 'applied', width: 100, align: 'right' },
+      { key: 'unviewed', title: '未查看', dataIndex: 'unviewed', width: 100, align: 'right' },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 170,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'detail', label: '查看', icon: 'solar:file-text-outline' },
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '截止', danger: true, icon: 'solar:close-circle-outline' },
+        ],
+      },
+    ],
+    searchFields: {
+      fields: [
+        { field: 'title', label: '招标名称', placeholder: '请输入招标名称' },
+        { field: 'category', label: '招标类别', placeholder: '请输入招标类别' },
+        {
+          field: 'status',
+          label: '状态',
+          component: 'select',
+          options: [
+            { label: '报名中', value: '报名中' },
+            { label: '评标中', value: '评标中' },
+            { label: '已截止', value: '已截止' },
+          ],
+        },
+      ],
+    },
+    toolbarActions: [{ key: 'create', label: '发布招标', type: 'primary', icon: 'app:publish' }],
+  },
+  tenderDrafts: {
+    title: '草稿箱',
+    columns: [
+      { key: 'title', title: '招标名称', dataIndex: 'title', width: 320 },
+      { key: 'category', title: '招标类别', dataIndex: 'category', width: 120 },
+      { key: 'method', title: '招标方式', dataIndex: 'method', width: 120 },
+      {
+        key: 'action',
+        title: '操作',
+        width: 170,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '继续编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+        ],
+      },
+    ],
+    searchFields: { fields: [{ field: 'title', label: '招标名称', placeholder: '请输入招标名称' }] },
+  },
+  meetingList: {
+    title: '对接会',
+    columns: [
+      { key: 'title', title: '对接会名称', dataIndex: 'title', width: 300 },
+      { key: 'city', title: '城市', dataIndex: 'city', width: 100 },
+      { key: 'date', title: '举办时间', dataIndex: 'date', width: 140 },
+      { key: 'category', title: '品类', dataIndex: 'category', width: 120 },
+      { key: 'attendeeCount', title: '报名人数', dataIndex: 'attendeeCount', width: 110, align: 'right' },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 140,
+        fixed: 'right',
+        align: 'center',
+        actions: [{ key: 'detail', label: '详情', icon: 'solar:file-text-outline' }],
+      },
+    ],
+    searchFields: {
+      fields: [
+        { field: 'title', label: '对接会名称', placeholder: '请输入对接会名称' },
+        { field: 'city', label: '城市', placeholder: '请输入城市' },
+      ],
+    },
+    toolbarActions: [{ key: 'create', label: '创建对接会', type: 'primary', icon: 'solar:add-circle-outline' }],
+  },
+  companyOrg: {
+    title: '组织架构',
+    columns: [
+      { key: 'name', title: '部门/组织', dataIndex: 'name', width: 200 },
+      { key: 'parent', title: '上级组织', dataIndex: 'parent', width: 160 },
+      { key: 'owner', title: '负责人', dataIndex: 'owner', width: 120 },
+      { key: 'members', title: '成员数', dataIndex: 'members', width: 100, align: 'right' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 150,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+        ],
+      },
+    ],
+    searchFields: { fields: [{ field: 'name', label: '部门名称', placeholder: '请输入部门名称' }] },
+    toolbarActions: [{ key: 'create', label: '新增组织', type: 'primary', icon: 'solar:add-circle-outline' }],
+  },
+  companyProjects: {
+    title: '项目设置',
+    columns: [
+      { key: 'name', title: '项目名称', dataIndex: 'name', width: 240 },
+      { key: 'region', title: '所在城市', dataIndex: 'region', width: 120 },
+      { key: 'type', title: '项目类型', dataIndex: 'type', width: 140 },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 150,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
+        ],
+      },
+    ],
+    searchFields: { fields: [{ field: 'name', label: '项目名称', placeholder: '请输入项目名称' }] },
+    toolbarActions: [{ key: 'create', label: '新增项目', type: 'primary', icon: 'solar:add-circle-outline' }],
+  },
+  companyZone: {
+    title: '企业专区',
+    columns: [
+      { key: 'title', title: '内容标题', dataIndex: 'title', width: 300 },
+      { key: 'type', title: '内容类型', dataIndex: 'type', width: 140 },
+      { key: 'publishedAt', title: '发布时间', dataIndex: 'publishedAt', width: 140 },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 150,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'publish', label: '发布', icon: 'app:publish' },
+        ],
+      },
+    ],
+    searchFields: { fields: [{ field: 'title', label: '内容标题', placeholder: '请输入标题' }] },
+    toolbarActions: [{ key: 'create', label: '新建内容', type: 'primary', icon: 'solar:add-circle-outline' }],
+  },
+  companyAccounts: {
+    title: '查看所有账号',
+    columns: [
+      { key: 'name', title: '姓名', dataIndex: 'name', width: 140 },
+      { key: 'phone', title: '手机号', dataIndex: 'phone', width: 160 },
+      { key: 'role', title: '角色', dataIndex: 'role', width: 140 },
+      { key: 'department', title: '部门', dataIndex: 'department', width: 160 },
+      { key: 'status', title: '状态', dataIndex: 'status', width: 110, align: 'center' },
+      {
+        key: 'action',
+        title: '操作',
+        width: 150,
+        fixed: 'right',
+        align: 'center',
+        actions: [
+          { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
+          { key: 'delete', label: '停用', danger: true, icon: 'solar:stop-circle-outline' },
+        ],
+      },
+    ],
+    searchFields: {
+      fields: [
+        { field: 'name', label: '姓名', placeholder: '请输入姓名' },
+        { field: 'department', label: '部门', placeholder: '请输入部门' },
+      ],
+    },
+    toolbarActions: [{ key: 'create', label: '新增账号', type: 'primary', icon: 'solar:user-plus-outline' }],
+  },
+}
+
+export function getListRequest(key: DatasetKey) {
+  return (params: Parameters<typeof queryDataset>[1]) => queryDataset(key, params)
+}

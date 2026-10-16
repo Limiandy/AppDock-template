@@ -45,6 +45,18 @@
         <BasicLayoutBreadcrumb />
 
         <div class="basic-layout-header__controls">
+          <a-tooltip v-for="action in headerActions" :key="action.key" :title="action.title">
+            <a-badge :dot="action.key === 'message'" :offset="[-2, 2]">
+              <button
+                type="button"
+                class="basic-layout-header__action"
+                :aria-label="action.title"
+                @click="onHeaderAction(action)"
+              >
+                <SvgIcon :name="action.icon" />
+              </button>
+            </a-badge>
+          </a-tooltip>
           <a-select
             v-if="mockAccess.enabled"
             v-model:value="selectedMockAccessProfileId"
@@ -63,6 +75,10 @@
             <a-select-option value="light,compact">亮色+紧凑</a-select-option>
             <a-select-option value="dark,compact">暗色+紧凑</a-select-option>
           </a-select>
+          <div class="basic-layout-header__user">
+            <a-avatar :size="24" :style="{ backgroundColor: '#546FFD' }">{{ userName.slice(0, 1) }}</a-avatar>
+            <span>{{ userName }}</span>
+          </div>
         </div>
       </a-layout-header>
 
@@ -104,6 +120,7 @@ import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { SvgIcon } from 'common'
 import { useMockAccess } from '@/access.ts'
 import BasicLayoutBreadcrumb from '@/layout/BasicLayoutBreadcrumb.vue'
+import { useGlobalStore } from '@/store/modules/global.ts'
 import { baseAppDevEntries, constantRoutes, asyncRoutes } from '@/router/BaseAppRoutes.ts'
 import { useEvent } from '@/hooks/useEvent.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
@@ -112,10 +129,29 @@ import { applyThemeMode, getModeByThemeConfig, globalThemeMode, type ThemeMode }
 const { eventBus } = useEvent()
 const isDevelopment = import.meta.env.DEV
 const mockAccess = useMockAccess()
+const global = useGlobalStore()
+
+const headerActions = [
+  { key: 'home', title: '回到首页', icon: 'app:home', path: '/workbench' },
+  { key: 'mobile', title: '移动端', icon: 'app:mobile' },
+  { key: 'help', title: '帮助', icon: 'app:help' },
+  { key: 'message', title: '消息', icon: 'app:message' },
+]
+
+function onHeaderAction(action: (typeof headerActions)[number]) {
+  if (action.path) {
+    router.push(action.path)
+    return
+  }
+  global.message.info(`原型演示：${action.title}`)
+}
+
 const selectedMockAccessProfileId = computed({
   get: () => mockAccess.currentProfile.value?.id,
   set: (profileId: string) => mockAccess.selectProfile(profileId),
 })
+
+const userName = computed(() => (mockAccess.enabled ? (mockAccess.currentProfile.value?.name ?? '未登录') : '未登录'))
 
 function normalizePath(parent: string, path: string): string {
   if (!parent) return path.startsWith('/') ? path : '/' + path
@@ -310,6 +346,34 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         outline: `${token.lineWidth}px ${token.lineType} ${token.colorPrimary}`,
         outlineOffset: `${token.marginXXS}px`,
       },
+    },
+
+    '.basic-layout-header__action': {
+      'display': 'inline-flex',
+      'alignItems': 'center',
+      'justifyContent': 'center',
+      'width': `${token.controlHeightSM}px`,
+      'height': `${token.controlHeightSM}px`,
+      'padding': 0,
+      'color': token.colorIcon,
+      'background': 'transparent',
+      'border': 'none',
+      'borderRadius': `${token.borderRadius}px`,
+      'cursor': 'pointer',
+      'transition': `color ${token.motionDurationMid}, background-color ${token.motionDurationMid}`,
+
+      '&:hover': {
+        color: token.colorPrimary,
+        background: token.colorFillTertiary,
+      },
+    },
+
+    '.basic-layout-header__user': {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: `${token.marginXS}px`,
+      color: token.colorTextSecondary,
+      fontSize: `${token.fontSizeSM}px`,
     },
 
     '.basic-layout-sider': {
