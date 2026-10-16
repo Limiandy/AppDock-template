@@ -139,6 +139,9 @@ function notify(action: string) {
 }
 
 const [className, scopeClass] = useStyle('recruit-list', (token) => ({
+  'margin': `${token.margin}px`,
+  'borderRadius': `${token.borderRadiusLG}px`,
+
   '.recruit-list__tabs': {
     [`${(token as any).rootCls ?? '.ant'}-tabs-nav`]: { marginBottom: 0 },
   },

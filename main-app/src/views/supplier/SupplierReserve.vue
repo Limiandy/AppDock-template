@@ -131,17 +131,7 @@ const allChecked = ref(false)
 const page = ref(1)
 const pageSize = 5
 
-const categoryOptions = [
-  '不限',
-  '照明专业设计',
-  '方案设计',
-  '招标代理',
-  '造价咨询',
-  '超前钻探',
-  '规划设计',
-  '电线电缆',
-  '其他',
-]
+const categoryOptions = ['照明专业设计', '方案设计', '招标代理', '造价咨询', '超前钻探', '规划设计', '电线电缆', '其他']
 const tagOptions = ['第五批联合采购单位', '第六批联合采购单位', '第七批联合采购单位', '第八批联合采购单位']
 const sourceOptions = ['直接入库', '招募招标报名', '线下导入', '主动入库', 'ERP邀请', '对接会']
 const importedOptions = ['已导入到ERP']
@@ -193,6 +183,9 @@ function notify(action: string) {
 }
 
 const [className, scopeClass] = useStyle('supplier-reserve', (token) => ({
+  'margin': `${token.margin}px`,
+  'borderRadius': `${token.borderRadiusLG}px`,
+
   '.supplier-filter': {
     display: 'flex',
     alignItems: 'center',

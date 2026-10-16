@@ -142,6 +142,9 @@ const [className, scopeClass] = useStyle('company-profile', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
+    'margin': `${token.margin}px`,
+    'borderRadius': `${token.borderRadiusLG}px`,
+
     '.company-profile__title': {
       margin: `0 0 ${token.margin}px`,
       fontSize: `${token.fontSizeHeading4}px`,

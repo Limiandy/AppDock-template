@@ -189,6 +189,9 @@ function onPublish(action: string) {
 }
 
 const [className, scopeClass] = useStyle('workbench', (token) => ({
+  'padding': `${token.padding}px`,
+  'background': token.colorBgLayout,
+
   '.workbench-card': {
     'marginBottom': `${token.margin}px`,
     'border-radius': `${token.borderRadiusLG}px`,

@@ -236,6 +236,9 @@ const [className, scopeClass] = useStyle('tender-publish', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
+    'margin': `${token.margin}px`,
+    'borderRadius': `${token.borderRadiusLG}px`,
+
     '.tender-publish__title': {
       margin: `0 0 ${token.margin}px`,
       fontSize: `${token.fontSizeHeading4}px`,

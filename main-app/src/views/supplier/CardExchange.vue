@@ -97,6 +97,9 @@ const [className, scopeClass] = useStyle('card-exchange', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
+    'margin': `${token.margin}px`,
+    'borderRadius': `${token.borderRadiusLG}px`,
+
     '.card-exchange__head': {
       marginBottom: `${token.marginXS}px`,
     },

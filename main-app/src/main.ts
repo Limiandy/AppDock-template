@@ -11,8 +11,17 @@ import { SvgIcon, DirectivesPlugin } from 'common'
 import { initializeAccess } from './access.ts'
 import { registerMicroApp } from './registerMicroApp.ts'
 
+// TEMP DEBUG
+const __errs: unknown[] = []
+;(window as any).__errs = __errs
+window.addEventListener('error', (event) => __errs.push(`window: ${event.message} @ ${event.filename}:${event.lineno}`))
+window.addEventListener('unhandledrejection', (event) =>
+  __errs.push(`rejection: ${(event.reason as Error)?.stack ?? String(event.reason)}`),
+)
+
 async function bootstrap() {
   const app = createApp(App)
+  app.config.errorHandler = (err) => __errs.push(`vue: ${(err as Error)?.stack ?? String(err)}`)
 
   initializeAccess()
   setupStore(app)
