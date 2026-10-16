@@ -60,7 +60,17 @@
             <SvgIcon name="solar:square-share-line-outline" />
             分享
           </a-button>
-          <span class="recruit-list__handlers">{{ item.handlers }}</span>
+          <span class="recruit-list__handlers">
+            <a-avatar
+              v-for="(initial, avatarIndex) in item.handlerInitials"
+              :key="avatarIndex"
+              :size="20"
+              class="recruit-list__avatar"
+            >
+              {{ initial }}
+            </a-avatar>
+            {{ item.handlers }}
+          </span>
         </div>
       </div>
       <div class="recruit-list__stats">
@@ -238,7 +248,16 @@ const [className, scopeClass] = useStyle('recruit-list', (token) => ({
   },
 
   '.recruit-list__handlers': {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: `${token.marginXXS}px`,
     color: token.colorTextTertiary,
+  },
+
+  '.recruit-list__avatar': {
+    background: token.colorFillSecondary,
+    color: token.colorTextSecondary,
+    fontSize: '10px',
   },
 
   '.recruit-list__stats': {

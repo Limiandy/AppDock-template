@@ -31,6 +31,7 @@ export interface RecruitRecord extends SuperTableRecord {
   requirement: string
   publishedAt: string
   handlers: string
+  handlerInitials: string[]
   applied: number
   unviewed: number
   stored: number
@@ -366,6 +367,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '500万注册资本 / 案例3个及以上 / 重庆、广西、四川等6个地区',
     publishedAt: '2018-02-18',
     handlers: 'hp等3人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 223,
     unviewed: 56,
     stored: 0,
@@ -378,6 +380,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '500万注册资本 / 案例3个及以上 / 重庆、广西、四川等6个地区',
     publishedAt: '2018-02-18',
     handlers: 'hp等2人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 23,
     unviewed: 212,
     stored: 10,
@@ -390,6 +393,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '500万注册资本 / 案例3个及以上 / 重庆、广西、四川等6个地区',
     publishedAt: '2018-02-18',
     handlers: 'hp等2人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 19,
     unviewed: 56,
     stored: 235,
@@ -402,6 +406,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '500万注册资本 / 案例3个及以上 / 重庆、广西、四川等6个地区',
     publishedAt: '2018-02-18',
     handlers: 'hp等2人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 123,
     unviewed: 555,
     stored: 24,
@@ -414,6 +419,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '500万注册资本 / 案例3个及以上 / 重庆、广西、四川等6个地区',
     publishedAt: '2018-02-18',
     handlers: 'hp等2人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 64,
     unviewed: 356,
     stored: 235,
@@ -426,6 +432,7 @@ export const recruits: RecruitRecord[] = [
     requirement: '1000万注册资本 / 案例5个及以上 / 全国',
     publishedAt: '2018-03-02',
     handlers: 'hp等2人可处理该招募',
+    handlerInitials: ['hp', 'zw'],
     applied: 48,
     unviewed: 120,
     stored: 12,
@@ -814,14 +821,30 @@ export const workbenchBoardNotices = [
   },
 ]
 
-export const workbenchPerformance = {
-  total: 3200,
-  sources: [
-    { name: '招募入库', value: 1500 },
-    { name: '对接会入库', value: 1000 },
-    { name: '主动入库', value: 700 },
-  ],
-}
+export const workbenchPerformanceMetrics = [
+  {
+    key: 'sources',
+    label: '已入库供应商来源',
+    total: 3200,
+    unit: '家',
+    sources: [
+      { name: '招募入库', value: 1500 },
+      { name: '对接会入库', value: 1000 },
+      { name: '主动入库', value: 700 },
+    ],
+  },
+  {
+    key: 'recruit',
+    label: '本季度招募完成率',
+    total: 86,
+    unit: '%',
+    sources: [
+      { name: '已完成', value: 46 },
+      { name: '进行中', value: 32 },
+      { name: '未开始', value: 8 },
+    ],
+  },
+]
 
 export const platformDynamics = {
   certified: 29128,

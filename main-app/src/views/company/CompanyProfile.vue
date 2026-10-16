@@ -4,8 +4,8 @@
 
     <a-form layout="horizontal" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" class="company-profile__form">
       <a-form-item label="公司LOGO">
-        <a-upload v-model:file-list="logoFiles" list-type="picture-card" :before-upload="() => false">
-          <div class="company-profile__upload">
+        <a-upload v-model:file-list="logoFiles" :before-upload="() => false" :show-upload-list="false">
+          <div class="company-profile__upload-box">
             <SvgIcon name="solar:cloud-upload-outline" />
             <span>点击上传</span>
           </div>
@@ -162,12 +162,24 @@ const [className, scopeClass] = useStyle('company-profile', (token) => {
       maxWidth: '560px',
     },
 
-    '.company-profile__upload': {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: `${token.marginXXS}px`,
-      color: token.colorTextSecondary,
+    '.company-profile__upload-box': {
+      'display': 'flex',
+      'flexDirection': 'column',
+      'alignItems': 'center',
+      'justifyContent': 'center',
+      'gap': `${token.marginXXS}px`,
+      'width': '200px',
+      'height': '100px',
+      'color': token.colorTextSecondary,
+      'border': `${token.lineWidth}px dashed ${token.colorBorder}`,
+      'borderRadius': `${token.borderRadius}px`,
+      'background': token.colorFillQuaternary,
+      'transition': `border-color ${token.motionDurationMid}, color ${token.motionDurationMid}`,
+
+      '&:hover': {
+        color: token.colorPrimary,
+        borderColor: token.colorPrimaryBorder,
+      },
     },
 
     '.company-profile__hint': {

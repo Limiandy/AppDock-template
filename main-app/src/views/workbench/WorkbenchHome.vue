@@ -91,9 +91,17 @@
             <span class="workbench-card__title">我的业绩</span>
           </div>
           <div class="workbench-performance">
-            <div class="workbench-performance__label">已入库供应商来源</div>
-            <div class="workbench-performance__total">{{ workbenchPerformance.total }} 家</div>
-            <div ref="chartRef" class="workbench-performance__chart"></div>
+            <button type="button" class="workbench-performance__arrow" aria-label="上一项业绩" @click="shiftMetric(-1)">
+              <SvgIcon name="solar:alt-arrow-left-outline" />
+            </button>
+            <div class="workbench-performance__main">
+              <div class="workbench-performance__label">{{ performance.label }}</div>
+              <div class="workbench-performance__total">{{ performance.total }} {{ performance.unit }}</div>
+              <div ref="chartRef" class="workbench-performance__chart"></div>
+            </div>
+            <button type="button" class="workbench-performance__arrow" aria-label="下一项业绩" @click="shiftMetric(1)">
+              <SvgIcon name="solar:alt-arrow-right-outline" />
+            </button>
           </div>
         </a-card>
 
@@ -124,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
 import { SvgIcon } from 'common'
 import {
@@ -132,7 +140,7 @@ import {
   workbenchBoardNotices,
   workbenchMessages,
   workbenchPending,
-  workbenchPerformance,
+  workbenchPerformanceMetrics,
   workbenchTender,
 } from '@/data/prototype'
 import { useGlobalStore } from '@/store/modules/global.ts'
@@ -146,29 +154,45 @@ const currentMessages = computed(() => (messageTab.value === 'messages' ? workbe
 const chartRef = ref<HTMLDivElement>()
 let chart: echarts.ECharts | undefined
 
+const performanceIndex = ref(0)
+const performance = computed(() => workbenchPerformanceMetrics[performanceIndex.value])
+
+function shiftMetric(step: number) {
+  const total = workbenchPerformanceMetrics.length
+  performanceIndex.value = (performanceIndex.value + step + total) % total
+}
+
 function renderChart() {
   if (!chartRef.value) return
 
-  chart = echarts.init(chartRef.value)
-  chart.setOption({
-    tooltip: { trigger: 'item' },
-    legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#596078' } },
-    series: [
-      {
-        type: 'pie',
-        radius: ['58%', '78%'],
-        center: ['50%', '44%'],
-        avoidLabelOverlap: false,
-        label: { show: false },
-        data: workbenchPerformance.sources.map((item, index) => ({
-          name: item.name,
-          value: item.value,
-          itemStyle: { color: ['#546FFD', '#55C5CD', '#6C5EE7'][index] },
-        })),
-      },
-    ],
-  })
+  if (!chart) {
+    chart = echarts.init(chartRef.value)
+  }
+
+  chart.setOption(
+    {
+      tooltip: { trigger: 'item' },
+      legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#596078' } },
+      series: [
+        {
+          type: 'pie',
+          radius: ['58%', '78%'],
+          center: ['50%', '44%'],
+          avoidLabelOverlap: false,
+          label: { show: false },
+          data: performance.value.sources.map((item, index) => ({
+            name: item.name,
+            value: item.value,
+            itemStyle: { color: ['#546FFD', '#55C5CD', '#6C5EE7'][index] },
+          })),
+        },
+      ],
+    },
+    true,
+  )
 }
+
+watch(performance, () => renderChart())
 
 function onResize() {
   chart?.resize()
@@ -335,6 +359,17 @@ const [className, scopeClass] = useStyle('workbench', (token) => ({
     color: token.colorTextSecondary,
   },
 
+  '.workbench-performance': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: `${token.marginXS}px`,
+  },
+
+  '.workbench-performance__main': {
+    flex: 1,
+    minWidth: 0,
+  },
+
   '.workbench-performance__label': {
     color: token.colorTextSecondary,
     fontSize: `${token.fontSize}px`,
@@ -350,6 +385,25 @@ const [className, scopeClass] = useStyle('workbench', (token) => ({
   '.workbench-performance__chart': {
     height: '240px',
     marginTop: `${token.marginSM}px`,
+  },
+
+  '.workbench-performance__arrow': {
+    'display': 'inline-flex',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+    'width': `${token.controlHeightSM}px`,
+    'height': `${token.controlHeightSM}px`,
+    'color': token.colorIcon,
+    'background': 'transparent',
+    'border': 'none',
+    'borderRadius': `${token.borderRadius}px`,
+    'cursor': 'pointer',
+    'transition': `color ${token.motionDurationMid}, background-color ${token.motionDurationMid}`,
+
+    '&:hover': {
+      color: token.colorPrimary,
+      background: token.colorFillTertiary,
+    },
   },
 
   '.workbench-dynamics': {
