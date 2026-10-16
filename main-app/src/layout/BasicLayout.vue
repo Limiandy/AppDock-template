@@ -57,28 +57,36 @@
               </button>
             </a-badge>
           </a-tooltip>
-          <a-select
-            v-if="mockAccess.enabled"
-            v-model:value="selectedMockAccessProfileId"
-            aria-label="模拟权限身份"
-            size="small"
-            :dropdown-style="{ zIndex: 9999 }"
-            style="width: 190px"
-          >
-            <a-select-option v-for="profile in mockAccess.profiles" :key="profile.id" :value="profile.id">
-              {{ profile.name }} · {{ profile.role }}
-            </a-select-option>
-          </a-select>
-          <a-select v-model:value="currentTheme" size="small" :dropdown-style="{ zIndex: 9999 }" style="width: 120px">
-            <a-select-option value="light">亮色</a-select-option>
-            <a-select-option value="dark">暗色</a-select-option>
-            <a-select-option value="light,compact">亮色+紧凑</a-select-option>
-            <a-select-option value="dark,compact">暗色+紧凑</a-select-option>
-          </a-select>
-          <div class="basic-layout-header__user">
-            <a-avatar :size="24" :style="{ backgroundColor: '#546FFD' }">{{ userName.slice(0, 1) }}</a-avatar>
-            <span>{{ userName }}</span>
-          </div>
+          <a-tooltip :title="isDark ? '切换为亮色' : '切换为暗色'">
+            <a-switch
+              :checked="isDark"
+              class="basic-layout-header__theme"
+              size="small"
+              :aria-label="isDark ? '切换为亮色' : '切换为暗色'"
+              @change="onThemeSwitch"
+            >
+              <template #checkedChildren><SvgIcon name="solar:moon-outline" /></template>
+              <template #unCheckedChildren><SvgIcon name="solar:sun-outline" /></template>
+            </a-switch>
+          </a-tooltip>
+
+          <a-dropdown placement="bottomRight" :trigger="['click']">
+            <div class="basic-layout-header__user" role="button" tabindex="0">
+              <a-avatar :size="24" :style="{ backgroundColor: '#546FFD' }">{{ userName.slice(0, 1) }}</a-avatar>
+              <span>{{ userName }}</span>
+            </div>
+            <template #overlay>
+              <a-menu :selected-keys="userMenuSelectedKeys" @click="onUserMenuClick">
+                <a-menu-item v-if="mockAccess.enabled" key="mock-title" disabled>切换模拟身份</a-menu-item>
+                <a-menu-item v-for="profile in mockAccess.profiles" :key="`profile:${profile.id}`">
+                  {{ profile.name }} · {{ profile.role }}
+                </a-menu-item>
+                <a-menu-divider v-if="mockAccess.enabled" />
+                <a-menu-item key="profile">个人设置</a-menu-item>
+                <a-menu-item key="logout">退出登录</a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </div>
       </a-layout-header>
 
@@ -152,6 +160,36 @@ const selectedMockAccessProfileId = computed({
 })
 
 const userName = computed(() => (mockAccess.enabled ? (mockAccess.currentProfile.value?.name ?? '未登录') : '未登录'))
+
+const isDark = computed(() => currentTheme.value.includes('dark'))
+
+const userMenuSelectedKeys = computed(() =>
+  selectedMockAccessProfileId.value ? [`profile:${selectedMockAccessProfileId.value}`] : [],
+)
+
+function onThemeSwitch(checked: boolean | string | number) {
+  const compact = currentTheme.value.includes('compact')
+  const dark = Boolean(checked)
+  currentTheme.value = dark ? (compact ? 'dark,compact' : 'dark') : compact ? 'light,compact' : 'light'
+}
+
+function onUserMenuClick({ key }: { key: string | number }) {
+  const menuKey = String(key)
+
+  if (menuKey.startsWith('profile:')) {
+    mockAccess.selectProfile(menuKey.slice('profile:'.length))
+    return
+  }
+
+  if (menuKey === 'profile') {
+    router.push('/profile')
+    return
+  }
+
+  if (menuKey === 'logout') {
+    global.message.info('原型演示：退出登录')
+  }
+}
 
 function normalizePath(parent: string, path: string): string {
   if (!parent) return path.startsWith('/') ? path : '/' + path
@@ -369,11 +407,25 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
     },
 
     '.basic-layout-header__user': {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: `${token.marginXS}px`,
-      color: token.colorTextSecondary,
-      fontSize: `${token.fontSizeSM}px`,
+      'display': 'inline-flex',
+      'alignItems': 'center',
+      'gap': `${token.marginXS}px`,
+      'paddingInline': `${token.paddingXS}px`,
+      'height': `${token.controlHeightSM}px`,
+      'color': token.colorTextSecondary,
+      'fontSize': `${token.fontSizeSM}px`,
+      'borderRadius': `${token.borderRadius}px`,
+      'cursor': 'pointer',
+      'transition': `background-color ${token.motionDurationMid}, color ${token.motionDurationMid}`,
+
+      '&:hover': {
+        color: token.colorPrimary,
+        background: token.colorFillTertiary,
+      },
+    },
+
+    '.basic-layout-header__theme': {
+      marginInline: `${token.marginXXS}px`,
     },
 
     '.basic-layout-sider': {
