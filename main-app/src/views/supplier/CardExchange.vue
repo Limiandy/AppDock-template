@@ -57,6 +57,7 @@ import useStyle from '@/hooks/style/useStyle.ts'
 import { pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const global = useGlobalStore()
+const records = ref<CardRecord[]>(cards.map((item) => ({ ...item })))
 const category = ref<CardRecord['category']>('人脉广场')
 const target = ref<CardRecord['target']>('供应商')
 const keyword = ref('')
@@ -70,7 +71,7 @@ const categories = computed(() => {
 
   return list.map((item) => ({
     ...item,
-    count: cards.filter((card) => card.category === item.key).length,
+    count: records.value.filter((card) => card.category === item.key).length,
   }))
 })
 
@@ -81,7 +82,7 @@ const targetOptions = [
 
 const visibleCards = computed(() => {
   const text = keyword.value.trim().toLowerCase()
-  return cards.filter((card) => {
+  return records.value.filter((card) => {
     if (card.category !== category.value) return false
     if (card.target !== target.value) return false
     if (!text) return true
@@ -90,7 +91,8 @@ const visibleCards = computed(() => {
 })
 
 function onExchange(record: CardRecord) {
-  global.message.success(`原型演示：向「${record.name}」${record.status === '可交换' ? '交换名片' : '申请交换名片'}`)
+  record.status = '已申请'
+  global.message.success(`原型演示：已向「${record.name}」发起名片申请`)
 }
 
 const [className, scopeClass] = useStyle('card-exchange', (token) => {

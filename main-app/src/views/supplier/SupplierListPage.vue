@@ -127,7 +127,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { SvgIcon } from 'common'
-import { suppliers, type SupplierRecord } from '@/data/prototype'
+import type { SupplierRecord } from '@/data/prototype'
+import { useSupplierStore } from '@/data/prototype/store'
 import { useGlobalStore } from '@/store/modules/global.ts'
 import SupplierDetailDrawer from '@/views/supplier/SupplierDetailDrawer.vue'
 import useStyle from '@/hooks/style/useStyle.ts'
@@ -212,6 +213,7 @@ const stageConfig: Record<SupplierStage, StageConfig> = {
 const props = defineProps<{ stage: SupplierStage }>()
 
 const global = useGlobalStore()
+const supplierStore = useSupplierStore()
 const config = computed(() => stageConfig[props.stage])
 
 const category = ref<string>()
@@ -251,7 +253,7 @@ const metaFields = [
   { key: 'performance', label: '履约评价', link: true },
 ]
 
-const stageSuppliers = computed(() => suppliers.filter((item) => item.stage === props.stage))
+const stageSuppliers = computed(() => supplierStore.byStage(props.stage))
 
 const filteredSuppliers = computed(() => {
   const text = keyword.value.trim().toLowerCase()
@@ -285,7 +287,37 @@ function onRowAction(label: string, record: SupplierRecord) {
     return
   }
 
-  global.message.info(`原型演示：${record.name} · ${label}`)
+  switch (label) {
+    case '入库':
+      supplierStore.store(record.id)
+      break
+    case '标记不合格':
+      supplierStore.reject(record.id)
+      break
+    case '收藏':
+      supplierStore.favorite(record.id)
+      break
+    case '取消收藏':
+      supplierStore.unfavorite(record.id)
+      break
+    case '移除':
+    case '移入回收站':
+      supplierStore.remove(record.id)
+      break
+    case '恢复':
+      supplierStore.restore(record.id)
+      break
+    case '彻底删除':
+      supplierStore.purge(record.id)
+      break
+    case '通知补充':
+      supplierStore.notifySupplement(record.id)
+      break
+    default:
+      break
+  }
+
+  global.message.success(`原型演示：${record.name} · ${label}已生效`)
 }
 
 function openDetail(record: SupplierRecord) {

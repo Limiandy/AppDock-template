@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="recruit-list__actions">
-        <a v-for="action in actions" :key="action" @click="notify(action)">{{ action }}</a>
+        <a v-for="action in actions" :key="action" @click="onRowAction(action, item)">{{ action }}</a>
       </div>
     </div>
 
@@ -99,6 +99,7 @@ import useStyle from '@/hooks/style/useStyle.ts'
 import { filterChipStyles, filterRowStyles, pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const global = useGlobalStore()
+const records = ref<RecruitRecord[]>(recruits.map((item) => ({ ...item })))
 
 const owner = ref<'我负责的' | '公司其他'>('我负责的')
 const processState = ref('全部')
@@ -108,20 +109,23 @@ const allChecked = ref(false)
 const page = ref(1)
 const pageSize = 5
 const actions = ['编辑', '查看', '截止']
-
-const processOptions = ['全部', `待处理（${recruits.filter((item) => item.pendingBadge).length}）`, '已处理']
-const statusOptions = [
+const processOptions = computed(() => [
   '全部',
-  `报名中（${recruits.filter((item) => item.status === '报名中').length}）`,
-  `报名截止（${recruits.filter((item) => item.status === '报名截止').length}）`,
-]
+  `待处理（${records.value.filter((item) => item.pendingBadge).length}）`,
+  '已处理',
+])
+const statusOptions = computed(() => [
+  '全部',
+  `报名中（${records.value.filter((item) => item.status === '报名中').length}）`,
+  `报名截止（${records.value.filter((item) => item.status === '报名截止').length}）`,
+])
 
-const mineCount = computed(() => recruits.filter((item) => item.owner === '我负责的').length)
-const otherCount = computed(() => recruits.filter((item) => item.owner === '公司其他').length)
+const mineCount = computed(() => records.value.filter((item) => item.owner === '我负责的').length)
+const otherCount = computed(() => records.value.filter((item) => item.owner === '公司其他').length)
 
 const filteredRecruits = computed(() => {
   const text = keyword.value.trim().toLowerCase()
-  return recruits.filter((item) => {
+  return records.value.filter((item) => {
     if (item.owner !== owner.value) return false
     if (processState.value.startsWith('待处理') && !item.pendingBadge) return false
     if (processState.value === '已处理' && item.pendingBadge) return false
@@ -147,6 +151,16 @@ function statFields(item: RecruitRecord) {
 
 function notify(action: string) {
   global.message.info(`原型演示：${action}`)
+}
+
+function onRowAction(label: string, record: RecruitRecord) {
+  if (label === '截止') {
+    record.status = '报名截止'
+    global.message.success(`原型演示：${record.title} 已截止报名`)
+    return
+  }
+
+  global.message.info(`原型演示：${record.title} · ${label}`)
 }
 
 const [className, scopeClass] = useStyle('recruit-list', (token) => ({
