@@ -165,6 +165,7 @@ import dayjs from 'dayjs'
 import { SvgIcon } from 'common'
 import { useGlobalStore } from '@/store/modules/global.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const global = useGlobalStore()
 
@@ -236,8 +237,7 @@ const [className, scopeClass] = useStyle('tender-publish', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
-    'margin': `${token.margin}px`,
-    'borderRadius': `${token.borderRadiusLG}px`,
+    ...pageInsetStyles(token),
 
     '.tender-publish__title': {
       margin: `0 0 ${token.margin}px`,

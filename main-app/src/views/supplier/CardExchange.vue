@@ -23,7 +23,6 @@
         <div class="card-exchange__card">
           <span class="card-exchange__accent"></span>
           <div class="card-exchange__top">
-            <span class="card-exchange__avatar">{{ item.name.slice(0, 1) }}</span>
             <div class="card-exchange__identity">
               <span class="card-exchange__name">{{ item.name }}</span>
               <span class="card-exchange__role">/ {{ item.role }}</span>
@@ -55,6 +54,7 @@ import { SvgIcon } from 'common'
 import { cards, type CardRecord } from '@/data/prototype'
 import { useGlobalStore } from '@/store/modules/global.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const global = useGlobalStore()
 const category = ref<CardRecord['category']>('人脉广场')
@@ -97,8 +97,7 @@ const [className, scopeClass] = useStyle('card-exchange', (token) => {
   const rootCls = (token as any).rootCls ?? '.ant'
 
   return {
-    'margin': `${token.margin}px`,
-    'borderRadius': `${token.borderRadiusLG}px`,
+    ...pageInsetStyles(token),
 
     '.card-exchange__head': {
       marginBottom: `${token.marginXS}px`,
@@ -161,18 +160,6 @@ const [className, scopeClass] = useStyle('card-exchange', (token) => {
       display: 'flex',
       alignItems: 'center',
       gap: `${token.marginXS}px`,
-    },
-
-    '.card-exchange__avatar': {
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: `${token.controlHeightSM}px`,
-      height: `${token.controlHeightSM}px`,
-      borderRadius: '50%',
-      background: token.colorFillSecondary,
-      color: token.colorTextSecondary,
-      fontWeight: token.fontWeightStrong,
     },
 
     '.card-exchange__identity': {

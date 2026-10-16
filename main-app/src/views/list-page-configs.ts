@@ -13,46 +13,7 @@ export interface ListPageConfig {
   showSelection?: boolean
 }
 
-const supplierColumns: SuperTableColumn[] = [
-  { key: 'name', title: '公司名称', dataIndex: 'name', width: 260 },
-  { key: 'certified', title: '认证', dataIndex: 'certified', width: 90, align: 'center' },
-  { key: 'erpImported', title: 'ERP', dataIndex: 'erpImported', width: 110, align: 'center' },
-  { key: 'honors', title: '荣誉', dataIndex: 'honors', width: 220 },
-  { key: 'tags', title: '标签', dataIndex: 'tags', width: 260 },
-  { key: 'capital', title: '注册资本', dataIndex: 'capital', width: 140, align: 'right' },
-  { key: 'areas', title: '服务地区', dataIndex: 'areas', width: 140 },
-  { key: 'inspectResult', title: '考察结果', dataIndex: 'inspectResult', width: 110, align: 'center' },
-  {
-    key: 'action',
-    title: '操作',
-    width: 150,
-    fixed: 'right',
-    align: 'center',
-    actions: [
-      { key: 'detail', label: '详情', icon: 'solar:file-text-outline' },
-      { key: 'edit', label: '编辑', icon: 'solar:pen-new-square-outline' },
-    ],
-  },
-]
-
-const supplierSearch: SuperTableSearchFields = {
-  fields: [
-    { field: 'name', label: '公司名称', placeholder: '搜索供应商名称' },
-    { field: 'areas', label: '服务地区', placeholder: '如：上海' },
-    { field: 'capital', label: '注册资本', placeholder: '如：2000万' },
-  ],
-  moreFields: [
-    { field: 'tags', label: '标签', placeholder: '如：防水工程' },
-    { field: 'cases', label: '案例', placeholder: '如：上海虹桥' },
-  ],
-}
-
-const supplierToolbar: SuperTableAction[] = [
-  { key: 'import', label: '批量导入供应商', icon: 'solar:upload-outline' },
-  { key: 'export', label: '导出到Excel', icon: 'solar:download-outline' },
-]
-
-export const listPageConfigs: Record<DatasetKey, ListPageConfig> = {
+export const listPageConfigs: Partial<Record<DatasetKey, ListPageConfig>> = {
   sourcing: {
     title: '寻源',
     description: '按区域与品类发布寻源需求，等待供应商响应',
@@ -78,12 +39,6 @@ export const listPageConfigs: Record<DatasetKey, ListPageConfig> = {
         { field: 'area', label: '区域', placeholder: '请输入区域' },
       ],
     },
-  },
-  recruitmentRejected: {
-    title: '不合格供应商',
-    description: '招募与考察环节被判定不合格的供应商',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
   },
   recruitmentDrafts: {
     title: '草稿箱',
@@ -154,42 +109,6 @@ export const listPageConfigs: Record<DatasetKey, ListPageConfig> = {
       { key: 'result', title: '考察结果', dataIndex: 'result', width: 110, align: 'center' },
     ],
     searchFields: { fields: [{ field: 'supplier', label: '供应商', placeholder: '请输入供应商名称' }] },
-  },
-  supplierScreening: {
-    title: '初筛供应商',
-    description: '招募报名后进入初筛的供应商',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
-    toolbarActions: supplierToolbar,
-  },
-  supplierReserve: {
-    title: '储备供应商',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
-    toolbarActions: supplierToolbar,
-  },
-  supplierFavorites: {
-    title: '收藏供应商',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
-    toolbarActions: supplierToolbar,
-  },
-  supplierRecycle: {
-    title: '回收站',
-    description: '被移除的供应商，可恢复或彻底删除',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
-    toolbarActions: [
-      { key: 'restore', label: '批量恢复', icon: 'solar:refresh-outline' },
-      { key: 'delete', label: '彻底删除', danger: true, icon: 'solar:trash-bin-trash-outline' },
-    ],
-  },
-  supplierSupplement: {
-    title: '补充资料',
-    description: '待补充资质与联系资料的供应商',
-    columns: supplierColumns,
-    searchFields: supplierSearch,
-    toolbarActions: [{ key: 'notify', label: '批量通知补充', icon: 'solar:bell-outline' }],
   },
   tenderList: {
     title: '招标列表',

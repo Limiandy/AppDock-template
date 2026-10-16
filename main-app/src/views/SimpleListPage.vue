@@ -49,7 +49,14 @@ import useStyle from '@/hooks/style/useStyle.ts'
 const props = defineProps<{ configKey: DatasetKey }>()
 
 const global = useGlobalStore()
-const config = computed(() => listPageConfigs[props.configKey])
+const config = computed(
+  () =>
+    listPageConfigs[props.configKey] ?? {
+      title: '',
+      columns: [],
+      searchFields: { fields: [] },
+    },
+)
 
 function request(params: SuperTableRequestParams): Promise<SuperTableRequestResult> {
   return queryDataset(props.configKey, params)

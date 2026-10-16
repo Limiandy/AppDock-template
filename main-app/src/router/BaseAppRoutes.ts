@@ -46,7 +46,13 @@ const recruitmentRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/recruitment/RecruitList.vue'),
         meta: { title: '招募列表' },
       },
-      listPage('rejected', '不合格供应商'),
+      {
+        path: 'rejected',
+        name: 'RecruitmentRejected',
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'rejected' },
+        meta: { title: '不合格供应商' },
+      },
       listPage('drafts', '草稿箱'),
     ],
   },
@@ -87,28 +93,29 @@ const supplierRoutes: RouteRecordRaw[] = [
       {
         path: 'screening',
         name: 'SupplierScreening',
-        component: () => import('@/views/SimpleListPage.vue'),
-        props: { configKey: 'supplierScreening' },
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'screening' },
         meta: { title: '初筛供应商' },
       },
       {
         path: 'reserve',
         name: 'SupplierReserve',
-        component: () => import('@/views/supplier/SupplierReserve.vue'),
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'reserve' },
         meta: { title: '储备供应商' },
       },
       {
         path: 'favorites',
         name: 'SupplierFavorites',
-        component: () => import('@/views/SimpleListPage.vue'),
-        props: { configKey: 'supplierFavorites' },
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'favorite' },
         meta: { title: '收藏供应商' },
       },
       {
         path: 'recycle',
         name: 'SupplierRecycle',
-        component: () => import('@/views/SimpleListPage.vue'),
-        props: { configKey: 'supplierRecycle' },
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'recycle' },
         meta: { title: '回收站' },
       },
       {
@@ -120,8 +127,8 @@ const supplierRoutes: RouteRecordRaw[] = [
       {
         path: 'supplement',
         name: 'SupplierSupplement',
-        component: () => import('@/views/SimpleListPage.vue'),
-        props: { configKey: 'supplierSupplement' },
+        component: () => import('@/views/supplier/SupplierListPage.vue'),
+        props: { stage: 'supplement' },
         meta: { title: '补充资料' },
       },
     ],
@@ -223,6 +230,15 @@ const personalRoutes: RouteRecordRaw[] = [
   },
 ]
 
+const messageRoutes: RouteRecordRaw[] = [
+  {
+    path: '/message',
+    name: 'MessageCenter',
+    component: () => import('@/views/message/MessageCenter.vue'),
+    meta: { title: '消息中心', icon: 'app:message', hideInMenu: true },
+  },
+]
+
 const systemManagementRoutes: RouteRecordRaw[] = [
   {
     path: '/system',
@@ -297,6 +313,7 @@ export const asyncRoutes: RouteRecordRaw[] = [
   ...meetingRoutes,
   ...companyRoutes,
   ...personalRoutes,
+  ...messageRoutes,
   ...(import.meta.env.DEV ? [...baseAppDevRoutes, ...systemManagementRoutes] : []),
 ]
 

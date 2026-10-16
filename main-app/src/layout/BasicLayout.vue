@@ -135,7 +135,7 @@ const headerActions = [
   { key: 'home', title: '回到首页', icon: 'app:home', path: '/workbench' },
   { key: 'mobile', title: '移动端', icon: 'app:mobile' },
   { key: 'help', title: '帮助', icon: 'app:help' },
-  { key: 'message', title: '消息', icon: 'app:message' },
+  { key: 'message', title: '消息', icon: 'app:message', path: '/message' },
 ]
 
 function onHeaderAction(action: (typeof headerActions)[number]) {

@@ -21,7 +21,7 @@ export interface SupplierRecord extends SuperTableRecord {
   cases: string
   inspectResult: string
   performance: string
-  stage: 'screening' | 'reserve' | 'favorite' | 'recycle' | 'supplement'
+  stage: 'screening' | 'reserve' | 'favorite' | 'recycle' | 'supplement' | 'rejected'
 }
 
 export interface RecruitRecord extends SuperTableRecord {
@@ -275,6 +275,86 @@ export const suppliers: SupplierRecord[] = [
     inspectResult: '优秀',
     performance: '质量价格3分，出货数量2分，服务配合2分',
     stage: 'supplement',
+  },
+  {
+    id: 'sup-010',
+    name: '广东省联塑科技实业有限公司',
+    certified: true,
+    erpImported: true,
+    honors: ['百强战略'],
+    tags: ['管材管件', '市政给排水'],
+    categories: ['给排水设备', '市政公用工程施工总承包二级'],
+    capital: '1.2亿元',
+    capitalValue: 12000,
+    areas: '广东、湖南',
+    cases: '广州南沙新区',
+    inspectResult: '优秀',
+    performance: '质量价格3分，出货数量3分，服务配合2分',
+    stage: 'favorite',
+  },
+  {
+    id: 'sup-011',
+    name: '北京东方雨虹防水技术股份有限公司',
+    certified: true,
+    erpImported: true,
+    honors: ['行业竞争力十强', '行业TOP级'],
+    tags: ['防水材料', '防水施工'],
+    categories: ['防水防腐保温工程专业承包一级'],
+    capital: '3.5亿元',
+    capitalValue: 35000,
+    areas: '全国',
+    cases: '北京大兴机场',
+    inspectResult: '优秀',
+    performance: '质量价格3分，出货数量3分，服务配合3分',
+    stage: 'recycle',
+  },
+  {
+    id: 'sup-012',
+    name: '广州集泰化工股份有限公司',
+    certified: false,
+    erpImported: false,
+    honors: [],
+    tags: ['密封胶', '水性涂料'],
+    categories: ['建筑密封材料'],
+    capital: '1800万元人民币',
+    capitalValue: 1800,
+    areas: '广东、福建',
+    cases: '珠海横琴项目',
+    inspectResult: '良好',
+    performance: '质量价格2分，出货数量2分，服务配合2分',
+    stage: 'supplement',
+  },
+  {
+    id: 'sup-013',
+    name: '浙江亚厦装饰股份有限公司',
+    certified: false,
+    erpImported: false,
+    honors: [],
+    tags: ['精装修', '工装'],
+    categories: ['建筑装修装饰工程专业承包一级'],
+    capital: '2.6亿元',
+    capitalValue: 26000,
+    areas: '浙江、江苏',
+    cases: '杭州亚运村',
+    inspectResult: '不通过',
+    performance: '质量价格1分，出货数量2分，服务配合1分',
+    stage: 'rejected',
+  },
+  {
+    id: 'sup-014',
+    name: '郑州中原国际石材有限公司',
+    certified: false,
+    erpImported: false,
+    honors: [],
+    tags: ['石材', '幕墙'],
+    categories: ['建筑幕墙工程专业承包二级'],
+    capital: '900万元人民币',
+    capitalValue: 900,
+    areas: '河南、陕西',
+    cases: '郑州会展中心',
+    inspectResult: '不通过',
+    performance: '质量价格1分，出货数量1分，服务配合2分',
+    stage: 'rejected',
   },
 ]
 
@@ -599,6 +679,100 @@ export const workbenchTender = [
   { key: 'evaluate', label: '待评标', value: 19, unit: '个', icon: 'solar:clipboard-check-outline' },
 ]
 
+export interface MessageRecord extends SuperTableRecord {
+  id: string
+  category: '我的消息' | '平台公告' | '系统通知'
+  tag: string
+  title: string
+  desc: string
+  date: string
+  read: boolean
+}
+
+export const messageCenter: MessageRecord[] = [
+  {
+    id: 'mc-001',
+    category: '我的消息',
+    tag: '招募报名',
+    title: '中宝达灯控系统供应商招募',
+    desc: '尊敬【吴兴江】，您参与过的【DAA】，新增品类【15975】，如需补充',
+    date: '2020年06月08日',
+    read: false,
+  },
+  {
+    id: 'mc-002',
+    category: '我的消息',
+    tag: '招募报名',
+    title: '金地集团入户门2021年度战略采购公告',
+    desc: '尊敬【吴兴江】，您参与过的【DAA】，新增品类【15975】，如需补充',
+    date: '2020年06月08日',
+    read: false,
+  },
+  {
+    id: 'mc-003',
+    category: '我的消息',
+    tag: '招募报名',
+    title: '联采需求品类审核通知',
+    desc: '尊敬【吴兴江】，您参与过的【DAA】，新增品类【15975】，如需补充',
+    date: '2020年06月08日',
+    read: true,
+  },
+  {
+    id: 'mc-004',
+    category: '我的消息',
+    tag: '名片交换',
+    title: '李** 申请与您交换名片',
+    desc: '来自山东中科蓝天科技有限公司的技术总监希望与您建立联系',
+    date: '2020年06月07日',
+    read: false,
+  },
+  {
+    id: 'mc-005',
+    category: '我的消息',
+    tag: '招标答疑',
+    title: '2021年度电梯设备集中采购招标 新增疑问',
+    desc: '供应商提交 2 条疑问，请及时解答以免影响报名',
+    date: '2020年06月06日',
+    read: true,
+  },
+  {
+    id: 'mc-006',
+    category: '平台公告',
+    tag: '平台公告',
+    title: '云采购平台 7 月采购节活动开启',
+    desc: '认证采购商可参与集采专场，提前锁定优质供应商',
+    date: '2021年07月01日',
+    read: false,
+  },
+  {
+    id: 'mc-007',
+    category: '平台公告',
+    tag: '平台公告',
+    title: '供应商认证标准升级说明',
+    desc: '新增行业竞争力评估维度，自 7 月起生效',
+    date: '2021年06月20日',
+    read: true,
+  },
+  {
+    id: 'mc-008',
+    category: '系统通知',
+    tag: '系统通知',
+    title: '企业专区内容审核通过',
+    desc: '《年度采购需求发布》已通过审核并对外展示',
+    date: '2021年07月02日',
+    read: false,
+  },
+  {
+    id: 'mc-009',
+    category: '系统通知',
+    tag: '系统通知',
+    title: '账号安全提醒',
+    desc: '建议每 90 天修改一次密码，避免账号共享',
+    date: '2021年06月28日',
+    read: true,
+  },
+]
+
 export const workbenchMessages = [
   {
     id: 'msg-001',
@@ -707,7 +881,7 @@ export const profileRecord = {
 
 export const datasets = {
   sourcing,
-  recruitmentRejected: suppliers.filter((item) => item.stage === 'recycle'),
+  recruitmentRejected: suppliers.filter((item) => item.stage === 'rejected'),
   recruitmentDrafts: recruits.slice(0, 2),
   inspectionTasks: inspections,
   inspectionRecords: inspections.filter((item) => item.status === '已完成'),
@@ -719,6 +893,7 @@ export const datasets = {
   tenderList: tenders,
   tenderDrafts: tenders.slice(0, 2),
   meetingList: meetings,
+  messageCenter,
   companyOrg,
   companyProjects,
   companyZone,

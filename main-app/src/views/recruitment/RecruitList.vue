@@ -86,6 +86,7 @@ import { SvgIcon } from 'common'
 import { recruits, type RecruitRecord } from '@/data/prototype'
 import { useGlobalStore } from '@/store/modules/global.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { filterChipStyles, filterRowStyles, pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const global = useGlobalStore()
 
@@ -139,42 +140,20 @@ function notify(action: string) {
 }
 
 const [className, scopeClass] = useStyle('recruit-list', (token) => ({
-  'margin': `${token.margin}px`,
-  'borderRadius': `${token.borderRadiusLG}px`,
+  ...pageInsetStyles(token),
 
   '.recruit-list__tabs': {
     [`${(token as any).rootCls ?? '.ant'}-tabs-nav`]: { marginBottom: 0 },
   },
 
-  '.recruit-list__filter': {
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: `${token.marginXS}px`,
-    paddingBlock: `${token.paddingSM}px`,
-  },
+  '.recruit-list__filter': filterRowStyles(token),
 
   '.recruit-list__filter-label': {
     color: token.colorTextSecondary,
     marginInlineEnd: `${token.marginXS}px`,
   },
 
-  '.recruit-list__chip': {
-    'cursor': 'pointer',
-    'marginInlineEnd': 0,
-    'paddingInline': `${token.paddingSM}px`,
-    'borderColor': 'transparent',
-    'background': 'transparent',
-    'color': token.colorTextSecondary,
-
-    '&:hover': { color: token.colorPrimary },
-
-    '&.is-active': {
-      color: token.colorPrimary,
-      borderColor: token.colorPrimaryBorder,
-      background: token.colorPrimaryBg,
-    },
-  },
+  '.recruit-list__chip': filterChipStyles(token),
 
   '.recruit-list__toolbar': {
     display: 'flex',
