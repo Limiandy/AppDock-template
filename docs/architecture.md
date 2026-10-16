@@ -98,6 +98,10 @@ const isBaseRoutePath = computed(() => baseAppRoutePaths.includes(route.fullPath
 `main-app/src/views/list-page-configs.ts`，数据来自 `main-app/src/data/prototype/datasets.ts`。正式项目应将原型数据按
 `data/<domain>/` 拆为带 mock/supabase 双实现的领域 repository。
 
+供应商各阶段列表（初筛/储备/收藏/回收站/补充资料/不合格）复用 `views/supplier/SupplierListPage.vue`，阶段间流转由
+`data/prototype/store.ts`
+的内存态仓库驱动；供应商详情抽屉、消息中心（`views/message/MessageCenter.vue`）、组织架构树表（`views/company/CompanyOrg.vue`）是参考稿定制页。
+
 ## 5. 微应用注册契约
 
 `main-app/src/micro-apps.json`（已入库，由脚本生成）：
