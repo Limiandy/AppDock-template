@@ -414,10 +414,12 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         background: 'transparent',
         borderInlineEnd: 0,
         paddingBlock: `${token.paddingXS}px`,
+        // 参考稿侧栏仅 152px，菜单使用小号字与紧凑行高，避免中文标签截断
+        fontSize: `${token.fontSizeSM}px`,
 
         [`${rootCls}-menu-item`]: {
-          height: `${token.controlHeightLG}px`,
-          lineHeight: `${token.controlHeightLG}px`,
+          height: `${token.controlHeight}px`,
+          lineHeight: `${token.controlHeight}px`,
           marginInline: 0,
           marginBlock: `${token.marginXXS}px`,
           // 参考稿侧栏仅 152px：压缩右内边距，保证中文菜单不截断
