@@ -429,7 +429,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
     },
 
     '.basic-layout-header__theme': {
-      marginInline: `${token.marginXXS}px`,
+      margin: 0,
     },
 
     '.basic-layout-sider': {
@@ -450,7 +450,8 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         alignItems: 'center',
         gap: `${token.marginXS}px`,
         height: `${headerHeight}px`,
-        paddingInline: `${token.padding}px`,
+        // 与一级菜单图标左对齐（菜单容器 8px + 菜单项 16px）
+        paddingInline: `${token.paddingLG}px`,
         borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
         color: token.colorText,
         fontSize: `${token.fontSizeLG}px`,
@@ -551,6 +552,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
 .basic-layout-header__controls {
   display: flex;
   flex-shrink: 0;
+  align-items: center;
   gap: 12px;
   margin-left: auto;
 }
