@@ -39,7 +39,11 @@
           :title="collapsed ? '展开菜单' : '折叠菜单'"
           @click="toggleCollapsed"
         >
-          <SvgIcon :name="collapsed ? 'solar:hamburger-menu-outline' : 'solar:sidebar-minimalistic-outline'" />
+          <SvgIcon
+            :name="collapsed ? 'solar:hamburger-menu-outline' : 'solar:sidebar-minimalistic-outline'"
+            width="18px"
+            height="18px"
+          />
         </button>
 
         <BasicLayoutBreadcrumb />
@@ -53,7 +57,7 @@
                 :aria-label="action.title"
                 @click="onHeaderAction(action)"
               >
-                <SvgIcon :name="action.icon" />
+                <SvgIcon :name="action.icon" width="18px" height="18px" />
               </button>
             </a-badge>
           </a-tooltip>
