@@ -29,11 +29,9 @@ export const managementSystemSeedTokens: ThemeConfig['token'] = {
   // 排版：字体栈与字号阶来自设计稿（docs/design-tokens.md），保留为 token；
   // 控件高度/内外边距不写死，交给 Antd 算法（含 compact）派生。
   fontFamily: `'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif`,
+  // 只固定设计稿的基础字号，fontSizeSM / fontSizeLG 等由算法派生（14 → 12 / 16），
+  // 这样在主题编辑器里改「默认字号」时，整条字号阶都会跟随。
   fontSize: 14,
-  // 说明：compact 算法会以 fontSizeSM 为基准重算基础字号（compact 下基础字号 = 12），
-  // 这里保持 12，避免出现「辅助文字比正文还大」的倒挂；字号阶仍来自设计稿。
-  fontSizeSM: 12,
-  fontSizeLG: 16,
   lineHeight: 1.57,
 
   // 圆角属于设计语言，保留显式取值

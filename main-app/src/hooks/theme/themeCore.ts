@@ -1,6 +1,7 @@
 import { theme } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { shallowRef } from 'vue'
+import compactDensityAlgorithm from './compactDensityAlgorithm'
 import {
   managementSystemDarkComponents,
   managementSystemDarkTokens,
@@ -10,7 +11,7 @@ import {
   managementSystemSeedTokens,
 } from './presets/managementSystem'
 
-const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme
+const { defaultAlgorithm, darkAlgorithm } = theme
 
 export type AlgorithmName = 'light' | 'dark' | 'compact'
 export type ThemeMode = 'light' | 'dark' | 'light,compact' | 'dark,compact'
@@ -18,7 +19,8 @@ export type ThemeMode = 'light' | 'dark' | 'light,compact' | 'dark,compact'
 export const algorithmMap = {
   light: defaultAlgorithm,
   dark: darkAlgorithm,
-  compact: compactAlgorithm,
+  // 紧凑只调密度，字号仍由设计 token 决定（可响应 fontSize 配置）
+  compact: compactDensityAlgorithm,
 }
 
 /**
@@ -26,8 +28,8 @@ export const algorithmMap = {
  * 明暗切换由 applyThemeMode 整层替换中性色，编辑器的自定义 token 会被保留。
  */
 export const globalThemeConfig = shallowRef<ThemeConfig>({
-  // 默认全局紧凑：尺寸/间距/行高由 Antd 算法派生（不写死数值）
-  algorithm: [defaultAlgorithm, compactAlgorithm],
+  // 默认全局紧凑：控件高度/内外边距由算法派生，字号由设计 token 控制
+  algorithm: [defaultAlgorithm, compactDensityAlgorithm],
   token: {
     ...managementSystemSeedTokens,
     ...managementSystemLightTokens,
