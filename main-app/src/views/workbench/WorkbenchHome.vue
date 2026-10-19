@@ -383,7 +383,8 @@ const [className, scopeClass] = useStyle('workbench', (token) => ({
   },
 
   '.workbench-performance__chart': {
-    height: '240px',
+    // 图表高度随主题密度缩放（紧凑下更矮），不写死像素值
+    height: `${token.controlHeightLG * 6}px`,
     marginTop: `${token.marginSM}px`,
   },
 
