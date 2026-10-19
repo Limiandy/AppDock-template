@@ -360,9 +360,24 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
     'overflow': 'hidden',
 
     '.basic-layout-header': {
+      display: 'flex',
+      flexShrink: 0,
+      alignItems: 'center',
+      gap: `${token.marginSM}px`,
+      height: `${headerHeight}px`,
+      lineHeight: `${headerHeight}px`,
+      paddingInline: `${token.padding}px`,
       background: token.colorBgContainer,
       border: 'none',
       boxShadow: `inset 0 -1px 0 0 ${token.colorSplit}`,
+    },
+
+    '.basic-layout-header__controls': {
+      display: 'flex',
+      flexShrink: 0,
+      alignItems: 'center',
+      gap: `${token.marginSM}px`,
+      marginInlineStart: 'auto',
     },
 
     '.basic-layout-header__collapse': {
@@ -432,7 +447,25 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
       margin: 0,
     },
 
+    '.basic-layout-content': {
+      flex: 1,
+      minHeight: 0,
+      minWidth: 0,
+      overflow: 'auto',
+    },
+
+    '#qiankun-container': {
+      width: '100%',
+      height: '100%',
+    },
+
+    '.basic-layout-sider__logo.is-collapsed': {
+      justifyContent: 'center',
+      paddingInline: 0,
+    },
+
     '.basic-layout-sider': {
+      'height': '100%',
       'background': token.colorBgContainer,
       'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
 
@@ -489,8 +522,9 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         fontSize: `${token.fontSizeSM}px`,
 
         [`${rootCls}-menu-item`]: {
-          height: `${token.controlHeight}px`,
-          lineHeight: `${token.controlHeight}px`,
+          // 行高 = 控件高 + 内距，随主题密度缩放，避免写死数值
+          height: `${token.controlHeight + token.padding}px`,
+          lineHeight: `${token.controlHeight + token.padding}px`,
           marginInline: 0,
           marginBlock: `${token.marginXXS}px`,
           // 参考稿侧栏仅 152px：压缩右内边距，保证中文菜单不截断
@@ -526,47 +560,3 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
   }
 })
 </script>
-
-<style lang="less" scoped>
-/* sider */
-.basic-layout-sider {
-  height: 100%;
-}
-
-.basic-layout-sider__logo.is-collapsed {
-  justify-content: center;
-  padding-inline: 0;
-}
-
-/* header */
-.basic-layout-header {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 12px;
-  height: 36px;
-  line-height: 36px;
-  padding-inline: 16px;
-}
-
-.basic-layout-header__controls {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-/* content：独立滚动区域 */
-.basic-layout-content {
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: auto;
-}
-
-#qiankun-container {
-  width: 100%;
-  height: 100%;
-}
-</style>

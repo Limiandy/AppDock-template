@@ -26,7 +26,8 @@ export const algorithmMap = {
  * 明暗切换由 applyThemeMode 整层替换中性色，编辑器的自定义 token 会被保留。
  */
 export const globalThemeConfig = shallowRef<ThemeConfig>({
-  algorithm: [defaultAlgorithm],
+  // 默认全局紧凑：尺寸/间距/行高由 Antd 算法派生（不写死数值）
+  algorithm: [defaultAlgorithm, compactAlgorithm],
   token: {
     ...managementSystemSeedTokens,
     ...managementSystemLightTokens,
@@ -37,7 +38,7 @@ export const globalThemeConfig = shallowRef<ThemeConfig>({
   },
 })
 
-export const globalThemeMode = shallowRef<ThemeMode>('light')
+export const globalThemeMode = shallowRef<ThemeMode>('light,compact')
 
 export function getAlgorithmsByMode(mode: ThemeMode) {
   return mode.split(',').map((name) => algorithmMap[name as AlgorithmName])

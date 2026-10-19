@@ -8,6 +8,7 @@
       :toolbar-actions="config.toolbarActions"
       :show-selection="config.showSelection !== false"
       :request="request"
+      page-padding="0"
       @create="onCreate"
       @export="onExport"
       @import="onImport"
@@ -45,6 +46,7 @@ import { queryDataset, type DatasetKey } from '@/data/prototype'
 import { listPageConfigs } from '@/views/list-page-configs'
 import { useGlobalStore } from '@/store/modules/global.ts'
 import useStyle from '@/hooks/style/useStyle.ts'
+import { pageInsetStyles } from '@/hooks/style/pageStyles'
 
 const props = defineProps<{ configKey: DatasetKey }>()
 
@@ -99,6 +101,8 @@ function onToolbarAction(key: string) {
 }
 
 const [className, scopeClass] = useStyle('simple-list-page', (token) => ({
+  ...pageInsetStyles(token),
+
   '.simple-list-page__desc': {
     margin: `0 0 ${token.marginSM}px`,
     color: token.colorTextSecondary,

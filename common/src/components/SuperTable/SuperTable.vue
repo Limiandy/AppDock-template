@@ -291,6 +291,8 @@ const props = withDefaults(
     toolbarActions?: SuperTableAction[]
     importConfig?: SuperTableImportConfig
     formConfig?: SuperTableFormConfig
+    /** 页面级内距，默认取 token.paddingLG；传 0 可交给外层容器控制 */
+    pagePadding?: string | number
   }>(),
   {
     dataSource: () => [],
@@ -313,6 +315,7 @@ const props = withDefaults(
     toolbarActions: undefined,
     importConfig: () => ({}),
     formConfig: undefined,
+    pagePadding: undefined,
   },
 )
 
@@ -389,6 +392,10 @@ const superTableStyle = computed(
       '--super-table-line-width': `${token.value.lineWidth}px`,
       '--super-table-line-type': token.value.lineType,
       '--super-table-padding': `${token.value.paddingLG}px`,
+      '--super-table-page-padding':
+        typeof props.pagePadding === 'number'
+          ? `${props.pagePadding}px`
+          : (props.pagePadding ?? `${token.value.paddingLG}px`),
       '--super-table-padding-sm': `${token.value.paddingSM}px`,
       '--super-table-padding-md': `${token.value.paddingMD}px`,
       '--super-table-gap': `${token.value.marginMD}px`,
@@ -901,7 +908,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: var(--super-table-gap);
-  padding: var(--super-table-padding);
+  padding: var(--super-table-page-padding);
   color: var(--super-table-text);
   background: var(--super-table-bg);
 }

@@ -183,7 +183,11 @@ Ant Design Vue 4.2 中 `Layout`、`Menu` 可配置组件 token（`Table`、`Card
 
 实现见 `main-app/src/hooks/theme/presets/managementSystem.ts`，并已作为 `themeCore` 的默认主题：
 
-- `globalThemeConfig` 初始化即合并 seed + light 中性层，布局、SuperTable、表单、表格等全局生效；
+- `globalThemeConfig` 初始化即合并 seed +
+  light 中性层，并默认启用**紧凑模式**（`[defaultAlgorithm, compactAlgorithm]`），布局、SuperTable、表单、表格等全局生效；
+- 紧凑模式下的字号：Antd 的 compact 算法以 `fontSizeSM`
+  为基准重算基础字号（当前 12px），菜单/表格/按钮等统一为 12px，Logo 字标仍用
+  `fontSizeLG`（16/17px）；若需要「紧凑间距 + 14px 正文」，需要显式指定字号或改用 compact 尺寸 token（当前未采用）；
 - 明暗切换调用 `applyThemeMode(mode)`：整层替换 light / dark 中性 token，品牌种子与主题编辑器自定义保持不变；
 - 需要单独复用（例如给独立页面做主题预览）时：
 
