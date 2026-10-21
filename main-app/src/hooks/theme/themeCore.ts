@@ -1,7 +1,7 @@
 import { theme } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { shallowRef } from 'vue'
-import compactDensityAlgorithm from './compactDensityAlgorithm'
+import compactFontsAlgorithm from './compactDensityAlgorithm'
 import {
   managementSystemDarkComponents,
   managementSystemDarkTokens,
@@ -11,7 +11,7 @@ import {
   managementSystemSeedTokens,
 } from './presets/managementSystem'
 
-const { defaultAlgorithm, darkAlgorithm } = theme
+const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme
 
 export type AlgorithmName = 'light' | 'dark' | 'compact'
 export type ThemeMode = 'light' | 'dark' | 'light,compact' | 'dark,compact'
@@ -19,8 +19,8 @@ export type ThemeMode = 'light' | 'dark' | 'light,compact' | 'dark,compact'
 export const algorithmMap = {
   light: defaultAlgorithm,
   dark: darkAlgorithm,
-  // 紧凑只调密度，字号仍由设计 token 决定（可响应 fontSize 配置）
-  compact: compactDensityAlgorithm,
+  // 密度用 Antd 内置 compact 算法（主题编辑器的密度开关按它判断）
+  compact: compactAlgorithm,
 }
 
 /**
@@ -28,8 +28,8 @@ export const algorithmMap = {
  * 明暗切换由 applyThemeMode 整层替换中性色，编辑器的自定义 token 会被保留。
  */
 export const globalThemeConfig = shallowRef<ThemeConfig>({
-  // 默认全局紧凑：控件高度/内外边距由算法派生，字号由设计 token 控制
-  algorithm: [defaultAlgorithm, compactDensityAlgorithm],
+  // 默认全局紧凑：密度由 compact 算法决定，字号由设计 token 决定
+  algorithm: [defaultAlgorithm, compactAlgorithm, compactFontsAlgorithm],
   token: {
     ...managementSystemSeedTokens,
     ...managementSystemLightTokens,
@@ -43,7 +43,21 @@ export const globalThemeConfig = shallowRef<ThemeConfig>({
 export const globalThemeMode = shallowRef<ThemeMode>('light,compact')
 
 export function getAlgorithmsByMode(mode: ThemeMode) {
-  return mode.split(',').map((name) => algorithmMap[name as AlgorithmName])
+  const algorithms = mode.split(',').map((name) => algorithmMap[name as AlgorithmName])
+
+  // 紧凑模式下在 Antd compact 之后再恢复字号，保证基础字号仍是 14px
+  return mode.includes('compact') ? [...algorithms, compactFontsAlgorithm] : algorithms
+}
+
+/** 只要包含紧凑算法，就确保字号恢复算法排在最后 */
+function normalizeAlgorithms(algorithm: ThemeConfig['algorithm']) {
+  const algorithms = Array.isArray(algorithm) ? algorithm : algorithm ? [algorithm] : []
+
+  if (algorithms.includes(compactAlgorithm) && !algorithms.includes(compactFontsAlgorithm)) {
+    return [...algorithms, compactFontsAlgorithm]
+  }
+
+  return algorithm
 }
 
 export function getModeByThemeConfig(config: ThemeConfig = {}): ThemeMode {
@@ -64,6 +78,7 @@ export function setGlobalThemeConfig(
   globalThemeConfig.value = {
     ...globalThemeConfig.value,
     ...config,
+    algorithm: normalizeAlgorithms(config.algorithm),
     token: {
       ...(options.replaceToken ? {} : globalThemeConfig.value.token),
       ...config.token,

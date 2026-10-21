@@ -1,14 +1,11 @@
 import { theme } from 'ant-design-vue'
 
-const { defaultAlgorithm, compactAlgorithm } = theme
+const { defaultAlgorithm } = theme
 
 /** 与 Antd 官方算法同签名（DerivativeFunc<SeedToken, MapToken>） */
-type ThemeAlgorithm = typeof compactAlgorithm
+type ThemeAlgorithm = typeof theme.compactAlgorithm
 
-/** 紧凑模式的基础字号（设计稿基准）：紧凑只调密度，字号基准为 14px */
-const COMPACT_BASE_FONT_SIZE = 14
-
-/** 字号/行高类 token：由基础字号派生，不被紧凑算法改写 */
+/** 字号/行高类 token：紧凑模式下必须回到设计 token 的取值 */
 const fontTokenKeys = [
   'fontSize',
   'fontSizeSM',
@@ -30,27 +27,27 @@ const fontTokenKeys = [
 ] as const
 
 /**
- * 紧凑算法（只负责密度）：
- * Antd 自带的 compactAlgorithm 会以 fontSizeSM 为基准重算整条字号阶，
- * 导致紧凑模式下基础字号被压成 12px、且主题里的 fontSize 配置不生效。
+ * 紧凑模式的「字号恢复」算法（必须放在 Antd compactAlgorithm 之后执行）。
  *
- * 这里在 compact 结果之上按「基础字号 14px」重新派生字号/行高，做到：
- * - 控件高度、内外边距等按紧凑缩放（密度）；
- * - 紧凑模式下基础字号为 14px（fontSizeSM 12 / fontSizeLG 16 等自动派生）；
- * - 主题显式配置了 fontSize 时以其为准，主题编辑器里调整字号会整条跟随。
+ * 背景：Antd 自带的 compactAlgorithm 会以 fontSizeSM 为基准重算整条字号阶，
+ * 导致紧凑模式下基础字号被压到 12px、主题里的 fontSize 配置不生效。
+ *
+ * 该算法只做一件事：把字号/行高 token 恢复为 seed 派生值，
+ * 密度（控件高度、内外边距）仍由 Antd compactAlgorithm 决定，因此：
+ * - 紧凑模式下基础字号保持在设计稿的 14px（fontSizeSM 12 / fontSizeLG 16 自动派生）；
+ * - 主题显式配置 fontSize 时整条字号阶跟随；
+ * - 编辑器按内置 compactAlgorithm 判断密度开关，显示与实际一致。
  */
-export const compactDensityAlgorithm: ThemeAlgorithm = (seed, mapToken) => {
-  const compactMap = compactAlgorithm(seed, mapToken)
-
-  const baseFontSize = typeof seed.fontSize === 'number' && seed.fontSize > 0 ? seed.fontSize : COMPACT_BASE_FONT_SIZE
-  const baseMap = defaultAlgorithm({ ...seed, fontSize: baseFontSize }) as unknown as Record<string, unknown>
+export const compactFontsAlgorithm: ThemeAlgorithm = (seed, mapToken) => {
+  const mergedMap = (mapToken ?? defaultAlgorithm(seed)) as unknown as Record<string, unknown>
+  const baseMap = defaultAlgorithm(seed) as unknown as Record<string, unknown>
 
   const fontTokens: Record<string, unknown> = {}
   for (const key of fontTokenKeys) {
     fontTokens[key] = baseMap[key]
   }
 
-  return { ...compactMap, ...fontTokens } as ReturnType<ThemeAlgorithm>
+  return { ...mergedMap, ...fontTokens } as unknown as ReturnType<ThemeAlgorithm>
 }
 
-export default compactDensityAlgorithm
+export default compactFontsAlgorithm
