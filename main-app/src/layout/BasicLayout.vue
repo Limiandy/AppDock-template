@@ -484,7 +484,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
       '--basic-layout-menu-icon-size': `${token.fontSize}px`,
 
       '&.ant-layout-sider-collapsed': {
-        '--basic-layout-menu-icon-size': `${token.fontSize + 4}px`,
+        '--basic-layout-menu-icon-size': `${token.fontSize + 6}px`,
 
         // 折叠态：只保留图标并在侧栏内水平居中
         [`${rootCls}-menu`]: {
