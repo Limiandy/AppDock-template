@@ -38,6 +38,79 @@ test('creates an AppDock project from the packaged template', async () => {
   }
 })
 
+test('creates a single app project without examples', async () => {
+  const testRoot = await mkdtemp(resolve(tmpdir(), 'create-app-dock-single-'))
+
+  try {
+    const result = runCli(['demo-single', '--single', '--no-examples'], testRoot)
+    assert.equal(result.status, 0, result.stderr)
+
+    const root = resolve(testRoot, 'demo-single')
+    assert.match(result.stdout, /单应用/)
+    assert.match(result.stdout, /不含示例页面/)
+
+    // micro frontend plumbing removed
+    await assert.rejects(access(resolve(root, 'main-app/src/registerMicroApp.ts')))
+    await assert.rejects(access(resolve(root, 'application')))
+    await assert.rejects(access(resolve(root, 'main-app/src/micro-apps.json')))
+    await assert.rejects(access(resolve(root, 'scripts/workspace-projects.mjs')))
+    await assert.rejects(access(resolve(root, 'vite/plugins/routeSyncPlugin.ts')))
+
+    // examples removed and replaced by a minimal home page
+    await assert.rejects(access(resolve(root, 'main-app/src/views/workbench')))
+    await assert.rejects(access(resolve(root, 'main-app/src/data/prototype')))
+    await access(resolve(root, 'main-app/src/views/HomeView.vue'))
+    const routes = await readFile(resolve(root, 'main-app/src/router/BaseAppRoutes.ts'), 'utf8')
+    assert.match(routes, /HomeView/)
+    assert.doesNotMatch(routes, /WorkbenchHome/)
+    const router = await readFile(resolve(root, 'main-app/src/router/index.ts'), 'utf8')
+    assert.doesNotMatch(router, /modules/)
+    assert.match(router, /redirect: '\/home'/)
+
+    const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'))
+    assert.equal(manifest.devDependencies['vite-plugin-qiankun'], undefined)
+    assert.equal(manifest.scripts['create:app'], undefined)
+    assert.equal(manifest.scripts['gen-micro-apps'], undefined)
+    assert.doesNotMatch(manifest.scripts.dev, /gen-micro-apps/)
+    assert.doesNotMatch(manifest.scripts.check, /test:scripts/)
+
+    const mainManifest = JSON.parse(await readFile(resolve(root, 'main-app/package.json'), 'utf8'))
+    assert.equal(mainManifest.dependencies.qiankun, undefined)
+
+    const readme = await readFile(resolve(root, 'README.md'), 'utf8')
+    assert.match(readme, /单应用/)
+    const agents = await readFile(resolve(root, 'AGENTS.md'), 'utf8')
+    assert.match(agents, /单应用/)
+  } finally {
+    await rm(testRoot, { recursive: true, force: true })
+  }
+})
+
+test('keeps the micro frontend scaffold when only examples are disabled', async () => {
+  const testRoot = await mkdtemp(resolve(tmpdir(), 'create-app-dock-clean-'))
+
+  try {
+    const result = runCli(['demo-clean', '--micro', '--no-examples'], testRoot)
+    assert.equal(result.status, 0, result.stderr)
+
+    const root = resolve(testRoot, 'demo-clean')
+    await access(resolve(root, 'main-app/src/registerMicroApp.ts'))
+    await access(resolve(root, 'main-app/src/micro-apps.json'))
+    await access(resolve(root, 'scripts/workspace-projects.mjs'))
+
+    await assert.rejects(access(resolve(root, 'main-app/src/views/workbench')))
+    await assert.rejects(access(resolve(root, 'main-app/src/data/prototype')))
+    await access(resolve(root, 'main-app/src/views/HomeView.vue'))
+    const routes = await readFile(resolve(root, 'main-app/src/router/BaseAppRoutes.ts'), 'utf8')
+    assert.match(routes, /HomeView/)
+
+    const readme = await readFile(resolve(root, 'README.md'), 'utf8')
+    assert.match(readme, /不含示例页面/)
+  } finally {
+    await rm(testRoot, { recursive: true, force: true })
+  }
+})
+
 test('refuses to overwrite a non-empty destination without --force', async () => {
   const testRoot = await mkdtemp(resolve(tmpdir(), 'create-app-dock-'))
 

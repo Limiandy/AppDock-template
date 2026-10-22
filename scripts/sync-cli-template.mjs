@@ -8,6 +8,7 @@ const templateDir = join(packageDir, 'template')
 
 const templateEntries = [
   '.gitignore',
+  '.prettierignore',
   'AGENTS.md',
   'README.md',
   'application',

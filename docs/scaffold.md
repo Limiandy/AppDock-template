@@ -191,10 +191,21 @@ location / {
 ## 12. create-app-dock CLI
 
 ```bash
-pnpm create app-dock my-app
-pnpm create app-dock my-app --force        # 覆盖非空目录（谨慎）
+pnpm create app-dock my-app                       # 交互式选择形态与示例
+pnpm create app-dock my-app --micro               # 微前端（默认）
+pnpm create app-dock my-app --single              # 单应用
+pnpm create app-dock my-app --no-examples         # 不含示例页面
+pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎）
 ```
 
+生成选项：
+
+| 选项                           | 效果                                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `--micro` / `--single`         | 微前端保留 `application/*`、qiankun、子应用脚手架脚本；单应用移除这些内容，只保留 `main-app` + `common`            |
+| `--examples` / `--no-examples` | 示例页面指工作台/寻源/供应商/招募/招标/公司设置/消息中心等参考稿原型；关闭后保留布局与主题，并生成最小首页 `/home` |
+
+- 非交互环境未传选项时默认 `--micro --examples`。
 - 模板快照由 `scripts/sync-cli-template.mjs` 在 `prepack` / `test:scripts` 时生成（目录本身已 gitignore）。
 - **新增根级文件或文档，如果生成的项目也需要，必须登记到 `templateEntries`。**
 - 发布：更新 `packages/create-app-dock/package.json` 版本 → 打 tag `create-app-dock-v<version>` → GitHub
