@@ -262,12 +262,18 @@ function routesToMenu(routes: any[], parentPath = ''): MenuProps['items'] {
     })
 }
 
-/** 顶栏高度：Antd 默认由 controlHeight * 2 推导，这里按设计固定为 36px */
-const headerHeight = 36
+/** 布局尺寸随主题密度变化：紧凑模式用 152/64/36，常规模式放大到 200/80/48 */
+const isCompactMode = computed(() => globalThemeMode.value.includes('compact'))
+
+const layoutMetrics = computed(() =>
+  isCompactMode.value ? { header: 36, sider: 152, collapsed: 64 } : { header: 48, sider: 200, collapsed: 80 },
+)
+
+const headerHeight = computed(() => layoutMetrics.value.header)
+const siderWidth = computed(() => layoutMetrics.value.sider)
+const collapsedWidth = computed(() => layoutMetrics.value.collapsed)
 
 const menus = ref<MenuProps['items']>([])
-const siderWidth = 152
-const collapsedWidth = 64
 const loading = ref<boolean>(false)
 const hasMenus = computed(() => Boolean(menus.value?.length))
 
@@ -364,8 +370,8 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
       flexShrink: 0,
       alignItems: 'center',
       gap: `${token.marginSM}px`,
-      height: `${headerHeight}px`,
-      lineHeight: `${headerHeight}px`,
+      height: `${headerHeight.value}px`,
+      lineHeight: `${headerHeight.value}px`,
       paddingInline: `${token.padding}px`,
       background: token.colorBgContainer,
       border: 'none',
@@ -482,7 +488,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         flexShrink: 0,
         alignItems: 'center',
         gap: `${token.marginXS}px`,
-        height: `${headerHeight}px`,
+        height: `${headerHeight.value}px`,
         // 与一级菜单图标左对齐（菜单容器 8px + 菜单项 16px）
         paddingInline: `${token.paddingLG}px`,
         borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
