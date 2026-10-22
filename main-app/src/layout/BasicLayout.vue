@@ -65,12 +65,15 @@
             <a-switch
               :checked="isDark"
               class="basic-layout-header__theme"
-              size="small"
               :aria-label="isDark ? '切换为亮色' : '切换为暗色'"
               @change="onThemeSwitch"
             >
-              <template #checkedChildren><SvgIcon name="solar:moon-outline" /></template>
-              <template #unCheckedChildren><SvgIcon name="solar:sun-outline" /></template>
+              <template #checkedChildren>
+                <SvgIcon name="solar:moon-outline" width="12px" height="12px" />
+              </template>
+              <template #unCheckedChildren>
+                <SvgIcon name="solar:sun-outline" width="12px" height="12px" />
+              </template>
             </a-switch>
           </a-tooltip>
 
