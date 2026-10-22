@@ -539,6 +539,8 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         },
 
         [`${rootCls}-menu-submenu-title`]: {
+          // 与普通菜单项保持同一左轴：Antd 默认给子菜单标题 4px 横向 margin，这里清零
+          marginInline: 0,
           paddingInlineEnd: `${token.paddingSM}px`,
         },
 
