@@ -2,15 +2,23 @@
   <a-card :bordered="false" :class="[scopeClass, className]">
     <h2 class="tender-publish__title">发布招标</h2>
 
-    <a-form layout="horizontal" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" class="tender-publish__form">
+    <a-form
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      layout="horizontal"
+      :label-col="{ span: 6 }"
+      :wrapper-col="{ span: 18 }"
+      class="tender-publish__form"
+    >
       <a-row :gutter="[24, 0]">
         <a-col :xs="24" :xl="12">
-          <a-form-item label="招标名称" required>
+          <a-form-item label="招标名称" name="title" required>
             <a-input v-model:value="model.title" placeholder="请输入招标名称，如：地区+项目名称+服务分类+招标公告" />
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="采购方式" required>
+          <a-form-item label="采购方式" name="purchaseMethod" required>
             <a-select
               v-model:value="model.purchaseMethod"
               placeholder="搜索供应商名称 / 服务分类"
@@ -19,12 +27,12 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="所属公司" required>
+          <a-form-item label="所属公司" name="company" required>
             <a-select v-model:value="model.company" :options="companyOptions" />
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="招标类别" required>
+          <a-form-item label="招标类别" name="category" required>
             <a-select
               v-model:value="model.category"
               placeholder="请选择服务分类，支持关键字搜索"
@@ -33,12 +41,12 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="招标方式" required>
+          <a-form-item label="招标方式" name="method" required>
             <a-select v-model:value="model.method" placeholder="搜索供应商名称 / 服务分类" :options="methodOptions" />
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="报名截止时间" required>
+          <a-form-item label="报名截止时间" name="deadline" required>
             <a-date-picker
               v-model:value="model.deadline"
               show-time
@@ -48,7 +56,7 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="招标项目" required>
+          <a-form-item label="招标项目" name="project" required>
             <a-select v-model:value="model.project" placeholder="请选择招标项目" :options="projectOptions" />
           </a-form-item>
         </a-col>
@@ -58,7 +66,7 @@
 
       <a-row :gutter="[24, 0]">
         <a-col :xs="24" :xl="12">
-          <a-form-item label="注册资金" required>
+          <a-form-item label="注册资金" name="capital" required>
             <div class="tender-publish__inline">
               <a-select v-model:value="model.capital" placeholder="请输入注册资金" :options="capitalOptions" />
               <span class="tender-publish__suffix">万元以上</span>
@@ -66,7 +74,7 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="服务区域" required>
+          <a-form-item label="服务区域" name="area" required>
             <a-select
               v-model:value="model.area"
               placeholder="以企业及分支机构所在地区为筛选项"
@@ -75,7 +83,7 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="服务资质" required>
+          <a-form-item label="服务资质" name="qualification" required>
             <div class="tender-publish__inline">
               <a-select
                 v-model:value="model.qualification"
@@ -87,7 +95,7 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="成功案例" required>
+          <a-form-item label="成功案例" name="caseCount" required>
             <div class="tender-publish__inline">
               <a-select v-model:value="model.caseCount" placeholder="不限" :options="caseOptions" />
               <span class="tender-publish__suffix">个以上</span>
@@ -105,7 +113,7 @@
         </a-col>
       </a-row>
 
-      <a-form-item label="招标详情" required>
+      <a-form-item label="招标详情" name="detail" required>
         <a-textarea v-model:value="model.detail" :rows="6" :maxlength="200" show-count placeholder="请输入招标详情" />
       </a-form-item>
 
@@ -131,7 +139,7 @@
 
       <a-row :gutter="[24, 0]">
         <a-col :xs="24" :xl="12">
-          <a-form-item label="招标负责人" required>
+          <a-form-item label="招标负责人" name="owner" required>
             <div class="tender-publish__inline">
               <a-select v-model:value="model.owner" :options="ownerOptions" />
               <a class="tender-publish__link">添加不在平台的负责人</a>
@@ -139,12 +147,12 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="办公电话" required>
+          <a-form-item label="办公电话" name="officePhone" required>
             <a-input v-model:value="model.officePhone" placeholder="办公电话" />
           </a-form-item>
         </a-col>
         <a-col :xs="24" :xl="12">
-          <a-form-item label="职务" required>
+          <a-form-item label="职务" name="ownerRole" required>
             <a-select v-model:value="model.ownerRole" placeholder="请输入招标负责人公司职务" :options="roleOptions" />
           </a-form-item>
         </a-col>
@@ -161,6 +169,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import type { FormInstance } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { SvgIcon } from 'common'
 import { useGlobalStore } from '@/store/modules/global.ts'
@@ -215,13 +224,38 @@ const model = reactive({
   officePhone: '',
 })
 
+const formRef = ref<FormInstance>()
+
+const rules = {
+  title: [{ required: true, message: '请输入招标名称' }],
+  purchaseMethod: [{ required: true, message: '请选择采购方式' }],
+  company: [{ required: true, message: '请选择所属公司' }],
+  category: [{ required: true, message: '请选择招标类别' }],
+  method: [{ required: true, message: '请选择招标方式' }],
+  deadline: [{ required: true, message: '请选择报名截止时间' }],
+  project: [{ required: true, message: '请选择招标项目' }],
+  capital: [{ required: true, message: '请选择注册资金' }],
+  area: [{ required: true, message: '请选择服务区域' }],
+  qualification: [{ required: true, message: '请选择服务资质' }],
+  detail: [{ required: true, message: '请输入招标详情' }],
+  owner: [{ required: true, message: '请选择招标负责人' }],
+  officePhone: [{ required: true, message: '请输入办公电话' }],
+  ownerRole: [{ required: true, message: '请选择职务' }],
+}
+
 const fileList = ref([])
 
 function onMeasure() {
   global.message.success('原型演示：符合条件的供应商约 128 家')
 }
 
-function onSubmit() {
+async function onSubmit() {
+  try {
+    await formRef.value?.validate()
+  } catch {
+    return
+  }
+
   global.message.success('原型演示：招标已发布')
 }
 

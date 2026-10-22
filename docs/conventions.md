@@ -78,7 +78,34 @@ main-app/src/
 - 表单字段的 `readonly`、`hidden` 支持函数形式 `(mode, record) => boolean`，详情模式默认只读。
 - 需要重置演示数据时，由页面决定触发方式，不在公共组件内置。
 
-## 4. 数据层约定
+## 4. 表单约定
+
+所有业务表单统一使用 Ant Design Vue 的 `a-form` + `a-form-item` 结构，不要把字段散写成普通 `div` + 控件。
+
+- 表单根节点：`<a-form ref="formRef" :model="formModel" :rules="rules" @finish="onSubmit">`；字段用
+  `<a-form-item name="字段名" label="标签" :rules="字段规则">` 包裹，`name` 必须与 `model` 字段一致。
+- 校验统一走表单实例：`a-form-item` 的 `rules` 声明规则；提交时由 `a-form` 的
+  `@finish`（校验通过后触发）调用接口，或显式 `await formRef.value?.validate()`
+  后再提交；校验失败时由表单展示错误，不要自己拼接错误提示。
+- 回显与重置：编辑/详情用 `formRef.value?.setFieldsValue(record)`；关闭或取消时用
+  `formRef.value?.resetFields()`，不要手动逐字段赋值。
+- 提交中状态用 `:confirm-loading` / 按钮 `loading`，避免重复提交。
+- 禁止从 DOM 取值、手写 `if (!value) message.error(...)` 之类的字段校验，也不要绕过 `validate` 直接调用接口。
+- 配置化表格里的表单（SuperTable 的 `formConfig`）同样遵循本约定：字段规则走 `rules`，提交走 `onSubmit` + `formSubmit`
+  事件，不要在页面里重复校验。
+
+```vue
+<template>
+  <a-form ref="formRef" :model="formModel" :rules="rules" layout="vertical" @finish="onSubmit">
+    <a-form-item label="公司名称" name="name" :rules="[{ required: true, message: '请输入公司名称' }]">
+      <a-input v-model:value="formModel.name" />
+    </a-form-item>
+    <a-button type="primary" html-type="submit" :loading="submitting">保存</a-button>
+  </a-form>
+</template>
+```
+
+## 5. 数据层约定
 
 新增数据域必须包含：
 
@@ -106,7 +133,7 @@ export interface XxxRepository {
 - 环境开关集中在 `index.ts`，不要在页面里判断 `import.meta.env`。
 - 字段命名：前端 camelCase，Supabase 表 snake_case，映射放在 supabase 适配器内。
 
-## 5. 权限约定
+## 6. 权限约定
 
 ```ts
 import { useAccess } from 'common'
@@ -122,7 +149,7 @@ setPermissions(identity.permissions) // 登录完成后覆盖
 - mock 身份在 `main-app/src/access.ts` 维护；新增权限时同步三个 profile 的语义（管理员 `*`、录入员可写、审计员只读）。
 - 真实登录接入后必须调用 `setPermissions`，不要依赖 mock 默认值。
 
-## 6. 样式与主题约定
+## 7. 样式与主题约定
 
 - 主题相关样式通过 `useStyle` 注入，选择器挂到布局/组件根类上：
 
@@ -144,7 +171,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 - 主题预设放在 `main-app/src/hooks/theme/presets/`，导出 `ThemeConfig`；新增预设同步 `docs/design-tokens.md`。
 - 全局默认视觉以 `presets/managementSystem.ts` 为准；不要另起一套色板，确需扩展时在预设中补层并同步 token 文档。
 
-## 7. common 公共库约定
+## 8. common 公共库约定
 
 - 公开入口固定为：`common`、`common/components`、`common/helper`、`common/hooks`、`common/icons`。
 - 新公共能力先判断归属：组件 → `components/`，纯函数/类 → `helper/`，组合式 → `hooks/`，图标 → `icons/`。
@@ -153,7 +180,7 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 - 改动后至少执行 `pnpm build:common`；涉及类型变化时执行 `pnpm typecheck`。
 - 依赖保持精简：能复用现有依赖就不新增；`vue` 与 `ant-design-vue` 为 external。
 
-## 8. 生成物与脚本约定
+## 9. 生成物与脚本约定
 
 | 文件                                                   | 生成方式                                | 是否入库       |
 | ------------------------------------------------------ | --------------------------------------- | -------------- |
@@ -170,15 +197,16 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 - 新增脚本逻辑要配套 `scripts/*.test.mjs` 测试；影响 CLI 模板的要更新 `templateEntries` 与 CLI 测试断言。
 - 生成物发生变化时，和对应的源码/脚本改动放在同一个提交里。
 
-## 9. 质量与提交约定
+## 10. 质量与提交约定
 
-- 提交前必须 `pnpm run check` 全绿；只跑了部分检查时要在说明里写清楚。
+- 提交前先运行一次 `pnpm run lint:fix`（ESLint 自动修复；需要同时格式化用 `pnpm run fix`），再执行
+  `pnpm run check`；只跑了部分检查时要在说明里写清楚。
 - 提交信息：Conventional Commits，subject 英文，正文可中文列要点；一个提交一个主题。
 - 禁止提交密钥、本地环境文件（`*.local`）、构建产物。
 - 修复缺陷时优先补测试（脚本逻辑）或说明人工验证路径（UI 逻辑）。
 - 不擅自升级/降级依赖；确需变更时单独提交并在 `PLANS.md` 记录原因。
 
-## 10. 文档约定
+## 11. 文档约定
 
 - 面向 Agent 的入口是 `AGENTS.md`；行为或约定变化必须同步更新它。
 - 机制变化 → `docs/architecture.md`；用法/命令变化 → `docs/scaffold.md`；约定变化 → 本文档。

@@ -2,7 +2,15 @@
   <a-card :bordered="false" :class="[scopeClass, className]">
     <h2 class="company-profile__title">公司资料</h2>
 
-    <a-form layout="horizontal" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" class="company-profile__form">
+    <a-form
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      layout="horizontal"
+      :label-col="{ span: 4 }"
+      :wrapper-col="{ span: 20 }"
+      class="company-profile__form"
+    >
       <a-form-item label="公司LOGO">
         <a-upload v-model:file-list="logoFiles" :before-upload="() => false" :show-upload-list="false">
           <div class="company-profile__upload-box">
@@ -13,7 +21,7 @@
         <div class="company-profile__hint">点击上传，注意：请确认图片长200px，高100px，白底，以确保完美显示</div>
       </a-form-item>
 
-      <a-form-item label="公司名称" required>
+      <a-form-item label="公司名称" name="name" required>
         <a-input v-model:value="model.name" class="company-profile__control" placeholder="请输入公司名称" />
       </a-form-item>
 
@@ -80,7 +88,7 @@
     </a-form>
 
     <div class="company-profile__footer">
-      <a-button type="primary" @click="notify('保存公司资料')">保存</a-button>
+      <a-button type="primary" @click="onSave">保存</a-button>
       <a-button type="text" @click="notify('取消')">取消</a-button>
     </div>
   </a-card>
@@ -88,6 +96,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import type { FormInstance } from 'ant-design-vue'
 import { SvgIcon } from 'common'
 import { companyProfile } from '@/data/prototype'
 import { useGlobalStore } from '@/store/modules/global.ts'
@@ -108,6 +117,10 @@ const businessAreaOptions = [
 ]
 
 const logoFiles = ref([])
+const formRef = ref<FormInstance>()
+const rules = {
+  name: [{ required: true, message: '请输入公司名称' }],
+}
 
 const model = reactive({
   name: companyProfile.name,
@@ -133,6 +146,16 @@ function addContact() {
 
 function removeContact(id: string) {
   model.contacts = model.contacts.filter((item) => item.id !== id)
+}
+
+async function onSave() {
+  try {
+    await formRef.value?.validate()
+  } catch {
+    return
+  }
+
+  global.message.success('原型演示：公司资料已保存')
 }
 
 function notify(action: string) {

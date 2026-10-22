@@ -62,17 +62,21 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
    `pnpm build:common`，否则 main-app 读到的仍是旧 `dist`。
 4. **不提交构建与本地产物：**
    `dist/`、`node_modules/`、`packages/create-app-dock/template/`、`docker/supabase/.env.local`、`.build/`。
-5. **提交前 `pnpm run check` 必须通过。** 不允许用“本地看起来没问题”代替门禁。
+5. **提交前先跑一次 ESLint 自动修复，再跑门禁。** 先执行 `pnpm run lint:fix`（等价于 `eslint --fix`；需要同时格式化时用
+   `pnpm run fix`），然后 `pnpm run check` 必须通过。不允许用“本地看起来没问题”代替门禁。
 6. **样式优先使用 Ant Design Vue token。** 主题相关样式走 `useStyle` 的 token 参数；`scoped less`
    只做结构与布局；禁止硬编码颜色与深度覆盖组件库内部样式。全局色板以
    `main-app/src/hooks/theme/presets/managementSystem.ts`（`docs/design-tokens.md`）为准，明暗切换用 `applyThemeMode`。
-7. **权限统一走 `useAccess`。** 权限命名 `资源:动作`（如 `shelter:update`），支持 `资源:*` 与
+7. **表单统一使用 Ant Design Vue 的 `a-form` + `a-form-item` 结构。** 校验规则写在 `a-form-item` 的
+   `rules`，通过表单实例校验与提交（`formRef.validate()` / `a-form` 的
+   `@finish`），不要手写字段校验，也不要直接从 DOM 取值或绕过校验调用接口。示例见 `docs/conventions.md`「表单约定」。
+8. **权限统一走 `useAccess`。** 权限命名 `资源:动作`（如 `shelter:update`），支持 `资源:*` 与
    `*`；未授权时默认隐藏入口。
-8. **数据访问走 `main-app/src/data/<domain>` 的 repository 接口**，不要直接在页面里散写
+9. **数据访问走 `main-app/src/data/<domain>` 的 repository 接口**，不要直接在页面里散写
    `fetch`；新增数据域必须同时提供 mock 与 supabase 实现（或明确说明只支持一种）。
-9. **新增公共 API 必须同步文档**：`common/README.md`（入口/用法），行为变化同步 `README.md`
-   / 本目录文档；文档与实现不一致视为未完成。
-10. **不要擅自 push、发布 npm 包、修改远端服务或升级依赖版本**；需要时先说明并获得确认。
+10. **新增公共 API 必须同步文档**：`common/README.md`（入口/用法），行为变化同步 `README.md`
+    / 本目录文档；文档与实现不一致视为未完成。
+11. **不要擅自 push、发布 npm 包、修改远端服务或升级依赖版本**；需要时先说明并获得确认。
 
 ## 典型任务 → 做什么
 
@@ -101,6 +105,7 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 
 ## 提交与文档约定
 
+- 每次提交前运行一次 ESLint 自动修复：`pnpm run lint:fix`（同时格式化用 `pnpm run fix`），随后执行 `pnpm run check`。
 - 提交信息使用 Conventional
   Commits：`feat:`、`fix:`、`refactor:`、`chore:`、`docs:`、`style:`、`test:`；subject 用英文，正文可中文列要点。
 - 一个提交聚焦一个主题；生成物变化（如 `micro-apps.json`）与对应的脚本/代码改动放在同一提交，避免悬空。
