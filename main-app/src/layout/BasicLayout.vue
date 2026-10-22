@@ -251,7 +251,13 @@ function routesToMenu(routes: any[], parentPath = ''): MenuProps['items'] {
         key: fullPath,
         title: r.meta?.title || '',
         label: r.meta?.title || '',
-        icon: r.meta?.icon ? h(SvgIcon, { name: r.meta.icon }) : undefined,
+        icon: r.meta?.icon
+          ? h(SvgIcon, {
+              name: r.meta.icon,
+              width: 'var(--basic-layout-menu-icon-size)',
+              height: 'var(--basic-layout-menu-icon-size)',
+            })
+          : undefined,
       }
 
       if (r.children && r.children.length > 0) {
@@ -474,6 +480,45 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
       'height': '100%',
       'background': token.colorBgContainer,
       'borderInlineEnd': `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      // 菜单图标尺寸：展开态与字号一致，折叠态放大一档（随密度变化）
+      '--basic-layout-menu-icon-size': `${token.fontSize}px`,
+
+      '&.ant-layout-sider-collapsed': {
+        '--basic-layout-menu-icon-size': `${token.fontSize + 4}px`,
+
+        // 折叠态：只保留图标并在侧栏内水平居中
+        [`${rootCls}-menu`]: {
+          padding: 0,
+
+          [`${rootCls}-menu-item`]: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            paddingInline: 0,
+          },
+
+          [`${rootCls}-menu-submenu-title`]: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            paddingInline: 0,
+          },
+
+          [`${rootCls}-menu-title-content`]: {
+            display: 'none',
+          },
+
+          [`${rootCls}-menu-item-icon`]: {
+            margin: 0,
+          },
+
+          [`${rootCls}-menu-submenu-arrow`]: {
+            display: 'none',
+          },
+        },
+      },
 
       [`${rootCls}-layout-sider-children`]: {
         display: 'flex',
