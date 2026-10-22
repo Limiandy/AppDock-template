@@ -13,6 +13,19 @@ function runCli(args, cwd) {
   return spawnSync(process.execPath, [binPath, ...args], { cwd, encoding: 'utf8' })
 }
 
+test('prints the CLI version', async () => {
+  const testRoot = await mkdtemp(resolve(tmpdir(), 'create-app-dock-'))
+  const { version } = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
+
+  try {
+    const result = runCli(['--version'], testRoot)
+    assert.equal(result.status, 0)
+    assert.equal(result.stdout.trim(), version)
+  } finally {
+    await rm(testRoot, { recursive: true, force: true })
+  }
+})
+
 test('creates an AppDock project from the packaged template', async () => {
   const testRoot = await mkdtemp(resolve(tmpdir(), 'create-app-dock-'))
 

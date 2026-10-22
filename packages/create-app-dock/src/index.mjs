@@ -1,4 +1,5 @@
 import { access, cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { basename, dirname, parse, resolve } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { stdin as processStdin } from 'node:process'
@@ -8,10 +9,22 @@ import { applySingleAppMode, removeExamples, writeModeNote } from './transforms.
 const packageDir = dirname(dirname(fileURLToPath(import.meta.url)))
 const templateDir = resolve(packageDir, 'template')
 
-const usage = `用法：\n  pnpm create app-dock <项目目录> [--single|--micro] [--no-examples] [--template default] [--force]\n\n示例：\n  pnpm create app-dock my-app                          # 交互式选择形态与示例\n  pnpm create app-dock my-app --micro                  # 微前端（默认）\n  pnpm create app-dock my-app --single --no-examples   # 单应用，不含示例页面\n  pnpm init app-dock my-app --template default`
+export const version = JSON.parse(readFileSync(resolve(packageDir, 'package.json'), 'utf8')).version
+
+const usage = `用法：\n  pnpm create app-dock <项目目录> [--single|--micro] [--no-examples] [--template default] [--force]\n\n示例：\n  pnpm create app-dock my-app                          # 交互式选择形态与示例\n  pnpm create app-dock my-app --micro                  # 微前端（默认）\n  pnpm create app-dock my-app --single --no-examples   # 单应用，不含示例页面\n  pnpm init app-dock my-app --template default
+
+版本：${version}`
 
 export function parseArgs(args) {
-  const options = { force: false, help: false, target: '', template: 'default', mode: undefined, examples: undefined }
+  const options = {
+    force: false,
+    help: false,
+    version: false,
+    target: '',
+    template: 'default',
+    mode: undefined,
+    examples: undefined,
+  }
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index]
@@ -28,6 +41,8 @@ export function parseArgs(args) {
       options.examples = false
     } else if (arg === '--help' || arg === '-h') {
       options.help = true
+    } else if (arg === '--version' || arg === '-v') {
+      options.version = true
     } else if (arg === '--template') {
       options.template = args[index + 1] ?? ''
       index += 1
@@ -144,6 +159,11 @@ export async function createProject({ cwd = process.cwd(), force = false, target
 export async function run(args, { cwd = process.cwd(), stdout = console.log } = {}) {
   const options = parseArgs(args)
 
+  if (options.version) {
+    stdout(version)
+    return
+  }
+
   if (options.help) {
     stdout(usage)
     return
@@ -179,6 +199,6 @@ export async function run(args, { cwd = process.cwd(), stdout = console.log } = 
   const examplesLabel = variant.examples ? '包含示例页面' : '不含示例页面'
 
   stdout(
-    `\n已创建 AppDock 项目：${projectName}（${modeLabel}，${examplesLabel}）\n\n下一步：\n  cd ${destination}\n  pnpm install\n  pnpm dev\n`,
+    `\ncreate-app-dock v${version}\n已创建 AppDock 项目：${projectName}（${modeLabel}，${examplesLabel}）\n\n下一步：\n  cd ${destination}\n  pnpm install\n  pnpm dev\n`,
   )
 }

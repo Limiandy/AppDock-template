@@ -191,6 +191,7 @@ location / {
 ## 12. create-app-dock CLI
 
 ```bash
+npx create-app-dock@latest my-app                 # 推荐：npx 拉取最新版
 pnpm create app-dock my-app                       # 交互式选择形态与示例
 pnpm create app-dock my-app --micro               # 微前端（默认）
 pnpm create app-dock my-app --single              # 单应用
@@ -206,6 +207,11 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
 | `--examples` / `--no-examples` | 示例页面指工作台/寻源/供应商/招募/招标/公司设置/消息中心等参考稿原型；关闭后保留布局与主题，并生成最小首页 `/home` |
 
 - 非交互环境未传选项时默认 `--micro --examples`。
+- 成功后首行会打印 CLI 版本（`create-app-dock vX.Y.Z`），也可用 `--version` / `-v` 单独查看。
+- **pnpm 的 dlx 缓存会固定旧版本**：`pnpm create` / `pnpm dlx` 把未指定版本的解析结果缓存在
+  `~/Library/Caches/pnpm/dlx`（macOS）或
+  `~/.cache/pnpm/dlx`（Linux），发布新版本后仍可能装旧版，表现为「没有出现形态/示例选项」。处理方式：删除该缓存目录，或指定版本
+  `pnpm create app-dock@latest` / `pnpm create app-dock@<version>`，或改用 `npx create-app-dock@latest`。
 - 模板快照由 `scripts/sync-cli-template.mjs` 在 `prepack` / `test:scripts` 时生成（目录本身已 gitignore）。
 - **新增根级文件或文档，如果生成的项目也需要，必须登记到 `templateEntries`。**
 - 发布：更新 `packages/create-app-dock/package.json` 版本 → 打 tag `create-app-dock-v<version>` → GitHub

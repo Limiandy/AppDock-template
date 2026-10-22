@@ -3,14 +3,24 @@
 Create an AppDock workspace, either as a **micro-frontend** or a **single application**, with or without the demo pages.
 
 ```bash
+npx create-app-dock@latest my-app
+# 或
 pnpm create app-dock my-app
 ```
+
+创建结果的第一行会打印 CLI 版本（如 `create-app-dock v0.1.4`），可用 `create-app-dock --version`
+单独查看，避免误用旧版本。`npx create-app-dock@latest` 是拿到最新版的推荐方式。
 
 The initializer also accepts the npm-style alias:
 
 ```bash
 pnpm init app-dock my-app --template default
 ```
+
+> **pnpm 缓存旧版本？** `pnpm create` / `pnpm dlx` 会把未指定版本号的解析结果缓存在
+> `~/Library/Caches/pnpm/dlx`（macOS）或
+> `~/.cache/pnpm/dlx`（Linux），即使已发布新版本也可能继续装旧版。遇到「选项没出现 / 版本不对」时：删除该缓存目录，或直接指定版本
+> `pnpm create app-dock@latest` （仍无效时用 `pnpm create app-dock@0.1.4`），也可以改用 `npx create-app-dock@latest`。
 
 ## Options
 
@@ -22,6 +32,7 @@ pnpm init app-dock my-app --template default
 | `--no-examples`     | 不包含示例页面：保留布局、主题、公共库与开发工具页，并生成一个最小首页 `/home`       |
 | `--force`           | 覆盖非空目录（谨慎使用）                                                             |
 | `--template <name>` | 模板名称，目前仅支持 `default`                                                       |
+| `--version`, `-v`   | 打印 CLI 版本                                                                        |
 | `--help`, `-h`      | 显示帮助                                                                             |
 
 不带形态/示例选项时会在终端中交互选择：
