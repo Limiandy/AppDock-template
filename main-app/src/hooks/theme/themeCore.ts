@@ -2,6 +2,7 @@ import { theme } from 'ant-design-vue'
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
 import { shallowRef } from 'vue'
 import compactFontsAlgorithm from './compactDensityAlgorithm'
+import { densityBaseFontSizes } from './presets/managementSystem'
 import {
   managementSystemDarkComponents,
   managementSystemDarkTokens,
@@ -88,7 +89,23 @@ export function setGlobalThemeConfig(
       ...config.components,
     },
   }
-  globalThemeMode.value = getModeByThemeConfig(globalThemeConfig.value)
+  const nextMode = getModeByThemeConfig(globalThemeConfig.value)
+  const modeChanged = nextMode !== globalThemeMode.value
+  globalThemeMode.value = nextMode
+
+  // 密度切换时同步基础字号（紧凑 14 / 常规 16），菜单、面包屑、正文一起变化；
+  // 只在模式变化时写入，避免覆盖主题编辑器里对字号的手动调整。
+  if (modeChanged) {
+    const baseFontSize = nextMode.includes('compact') ? densityBaseFontSizes.compact : densityBaseFontSizes.normal
+
+    globalThemeConfig.value = {
+      ...globalThemeConfig.value,
+      token: {
+        ...globalThemeConfig.value.token,
+        fontSize: baseFontSize,
+      },
+    }
+  }
 }
 
 const modeOwnedTokenKeys = new Set([

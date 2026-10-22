@@ -524,8 +524,8 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => {
         background: 'transparent',
         borderInlineEnd: 0,
         paddingBlock: `${token.paddingXS}px`,
-        // 参考稿侧栏仅 152px，菜单使用小号字与紧凑行高，避免中文标签截断
-        fontSize: `${token.fontSizeSM}px`,
+        // 与面包屑/正文同字号（随密度变化：紧凑 14 / 常规 16）
+        fontSize: `${token.fontSize}px`,
 
         [`${rootCls}-menu-item`]: {
           // 行高 = 控件高 + 内距，随主题密度缩放，避免写死数值

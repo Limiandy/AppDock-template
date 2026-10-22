@@ -12,6 +12,12 @@ import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context'
  * 这些组件的视觉由全局 token（colorFillAlter、colorBorderSecondary、controlItemBgHover 等）派生。
  */
 
+/** 密度对应的基础字号：紧凑 14 / 常规 16（侧栏菜单、面包屑、正文共用） */
+export const densityBaseFontSizes = {
+  compact: 14,
+  normal: 16,
+} as const
+
 /** 与明暗无关：品牌与功能色、排版、圆角、控件尺寸 */
 export const managementSystemSeedTokens: ThemeConfig['token'] = {
   // 品牌与功能色
@@ -29,9 +35,9 @@ export const managementSystemSeedTokens: ThemeConfig['token'] = {
   // 排版：字体栈与字号阶来自设计稿（docs/design-tokens.md），保留为 token；
   // 控件高度/内外边距不写死，交给 Antd 算法（含 compact）派生。
   fontFamily: `'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif`,
-  // 只固定设计稿的基础字号，fontSizeSM / fontSizeLG 等由算法派生（14 → 12 / 16），
-  // 这样在主题编辑器里改「默认字号」时，整条字号阶都会跟随。
-  fontSize: 14,
+  // 只固定基础字号，fontSizeSM / fontSizeLG 等由算法派生（14 → 12 / 16）；
+  // 基础字号随密度变化（紧凑 14 / 常规 16），侧栏菜单、面包屑、正文共用。
+  fontSize: densityBaseFontSizes.compact,
   lineHeight: 1.57,
 
   // 圆角属于设计语言，保留显式取值

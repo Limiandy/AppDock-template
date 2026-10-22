@@ -30,10 +30,14 @@ const editorTheme = shallowRef<MutableTheme>({
 })
 
 function handleThemeChange(nextTheme: MutableTheme) {
-  editorTheme.value = nextTheme
   setGlobalThemeConfig(toRaw(nextTheme.config), { replaceToken: true, replaceComponents: true })
-  eventBus.emit('themeChange', toRaw(nextTheme.config), {
-    mode: getModeByThemeConfig(nextTheme.config),
+
+  // 广播「应用后的配置」：包含随密度同步的基础字号等归一化结果，
+  // 避免下游 replaceToken 时把密度同步的字号覆盖回去。
+  const appliedConfig = toRaw(globalThemeConfig.value)
+  editorTheme.value = { ...nextTheme, config: appliedConfig }
+  eventBus.emit('themeChange', appliedConfig, {
+    mode: getModeByThemeConfig(appliedConfig),
     source: 'theme-editor',
   })
 }
