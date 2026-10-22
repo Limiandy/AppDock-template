@@ -48,7 +48,8 @@ const [className, scopeClass] = useStyle('basic-layout-breadcrumb', (token) => {
 
   return {
     'fontSize': `${token.fontSize}px`,
-    'lineHeight': token.lineHeight,
+    // 继承顶栏行高，保证与折叠按钮/动作图标/用户区在同一条水平中线上
+    'lineHeight': 'inherit',
     'whiteSpace': 'nowrap',
     'overflow': 'hidden',
 
