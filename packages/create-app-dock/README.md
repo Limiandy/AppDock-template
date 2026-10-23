@@ -17,13 +17,14 @@ The initializer also accepts the npm-style alias:
 pnpm init app-dock my-app --template default
 ```
 
-> **pnpm 装到了旧版本（没有形态/示例选项）？** `pnpm create` / `pnpm dlx`
-> 会缓存包解析结果（`~/Library/Caches/pnpm/dlx`、`~/Library/Caches/pnpm/v11/metadata`，Linux 为
-> `~/.cache/pnpm/...`），发布新版本后仍可能继续安装旧版；删除缓存后依然如此时，**直接指定精确版本**最可靠：
+> **pnpm 装到了旧版本（没有形态/示例选项）？** 不带版本号的包名本应按 registry 的 `latest` 标签解析，但 pnpm 的 `create`
+> / `dlx` 会缓存解析结果（`~/Library/Caches/pnpm/dlx`、 `~/Library/Caches/pnpm/v11/metadata`，Linux 为
+> `~/.cache/pnpm/...`），个别环境会长期停留在旧版本。排查顺序：先 `npm view create-app-dock version`
+> 确认最新版 → 再删缓存重试 → 仍旧就换入口：
 >
 > ```bash
-> pnpm create app-dock@0.1.4 my-app     # 精确版本
-> npx create-app-dock@latest my-app     # 或改用 npx
+> npx create-app-dock@latest my-app              # 推荐：npx 每次重新解析 latest
+> pnpm create app-dock@<version> my-app          # 精确版本兜底，<version> 换成当前最新版
 > ```
 >
 > 生成结果首行的 `create-app-dock vX.Y.Z` 会显示实际使用的版本。
