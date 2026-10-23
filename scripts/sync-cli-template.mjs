@@ -7,8 +7,11 @@ const packageDir = join(rootDir, 'packages', 'create-app-dock')
 const templateDir = join(packageDir, 'template')
 
 const templateEntries = [
+  '.dockerignore',
   '.gitignore',
   '.prettierignore',
+  'Dockerfile',
+  'Jenkinsfile',
   'AGENTS.md',
   'README.md',
   'application',
