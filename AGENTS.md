@@ -97,15 +97,16 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 
 ## 验证责任
 
-| 改动类型                                | 必须执行                                                                                                                    |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 任意代码                                | `pnpm run check`                                                                                                            |
-| `scripts/`、`packages/create-app-dock/` | `pnpm run check`（含 `test:scripts`，会同步模板快照并跑 CLI 测试）                                                          |
-| `common/`                               | `pnpm build:common && pnpm typecheck`，必要时在页面验证                                                                     |
-| 布局 / 交互 / 主题                      | `pnpm dev:mock` 打开对应路由人工确认（或截图核对）                                                                          |
-| 子应用增删                              | 增删后检查 `micro-apps.json`、`router/modules/`、根 `tsconfig.json` 是否被正确更新                                          |
-| 构建产物                                | `pnpm build` 或 `pnpm build:select`；确认 `dist`（混淆）+ `dist-debug`（不压缩、带 map）均产出，结构符合 `docs/scaffold.md` |
-| 构建脚本 / 混淆配置 / 图标 sprite       | `pnpm build:mock`，确认 `dist/app-icons.svg` 生成、生产包无 `.map`、调试包有 `.map`                                         |
+| 改动类型                                | 必须执行                                                                                                                                 |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 任意代码                                | `pnpm run check`                                                                                                                         |
+| `scripts/`、`packages/create-app-dock/` | `pnpm run check`（含 `test:scripts`，会同步模板快照并跑 CLI 测试）                                                                       |
+| `common/`                               | `pnpm build:common && pnpm typecheck`，必要时在页面验证                                                                                  |
+| 布局 / 交互 / 主题                      | `pnpm dev:mock` 打开对应路由人工确认（或截图核对）                                                                                       |
+| 子应用增删                              | 增删后检查 `micro-apps.json`、`router/modules/`、根 `tsconfig.json` 是否被正确更新                                                       |
+| 构建产物                                | `pnpm build` 或 `pnpm build:select`；确认 `dist`（混淆）+ `dist-debug`（不压缩、带 map）均产出，结构符合 `docs/scaffold.md`              |
+| 构建脚本 / 混淆配置 / 图标 sprite       | `pnpm build:mock`，确认 `dist/app-icons.svg` 生成、生产包无 `.map`、调试包有 `.map`                                                      |
+| Dockerfile / Jenkinsfile                | `docker build --target verify .` + `docker build --build-arg BUILD_SCRIPT=build:mock -t app-dock:test .`，再起容器访问 `/healthz` 与 `/` |
 
 ## 提交与文档约定
 

@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+**/node_modules
+**/dist
+**/dist-debug
+**/dist-ssr
+.build
+*.log
+packages/create-app-dock/template
+docker/supabase/.env.local
+docker/supabase/.generated
+.DS_Store

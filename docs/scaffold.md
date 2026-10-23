@@ -188,6 +188,38 @@ location / {
 }
 ```
 
+### Docker 镜像
+
+```bash
+# 质量门禁（等价 pnpm run check，节点不需要 node/pnpm）
+docker build --target verify .
+
+# 生产镜像（dist：压缩 + 混淆）
+docker build --build-arg BUILD_SCRIPT=build:mock -t app-dock:local .
+docker run --rm -p 18080:80 app-dock:local
+
+# 可调试镜像（dist-debug：不压缩、带 sourcemap，仅内网）
+docker build --build-arg BUILD_SCRIPT=build:mock --target debug -t app-dock:debug .
+docker run --rm -p 18081:80 app-dock:debug
+```
+
+- 多阶段：`build`（node:22-alpine + pnpm，`BUILD_SCRIPT` 可选 `build` / `build:mock` / `build:supabase`）→ `verify` /
+  `runtime` / `debug`（nginx:alpine）。
+- `docker/nginx.conf`：SPA fallback、gzip、`/assets/` 长缓存、`app-icons.svg` 缓存一天、`index.html`
+  no-cache、`/healthz` 健康检查。
+- 子应用单独部署到子路径时，追加 `location ^~ /<app>/ { try_files $uri $uri/ /<app>/index.html; }`。
+
+### Jenkins
+
+根目录 `Jenkinsfile` 是 Declarative Pipeline，参数：`BUILD_SCRIPT`、`IMAGE_REPOSITORY`、`IMAGE_TAG` （默认 git short
+SHA）、`REGISTRY_URL`、`DOCKER_CREDENTIALS_ID`、`PUSH_IMAGE`、`BUILD_DEBUG_IMAGE`。
+
+阶段：Prepare（算 tag）→ Verify（`docker build --target verify`）→ Build image → 可选 Build debug image → Smoke
+test（起容器校验 `/healthz`、`index.html`、`app-icons.svg`）→ 可选 Push。
+
+- 节点只需要 docker；`corepack`/`pnpm` 都在镜像里执行，避免污染 Jenkins 工作区。
+- 推送使用 `docker.withRegistry`，凭据默认 ID 为 `docker-registry`，按实际环境修改。
+
 ## 12. create-app-dock CLI
 
 ```bash
