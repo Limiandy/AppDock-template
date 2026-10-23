@@ -167,7 +167,8 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 - 禁止使用 `:deep()` 大面积覆盖 `ant-*` 组件内部样式；优先使用组件 props、slots 与 token。
 - 主题模式：`light` / `dark` / `light,compact` / `dark,compact`；切换通过
   `eventBus.emit('themeChange')`，不要直接改 Antd 配置。
-- 图标统一 `<SvgIcon name="solar:xxx" />`；新增图标后执行 `node common/scripts/gen-icons.mjs` 并提交 `icons.json`。
+- 图标统一 `<SvgIcon name="solar:xxx" />`，不要内联 SVG；新增图标后执行 `pnpm gen:icons` 并提交 `icons.json` 与
+  `sql/icons.*.sql`（sprite 由构建插件生成，不入库）。
 - 主题预设放在 `main-app/src/hooks/theme/presets/`，导出 `ThemeConfig`；新增预设同步 `docs/design-tokens.md`。
 - 全局默认视觉以 `presets/managementSystem.ts` 为准；不要另起一套色板，确需扩展时在预设中补层并同步 token 文档。
 
@@ -182,14 +183,15 @@ const [className, scopeClass] = useStyle('basic-layout', (token) => ({
 
 ## 9. 生成物与脚本约定
 
-| 文件                                                   | 生成方式                                | 是否入库       |
-| ------------------------------------------------------ | --------------------------------------- | -------------- |
-| `main-app/src/micro-apps.json`                         | `pnpm gen-micro-apps` / dev、build 脚本 | 入库，禁止手改 |
-| `main-app/src/router/modules/*.ts`                     | 子应用 dev server 的路由同步插件        | 入库           |
-| `common/src/icons/icons.json`                          | `node common/scripts/gen-icons.mjs`     | 入库           |
-| `packages/create-app-dock/template/`                   | `scripts/sync-cli-template.mjs`         | 不入库         |
-| `common/dist/`、`dist/`、`application/*/dist/`         | Vite 构建                               | 不入库         |
-| `docker/supabase/.env.local`、`.generated/`、`.build/` | 本地工具                                | 不入库         |
+| 文件                                                          | 生成方式                                | 是否入库       |
+| ------------------------------------------------------------- | --------------------------------------- | -------------- |
+| `main-app/src/micro-apps.json`                                | `pnpm gen-micro-apps` / dev、build 脚本 | 入库，禁止手改 |
+| `main-app/src/router/modules/*.ts`                            | 子应用 dev server 的路由同步插件        | 入库           |
+| `common/src/icons/icons.json`                                 | `pnpm gen:icons`                        | 入库           |
+| `sql/icons.postgres.sql`、`sql/icons.mysql.sql`               | `pnpm gen:icon-sql`                     | 入库           |
+| `packages/create-app-dock/template/`                          | `scripts/sync-cli-template.mjs`         | 不入库         |
+| `common/dist/`、`dist/`、`dist-debug/`、`application/*/dist/` | Vite 构建                               | 不入库         |
+| `docker/supabase/.env.local`、`.generated/`、`.build/`        | 本地工具                                | 不入库         |
 
 约定：
 

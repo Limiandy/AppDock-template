@@ -55,7 +55,7 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 
 1. **生成物不手改，只改来源。**
    `main-app/src/micro-apps.json`、`main-app/src/router/modules/*.ts`、`common/src/icons/icons.json`
-   都由脚本生成。子应用增删用 `pnpm create:app` / `pnpm delete:app`；图标清单用 `node common/scripts/gen-icons.mjs`。
+   都由脚本生成。子应用增删用 `pnpm create:app` / `pnpm delete:app`；图标清单与 SQL 字典用 `pnpm gen:icons`。
 2. **不要手改根 `tsconfig.json` 的 `application/*` 引用。**
    `gen-micro-apps`、`dev:select`、`build:select`、子应用增删都会自动同步；必要时执行 `pnpm sync:tsconfig`。
 3. **改动 `common` 后必须重新构建 `common`。** `dev*` / `build*` 脚本已内置；单独验证时执行

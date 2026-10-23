@@ -83,9 +83,11 @@ pnpm delete:app -- --name demo-app --yes          # 直接删除
 ## 6. 构建
 
 ```bash
-pnpm build            # 全量构建（mock 默认）
-pnpm build:supabase   # 指定数据源
-pnpm build:select     # 选择要参与打包的子应用
+pnpm build            # 生产构建：dist（压缩 + 混淆）+ dist-debug（不压缩、带 sourcemap）
+pnpm build:mock       # 指定 Vite mode 为 mock
+pnpm build:supabase   # 指定数据源为 supabase
+pnpm build:debug      # 只构建调试包 dist-debug
+pnpm build:select     # 选择要参与打包的子应用（只出生产包）
 ```
 
 产物布局（`build:select`）：
@@ -93,7 +95,8 @@ pnpm build:select     # 选择要参与打包的子应用
 ```text
 dist/
 ├── index.html          # main-app
-├── assets/
+├── app-icons.svg       # 图标 sprite（全量，构建时生成）
+├── assets/             # 带 hash 的 JS/CSS（已混淆）
 ├── css-app/            # 子应用（base 为 /css-app/）
 │   ├── index.html
 │   └── assets/
@@ -102,8 +105,9 @@ dist/
 
 说明：
 
-- `pnpm build` 直接调用 main-app 自身的 `vite build`，产物在 `main-app/dist`；需要根级 `dist/` 合并布局时用
-  `build:select`。
+- `pnpm build` / `build:mock` / `build:supabase` 由 `scripts/build-app.mjs` 连续产出两套包： `main-app/dist`（oxc 压缩 +
+  javascript-obfuscator 混淆，无 sourcemap）和
+  `main-app/dist-debug`（不压缩、不混淆、带 sourcemap）；细节见「构建产物与代码混淆」。
 - 子应用构建由根脚本传入 `--outDir ../../dist/<app> --emptyOutDir`。
 - `common` 作为 workspace 依赖参与构建，不单独产出部署目录。
 
@@ -170,10 +174,12 @@ Storage bucket:  super-table-files
 
 ## 11. 本地部署验证
 
+最快的验证方式是直接构建镜像（见下方「Docker 镜像」）。也可以用临时 nginx 挂载已有产物：
+
 ```bash
-docker rm -f app-dock-dist 2>/dev/null || true
+pnpm build:mock
 docker run -d --name app-dock-dist -p 18080:80 \
-  -v "$PWD/dist:/usr/share/nginx/html:ro" \
+  -v "$PWD/main-app/dist:/usr/share/nginx/html:ro" \
   nginx:alpine
 ```
 
@@ -273,7 +279,7 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
   `solar:xxx`，构建期无法可靠判断「用到哪些」，裁剪会漏图标；
 - 全量 sprite 约 1.7MB，gzip 后约 400KB，作为独立文件可被浏览器/CDN 缓存，不再进入 JS 包；
 - HTML 会注入 `<meta name="app-icon-sprite">`，`SvgIcon` 通过 `<use href="…">` 引用该文件；
-- 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `node common/scripts/gen-icons.mjs`；
+- 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `pnpm gen:icons`；
 - SVG 里不要带 `<!DOCTYPE>` / `<!ENTITY>`（插件会自动剥离，其它 `<!...>`
   声明会直接构建失败，因为非法声明会让整个 sprite 解析失败、后续图标全部不显示）。
 - 图标字典 SQL：`pnpm gen:icon-sql` 生成 `sql/icons.postgres.sql`（Supabase/Postgres）与 `sql/icons.mysql.sql`（MySQL
@@ -283,11 +289,11 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
 
 ## 14. 排错速查
 
-| 现象                           | 原因与处理                                                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| 启动报找不到 `micro-apps.json` | 直接跑了 `vite` 而没走根脚本；执行 `pnpm gen-micro-apps` 或改用 `pnpm dev`                                           |
-| 子应用菜单不出现               | 路由模块未生成：让子应用 dev server 跑起来触发同步，或检查 `application/<app>/src/router/index.ts` 是否导出 `routes` |
-| 类型检查缺少子应用             | 根 `tsconfig.json` 引用漂移：执行 `pnpm sync:tsconfig`                                                               |
-| 改了 `common` 页面无变化       | `common` 读取的是 `dist`：执行 `pnpm build:common` 后重启 dev                                                        |
-| 图标显示空白                   | 检查 `common/src/icons/icons.json` 是否包含该图标；新增图标后执行 `node common/scripts/gen-icons.mjs`                |
-| 端口冲突                       | 修改 `application/<app>/vite.config.ts` 的 `const port`，再跑 `pnpm gen-micro-apps`                                  |
+| 现象                           | 原因与处理                                                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 启动报找不到 `micro-apps.json` | 直接跑了 `vite` 而没走根脚本；执行 `pnpm gen-micro-apps` 或改用 `pnpm dev`                                                                       |
+| 子应用菜单不出现               | 路由模块未生成：让子应用 dev server 跑起来触发同步，或检查 `application/<app>/src/router/index.ts` 是否导出 `routes`                             |
+| 类型检查缺少子应用             | 根 `tsconfig.json` 引用漂移：执行 `pnpm sync:tsconfig`                                                                                           |
+| 改了 `common` 页面无变化       | `common` 读取的是 `dist`：执行 `pnpm build:common` 后重启 dev                                                                                    |
+| 图标显示空白                   | 先看 `app-icons.svg` 是否能被 XML 解析（非法声明会导致后续图标全部丢失）；再确认 `pnpm gen:icons` 已执行、`common/src/icons/icons.json` 含该图标 |
+| 端口冲突                       | 修改 `application/<app>/vite.config.ts` 的 `const port`，再跑 `pnpm gen-micro-apps`                                                              |

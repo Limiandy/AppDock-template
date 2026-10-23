@@ -30,7 +30,9 @@ import {
 
 - `registerQiankun`：封装 `vite-plugin-qiankun` 生命周期，负责创建 Vue 应用、注册 Pinia、注册
   `SvgIcon`、安装公共指令，并挂载子应用。
-- `SvgIcon`：基于 SVG symbol 的图标组件，默认使用 `icon` 前缀，支持 `solar:xxx` 这类图标名。
+- `SvgIcon`：基于 SVG symbol 的图标组件，默认使用 `icon` 前缀，支持 `app:xxx` / `solar:xxx` 这类图标名；图标来自构建产物
+  `app-icons.svg`（由 `vite/plugins/svgSpritePlugin.ts` 生成，HTML 通过 `<meta name="app-icon-sprite">`
+  提供地址），不内联进 JS。
 - `SuperTable`：基于 Ant Design Vue
   Table/Form 的配置化表格，内置查询区、工具栏、行操作、分页和导入弹窗，并跟随全局主题 token 变化。
 - `DirectivesPlugin`：公共指令插件，目前注册 `v-loading`。
@@ -40,6 +42,15 @@ import {
 - `useAccess`：应用级权限集与权限判断。默认无权限，支持精确权限、`资源:*` 和全局 `*`。
 
 ## 子入口能力
+
+### icons
+
+```ts
+import { getIconsGrouped } from 'common/icons'
+```
+
+图标资源放在 `common/src/icons/<dir>/<name>.svg`；`pnpm gen:icons` 会更新 `icons.json` 与
+`sql/icons.postgres.sql`、`sql/icons.mysql.sql`（`sys_icon` 表，业务表存 `code` 即可）。
 
 ### components
 

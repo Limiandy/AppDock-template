@@ -24,9 +24,12 @@ AppDock 是一个基于 Vue 3、Vite、TypeScript、Ant Design Vue 和 qiankun �
 ├── common/                   # 公共库
 ├── main-app/                 # 主应用
 ├── scripts/                  # 项目脚本
+├── sql/                      # 图标字典 SQL（pnpm gen:icon-sql 生成）
 ├── types/                    # 全局类型声明
 ├── vite/                     # 自定义 Vite 插件
 ├── vite.config.base.ts       # 主应用和子应用共用 Vite 配置
+├── Dockerfile                # 多阶段镜像：build / verify / runtime / debug
+├── Jenkinsfile               # Jenkins 流水线（verify → build → smoke → push）
 └── pnpm-workspace.yaml       # pnpm workspace 配置
 ```
 
@@ -136,29 +139,25 @@ pnpm dev:select
 
 ## 打包
 
-只构建主应用：
-
 ```bash
-pnpm build
+pnpm build            # 生产构建：dist（压缩 + 混淆）+ dist-debug（不压缩、带 sourcemap）
+pnpm build:debug      # 只出调试包
+pnpm build:select     # 选择子应用一起打包（只出生产包）
 ```
 
-选择子应用一起打包：
+产物规则：
 
-```bash
-pnpm build:select
-```
+- `main-app/dist`：生产包，oxc 压缩 + `javascript-obfuscator` 混淆（vendor 不混淆），不产出 sourcemap
+- `main-app/dist-debug`：调试包，不压缩、不混淆、带 sourcemap，仅用于排查线上问题
+- `main-app/dist/app-icons.svg`：图标 sprite（全量，构建时生成，建议 gzip + 缓存）
+- 子应用输出到 `dist/<app-name>/`；`common` 作为 workspace 公共库参与构建，不单独部署
 
-构建产物规则：
-
-- `main-app` 输出到根目录 `dist/`
-- 子应用输出到 `dist/<app-name>/`
-- `common` 作为 workspace 公共库参与应用构建，不作为独立部署目录
-
-示例：
+示例（`build:select`）：
 
 ```text
 dist/
 ├── index.html
+├── app-icons.svg
 ├── assets/
 ├── css-app/
 │   ├── index.html
@@ -167,6 +166,9 @@ dist/
     ├── index.html
     └── assets/
 ```
+
+容器化：`docker build --build-arg BUILD_SCRIPT=build:mock -t app-dock:local .`，详见
+`docs/scaffold.md`「Docker 镜像」「Jenkins」。
 
 ## 路由同步
 

@@ -149,21 +149,32 @@ const isBaseRoutePath = computed(() => baseAppRoutePaths.includes(route.fullPath
 ## 7. 构建与产物
 
 ```bash
-pnpm build          # gen → vue-tsc -b → common build → main-app build（默认 mock 数据源）
+pnpm build          # gen → vue-tsc -b → common build → scripts/build-app.mjs（默认 mock 数据源）
+pnpm build:debug    # 只出调试包
 pnpm build:select   # 交互选择子应用，输出到根 dist/<app>/
 ```
 
-产物布局：
+`pnpm build` 会连续产出两套包：
+
+```text
+main-app/dist/            生产包：oxc 压缩 + javascript-obfuscator 混淆（vendor 跳过），无 sourcemap
+main-app/dist-debug/      调试包：不压缩、不混淆、带 sourcemap
+main-app/dist/app-icons.svg   图标 sprite（全量，构建时由 vite/plugins/svgSpritePlugin.ts 生成）
+```
+
+`build:select` 的根 `dist/` 合并布局（子应用需 nginx fallback）：
 
 ```text
 dist/
-├── index.html          # main-app（仅 build:select 输出到根 dist；pnpm build 输出在 main-app/dist）
+├── index.html          # main-app
+├── app-icons.svg
 ├── assets/
-└── <app-name>/         # 子应用静态资源，需 nginx fallback
+└── <app-name>/         # 子应用静态资源
 ```
 
 `vite.config.base.ts` 决定 `base`：`main-app` 为 `/`，子应用为
-`/<app-name>/`；子应用额外注册 qiankun 插件与路由同步插件。
+`/<app-name>/`；子应用额外注册 qiankun 插件与路由同步插件。混淆配置同样在该文件的 `vitePluginBundleObfuscator`
+段落（Vite 8 / Rolldown）。
 
 ## 8. 数据流
 
@@ -215,8 +226,11 @@ BasicLayout / ThemeEditor 切换主题
 - 多入口：`index`、`components`、`helper`、`hooks`、`icons`（`common/vite.config.ts`）。
 - `preserveModules` 保留模块结构，便于按需引入；`vue` 与 `ant-design-vue` 为 external。
 - `vite-plugin-dts` 产出类型；`vite-plugin-lib-inject-css` 处理样式注入。
-- `virtual:svg-icons-register` 在 `common/src/index.ts` 引入，注册 `icon-<dir>-<name>` symbol；`SvgIcon` 把 `solar:xxx`
-  映射成对应 symbol id。
+- 图标不再内联进 JS：`vite/plugins/svgSpritePlugin.ts` 在构建时把 `common/src/icons` 生成 `app-icons.svg`
+  （dev 走中间件实时生成），HTML 注入 `<meta name="app-icon-sprite">`，`SvgIcon` 用
+  `<use href="/app-icons.svg#icon-<dir>-<name>">` 引用；sprite 始终输出全量图标，支持后端下发的图标名。
+- 图标字典可导出 SQL：`pnpm gen:icon-sql` 生成 `sql/icons.postgres.sql` / `sql/icons.mysql.sql`（`sys_icon`
+  表），业务表（菜单等）保存 `code`（如 `app:workbench`）即可被前端直接渲染。
 
 ## 12. create-app-dock 模板机制
 

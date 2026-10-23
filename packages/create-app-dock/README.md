@@ -72,5 +72,9 @@ pnpm install
 pnpm dev
 ```
 
+构建产物：`main-app/dist`（压缩 + 混淆）与 `main-app/dist-debug`（不压缩、带 sourcemap）；图标 sprite 输出为
+`main-app/dist/app-icons.svg`；图标字典 SQL 在 `sql/` 下（`pnpm gen:icon-sql` 可重新生成）。容器与流水线：根目录
+`Dockerfile`、`Jenkinsfile`。
+
 单应用形态的可用命令：`dev`、`dev:mock`、`dev:supabase`、`build`、`build:mock`、`build:supabase`、`check`、`fix`
 以及 Supabase 相关脚本；微前端形态额外包含 `dev:select`、`build:select`、`create:app`、`delete:app`、 `gen-micro-apps`。
