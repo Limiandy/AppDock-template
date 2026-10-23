@@ -218,7 +218,7 @@ export async function applySingleAppMode(root, options = {}) {
 
   const manifest = await readJson(root, 'package.json')
   Object.assign(manifest.scripts, {
-    'dev': 'pnpm run build:common && npm run dev --workspace=main-app',
+    'dev': 'pnpm run build:common && pnpm --filter main-app dev',
     'dev:mock': 'pnpm run build:common && pnpm --filter main-app exec vite --mode mock',
     'dev:supabase': 'pnpm run build:common && pnpm --filter main-app exec vite --mode supabase',
     'build': 'vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs',

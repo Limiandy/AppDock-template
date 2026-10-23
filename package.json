@@ -6,7 +6,7 @@
   "scripts": {
     "build:common": "pnpm --filter common build",
     "postinstall": "pnpm run build:common",
-    "dev": "pnpm run build:common && node scripts/gen-micro-apps.js && npm run dev --workspace=main-app",
+    "dev": "pnpm run build:common && node scripts/gen-micro-apps.js && pnpm --filter main-app dev",
     "dev:mock": "pnpm run build:common && node scripts/gen-micro-apps.js && pnpm --filter main-app exec vite --mode mock",
     "dev:supabase": "pnpm run build:common && node scripts/gen-micro-apps.js && pnpm --filter main-app exec vite --mode supabase",
     "build": "node scripts/gen-micro-apps.js && vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs",
