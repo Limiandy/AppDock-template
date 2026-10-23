@@ -218,7 +218,32 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
 - 发布：更新 `packages/create-app-dock/package.json` 版本 → 打 tag `create-app-dock-v<version>` → GitHub
   Actions 校验后经 npm Trusted Publishing 发布。
 
-## 13. 排错速查
+## 13. 构建产物与代码混淆
+
+`pnpm build` / `build:mock` / `build:supabase` 会连续产出两套包（`scripts/build-app.mjs` 驱动）：
+
+| 目录（相对 `main-app`） | 内容                                                                     |
+| ----------------------- | ------------------------------------------------------------------------ |
+| `dist/`                 | 生产包：oxc 压缩 + javascript-obfuscator 混淆（vendor 跳过），不产出 map |
+| `dist-debug/`           | 调试包：不压缩、不混淆、带 sourcemap，用于排查线上问题                   |
+
+- 开关是环境变量 `APP_DEBUG_BUNDLE=1`；只出其中一套时：
+  `node scripts/build-app.mjs <mode> --prod-only|--debug-only`。根脚本 `pnpm build:debug` 只出调试包。
+- 混淆配置在 `vite.config.base.ts`：`vite-plugin-bundle-obfuscator` + `autoExcludeNodeModules` （node_modules 拆成
+  `vendor-modules-*` 并跳过）+ `threadPool`。业务 chunk 才会被混淆。
+- `build:select`（多子应用选择构建）目前只出生产包。
+- 调试包本地预览：`pnpm --filter main-app exec vite preview --outDir dist-debug`。
+- `dist-debug/` 已在 `.gitignore` 中。
+
+图标（`common/src/icons`）不再内联进 JS，构建时由 `vite/plugins/svgSpritePlugin.ts` 生成 `app-icons.svg` 静态资源：
+
+- **始终输出全量图标**：菜单等场景的图标名可能由后端配置下发（新建菜单时选图标），前端运行时才拼出 `app:xxx` /
+  `solar:xxx`，构建期无法可靠判断「用到哪些」，裁剪会漏图标；
+- 全量 sprite 约 1.7MB，gzip 后约 400KB，作为独立文件可被浏览器/CDN 缓存，不再进入 JS 包；
+- HTML 会注入 `<meta name="app-icon-sprite">`，`SvgIcon` 通过 `<use href="…">` 引用该文件；
+- 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `node common/scripts/gen-icons.mjs`。
+
+## 14. 排错速查
 
 | 现象                           | 原因与处理                                                                                                           |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |

@@ -5,6 +5,7 @@ import qiankun from 'vite-plugin-qiankun'
 import path from 'path'
 import routeSyncPlugin from './vite/plugins/routeSyncPlugin.ts'
 import rawJSPlugin from './vite/plugins/rawJSPlugin.ts'
+import svgSpritePlugin from './vite/plugins/svgSpritePlugin.ts'
 import chalk from 'chalk'
 import simpleHtmlPlugin from 'vite-plugin-simple-html'
 import autoprefixer from 'autoprefixer'
@@ -12,6 +13,7 @@ import cssnano from 'cssnano'
 import postcssPresetEnv from 'postcss-preset-env'
 import postcssNormalize from 'postcss-normalize'
 import fs from 'fs'
+import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator'
 
 function getPackageName() {
   const packagePath = path.resolve(process.cwd(), 'package.json')
@@ -22,6 +24,9 @@ function getPackageName() {
 
   return process.env.npm_package_name
 }
+
+// APP_DEBUG_BUNDLE=1 时输出可调试产物：不压缩、不混淆、带 sourcemap
+const isDebugBundle = process.env.APP_DEBUG_BUNDLE === '1'
 
 // https://vite.dev/config/
 // @ts-ignore
@@ -34,6 +39,7 @@ export default defineConfig(({ mode, command }) => {
 
   const plugins: PluginOption[] = [
     vue(),
+    svgSpritePlugin(),
     jsx(),
     rawJSPlugin(),
     simpleHtmlPlugin({
@@ -54,6 +60,39 @@ export default defineConfig(({ mode, command }) => {
     }),
   ]
 
+  if (command === 'build' && !isDebugBundle) {
+    plugins.push(
+      vitePluginBundleObfuscator({
+        apply: 'build',
+        autoExcludeNodeModules: true,
+        threadPool: true,
+        log: true,
+        options: {
+          compact: true,
+          identifierNamesGenerator: 'hexadecimal',
+          ignoreImports: true,
+          renameGlobals: false,
+          renameProperties: false,
+          stringArray: true,
+          stringArrayEncoding: ['base64'],
+          stringArrayThreshold: 0.75,
+          stringArrayRotate: true,
+          stringArrayShuffle: true,
+          splitStrings: true,
+          splitStringsChunkLength: 10,
+          controlFlowFlattening: true,
+          controlFlowFlatteningThreshold: 0.5,
+          deadCodeInjection: true,
+          deadCodeInjectionThreshold: 0.2,
+          transformObjectKeys: true,
+          selfDefending: true,
+          debugProtection: false,
+          unicodeEscapeSequence: false,
+        },
+      }),
+    )
+  }
+
   if (appName !== 'main-app') {
     plugins.unshift(
       // 支持 Qiankun
@@ -72,6 +111,11 @@ export default defineConfig(({ mode, command }) => {
   return {
     base: appName === 'main-app' ? '/' : `/${appName}/`,
     plugins,
+    build: {
+      outDir: isDebugBundle ? 'dist-debug' : 'dist',
+      minify: isDebugBundle ? false : 'oxc',
+      sourcemap: isDebugBundle,
+    },
     css: {
       preprocessorOptions: {
         less: {

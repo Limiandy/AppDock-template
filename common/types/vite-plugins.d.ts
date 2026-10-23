@@ -7,5 +7,3 @@ declare module '@vitejs/plugin-vue-jsx' {
   import { Plugin } from 'vite'
   export default function vueJsxPlugin(): Plugin
 }
-
-declare module 'virtual:svg-icons-register'

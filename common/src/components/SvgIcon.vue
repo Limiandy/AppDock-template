@@ -1,7 +1,7 @@
 <template>
   <span role="img" :aria-label="name" class="anticon" :class="[`anticon-${name}`]" tabindex="-1">
-    <svg aria-hidden="true" :style="{ width, height }">
-      <use :xlink:href="symbolId" :fill="color" />
+    <svg aria-hidden="true" xmlns:xlink="http://www.w3.org/1999/xlink" :style="{ width, height }">
+      <use :href="href" :xlink:href="href" :fill="color" />
     </svg>
   </span>
 </template>
@@ -35,10 +35,19 @@ const symbolId = computed(() => {
     name = arr[1]
   }
 
-  // 最终生成 plugin 格式一致的 symbolId
+  // 最终生成 sprite 中一致的 symbolId
   // dir 允许为空
   return `#${props.prefix}-${dir ? dir + '-' : ''}${name}`
 })
+
+// 图标以独立 sprite 文件加载，URL 由构建插件注入的 meta 标签提供
+const spriteUrl = computed(() => {
+  if (typeof document === 'undefined') return '/app-icons.svg'
+
+  return document.querySelector('meta[name="app-icon-sprite"]')?.getAttribute('content') ?? '/app-icons.svg'
+})
+
+const href = computed(() => `${spriteUrl.value}${symbolId.value}`)
 </script>
 
 <style lang="less" scoped>

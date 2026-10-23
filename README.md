@@ -46,7 +46,8 @@ pnpm install
 ```bash
 pnpm dev              # 生成 dev 微应用配置并运行主应用
 pnpm dev:select       # 选择要运行的主应用/子应用
-pnpm build            # 生成 build 微应用配置并构建主应用
+pnpm build            # 生成 build 微应用配置并构建主应用（dist + dist-debug）
+pnpm build:debug      # 只构建调试包：不压缩、不混淆、带 sourcemap
 pnpm build:select     # 选择要参与打包的子应用
 pnpm create:app       # 创建子应用
 pnpm delete:app       # 删除子应用

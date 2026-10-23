@@ -9,6 +9,7 @@ export default tsEslint.config(
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/dist-debug/**',
       '**/dist-ssr/**',
       '**/coverage/**',
       '**/.cache/**',

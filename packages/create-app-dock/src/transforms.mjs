@@ -221,10 +221,10 @@ export async function applySingleAppMode(root, options = {}) {
     'dev': 'pnpm run build:common && npm run dev --workspace=main-app',
     'dev:mock': 'pnpm run build:common && pnpm --filter main-app exec vite --mode mock',
     'dev:supabase': 'pnpm run build:common && pnpm --filter main-app exec vite --mode supabase',
-    'build': 'vue-tsc -b && pnpm --filter common build && pnpm --filter main-app build',
-    'build:mock': 'vue-tsc -b && pnpm --filter common build && pnpm --filter main-app exec vite build --mode mock',
-    'build:supabase':
-      'vue-tsc -b && pnpm --filter common build && pnpm --filter main-app exec vite build --mode supabase',
+    'build': 'vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs',
+    'build:mock': 'vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs mock',
+    'build:supabase': 'vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs supabase',
+    'build:debug': 'vue-tsc -b && pnpm --filter common build && node scripts/build-app.mjs mock --debug-only',
     'check': 'pnpm run format:check && pnpm run lint && pnpm run typecheck',
   })
   for (const key of [

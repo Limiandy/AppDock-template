@@ -1,6 +1,5 @@
 // @ts-ignore
 import { registerQiankun } from './qiankunLifeCycle'
-import 'virtual:svg-icons-register'
 import SvgIcon from './components/SvgIcon.vue'
 import SuperTable from './components/SuperTable'
 import DirectivesPlugin from './directives/index'

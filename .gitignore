@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 packages/create-app-dock/template/
 dist
+dist-debug
 dist-ssr
 *.local
 .build/

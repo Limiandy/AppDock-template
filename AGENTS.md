@@ -74,9 +74,12 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
    `*`；未授权时默认隐藏入口。
 9. **数据访问走 `main-app/src/data/<domain>` 的 repository 接口**，不要直接在页面里散写
    `fetch`；新增数据域必须同时提供 mock 与 supabase 实现（或明确说明只支持一种）。
-10. **新增公共 API 必须同步文档**：`common/README.md`（入口/用法），行为变化同步 `README.md`
+10. **图标统一走 sprite，不在组件里内联 SVG。** 图标放 `common/src/icons/<dir>/<name>.svg`，组件用
+    `<SvgIcon name="<dir>:<name>" />`；构建时由 `vite/plugins/svgSpritePlugin.ts` 生成
+    `app-icons.svg`（全量输出，支持后端下发图标名）。不要在组件里直接写 `<svg>` 路径数据。
+11. **新增公共 API 必须同步文档**：`common/README.md`（入口/用法），行为变化同步 `README.md`
     / 本目录文档；文档与实现不一致视为未完成。
-11. **不要擅自 push、发布 npm 包、修改远端服务或升级依赖版本**；需要时先说明并获得确认。
+12. **不要擅自 push、发布 npm 包、修改远端服务或升级依赖版本**；需要时先说明并获得确认。
 
 ## 典型任务 → 做什么
 
@@ -94,14 +97,15 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 
 ## 验证责任
 
-| 改动类型                                | 必须执行                                                                           |
-| --------------------------------------- | ---------------------------------------------------------------------------------- |
-| 任意代码                                | `pnpm run check`                                                                   |
-| `scripts/`、`packages/create-app-dock/` | `pnpm run check`（含 `test:scripts`，会同步模板快照并跑 CLI 测试）                 |
-| `common/`                               | `pnpm build:common && pnpm typecheck`，必要时在页面验证                            |
-| 布局 / 交互 / 主题                      | `pnpm dev:mock` 打开对应路由人工确认（或截图核对）                                 |
-| 子应用增删                              | 增删后检查 `micro-apps.json`、`router/modules/`、根 `tsconfig.json` 是否被正确更新 |
-| 构建产物                                | `pnpm build` 或 `pnpm build:select`，确认 `dist` 结构符合 `docs/scaffold.md`       |
+| 改动类型                                | 必须执行                                                                                                                    |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 任意代码                                | `pnpm run check`                                                                                                            |
+| `scripts/`、`packages/create-app-dock/` | `pnpm run check`（含 `test:scripts`，会同步模板快照并跑 CLI 测试）                                                          |
+| `common/`                               | `pnpm build:common && pnpm typecheck`，必要时在页面验证                                                                     |
+| 布局 / 交互 / 主题                      | `pnpm dev:mock` 打开对应路由人工确认（或截图核对）                                                                          |
+| 子应用增删                              | 增删后检查 `micro-apps.json`、`router/modules/`、根 `tsconfig.json` 是否被正确更新                                          |
+| 构建产物                                | `pnpm build` 或 `pnpm build:select`；确认 `dist`（混淆）+ `dist-debug`（不压缩、带 map）均产出，结构符合 `docs/scaffold.md` |
+| 构建脚本 / 混淆配置 / 图标 sprite       | `pnpm build:mock`，确认 `dist/app-icons.svg` 生成、生产包无 `.map`、调试包有 `.map`                                         |
 
 ## 提交与文档约定
 
