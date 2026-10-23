@@ -273,7 +273,9 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
   `solar:xxx`，构建期无法可靠判断「用到哪些」，裁剪会漏图标；
 - 全量 sprite 约 1.7MB，gzip 后约 400KB，作为独立文件可被浏览器/CDN 缓存，不再进入 JS 包；
 - HTML 会注入 `<meta name="app-icon-sprite">`，`SvgIcon` 通过 `<use href="…">` 引用该文件；
-- 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `node common/scripts/gen-icons.mjs`。
+- 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `node common/scripts/gen-icons.mjs`；
+- SVG 里不要带 `<!DOCTYPE>` / `<!ENTITY>`（插件会自动剥离，其它 `<!...>`
+  声明会直接构建失败，因为非法声明会让整个 sprite 解析失败、后续图标全部不显示）。
 
 ## 14. 排错速查
 

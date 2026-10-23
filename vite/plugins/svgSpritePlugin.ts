@@ -39,14 +39,27 @@ function readIcon(file: string, root: string): SpriteIcon {
     dir: segments.length > 1 ? segments[0] : '',
     name: segments.at(-1)!.replace(/\.svg$/, ''),
     viewBox: svg.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 24 24',
-    content: svg
-      .replace(/<\?xml[\s\S]*?\?>/g, '')
-      .replace(/<!--[\s\S]*?-->/g, '')
-      .replace(/<svg\b[^>]*>/, '')
-      .replace(/<\/svg>\s*$/, '')
-      .replace(/\s+/g, ' ')
-      .trim(),
+    content: normalizeContent(svg, file),
   }
+}
+
+function normalizeContent(svg: string, file: string) {
+  const content = svg
+    // 声明类节点（<!DOCTYPE>/<!ENTITY>）在 <symbol> 里非法，会让整个 sprite 解析失败
+    .replace(/<!(?:DOCTYPE|ENTITY)[\s\S]*?>/gi, '')
+    .replace(/<\?xml[\s\S]*?\?>/g, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<svg\b[^>]*>/, '')
+    .replace(/<\/svg>\s*$/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  // 兜底：还有未处理的声明就直接失败，避免生成出解析不了的 sprite
+  if (content.includes('<!')) {
+    throw new Error(`图标 ${file} 含有无法内联进 sprite 的声明（<!...>），请先清理该 SVG`)
+  }
+
+  return content
 }
 
 function renderSprite(icons: SpriteIcon[]) {
