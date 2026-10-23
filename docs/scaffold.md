@@ -276,6 +276,10 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
 - 新增图标把 SVG 放进 `common/src/icons/<dir>/` 并运行 `node common/scripts/gen-icons.mjs`；
 - SVG 里不要带 `<!DOCTYPE>` / `<!ENTITY>`（插件会自动剥离，其它 `<!...>`
   声明会直接构建失败，因为非法声明会让整个 sprite 解析失败、后续图标全部不显示）。
+- 图标字典 SQL：`pnpm gen:icon-sql` 生成 `sql/icons.postgres.sql`（Supabase/Postgres）与 `sql/icons.mysql.sql`（MySQL
+  5.7+/8.x），建表 `sys_icon` 并 upsert 全部图标；业务表（菜单等）只存 `icon = sys_icon.code`（如
+  `app:workbench`），前端 `<SvgIcon :name="icon" />` 直接渲染；
+- 新增/删除图标后执行 `pnpm gen:icons`，同时更新 `icons.json` 与两份 SQL。
 
 ## 14. 排错速查
 

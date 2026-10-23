@@ -89,7 +89,7 @@ Vite 参数可透传：`pnpm dev:select -- --mode mock`。
 | 新增基座页面      | 在 `main-app/src/router/BaseAppRoutes.ts` 的 `asyncRoutes` 增加路由（`meta.title/icon`）→ 在 `main-app/src/views/` 建页面     |
 | 新增列表页        | 用 `SuperTable`，只提供 `columns/searchFields/toolbarActions/formConfig/request`；权限用 `actions[].visible`                  |
 | 新增公共组件/工具 | 放 `common/src/{components,helper,hooks}` → 更新对应出口与 `common/README.md` → 至少跑 `pnpm build:common` + `pnpm typecheck` |
-| 新增图标          | `common/src/icons/<dir>/<name>.svg` → `node common/scripts/gen-icons.mjs` → 组件里用 `<SvgIcon name="<dir>:<name>" />`        |
+| 新增图标          | `common/src/icons/<dir>/<name>.svg` → `pnpm gen:icons`（更新 icons.json + SQL 字典）→ `<SvgIcon name="<dir>:<name>" />`       |
 | 新增数据域        | 建 `main-app/src/data/<domain>/{types,index,mock,supabase}.ts`，导出 repository 接口与工厂                                    |
 | 调整权限          | 在 `main-app/src/access.ts` 的 mock profiles 增加权限；页面用 `can/canAny/canAll`                                             |
 | 调整主题/布局     | `main-app/src/layout/BasicLayout*.vue` + `main-app/src/hooks/theme/themeCore.ts`，样式走 token                                |

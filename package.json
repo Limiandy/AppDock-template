@@ -19,6 +19,8 @@
     "delete:app": "node scripts/delete-application.mjs",
     "preview": "vite preview",
     "gen-micro-apps": "node scripts/gen-micro-apps.js",
+    "gen:icons": "node common/scripts/gen-icons.mjs && node common/scripts/gen-icon-sql.mjs",
+    "gen:icon-sql": "node common/scripts/gen-icon-sql.mjs",
     "sync:tsconfig": "node scripts/sync-tsconfig-references.mjs",
     "lint": "eslint \"{main-app,application,common,scripts,vite,packages}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\"",
     "lint:fix": "eslint \"{main-app,application,common,scripts,vite,packages}/**/*.{js,jsx,ts,tsx,vue,mjs,cjs}\" \"*.config.{js,ts,mjs,cjs}\" --fix",

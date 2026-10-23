@@ -25,6 +25,7 @@ const templateEntries = [
   'pnpm-workspace.yaml',
   'prettier.config.js',
   'scripts',
+  'sql',
   'tsconfig.app.json',
   'tsconfig.json',
   'tsconfig.node.json',
