@@ -269,6 +269,10 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
   `node scripts/build-app.mjs <mode> --prod-only|--debug-only`。根脚本 `pnpm build:debug` 只出调试包。
 - 混淆配置在 `vite.config.base.ts`：`vite-plugin-bundle-obfuscator` + `autoExcludeNodeModules` （node_modules 拆成
   `vendor-modules-*` 并跳过）+ `threadPool`。业务 chunk 才会被混淆。
+- 反调试：默认开启（`debugProtection` + `debugProtectionInterval: 4000`），打开 devtools 会被 `debugger`
+  断点打断；线上排查需要临时关闭时用 `APP_ANTI_DEBUG=0 pnpm build:mock`。调试包永远不含反调试代码。
+- **缓存注意**：混淆发生在 bundle 生成之后，文件名 hash 不随混淆内容变化。因此 `docker/nginx.conf` 对 `/assets/` 使用
+  `must-revalidate` 而不是 `immutable`；换 CDN 时也不要给 JS/CSS 配置长 immutable 缓存。
 - `build:select`（多子应用选择构建）目前只出生产包。
 - 调试包本地预览：`pnpm --filter main-app exec vite preview --outDir dist-debug`。
 - `dist-debug/` 已在 `.gitignore` 中。

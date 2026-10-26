@@ -28,6 +28,9 @@ function getPackageName() {
 // APP_DEBUG_BUNDLE=1 时输出可调试产物：不压缩、不混淆、带 sourcemap
 const isDebugBundle = process.env.APP_DEBUG_BUNDLE === '1'
 
+// 生产包的反调试开关：默认开启；需要线上排查时可 APP_ANTI_DEBUG=0 构建关闭
+const antiDebug = process.env.APP_ANTI_DEBUG !== '0'
+
 // https://vite.dev/config/
 // @ts-ignore
 export default defineConfig(({ mode, command }) => {
@@ -86,7 +89,9 @@ export default defineConfig(({ mode, command }) => {
           deadCodeInjectionThreshold: 0.2,
           transformObjectKeys: true,
           selfDefending: true,
-          debugProtection: false,
+          // 反调试：注入 debugger 保护，开启 devtools 时会被断点打断
+          debugProtection: antiDebug,
+          debugProtectionInterval: antiDebug ? 4000 : 0,
           unicodeEscapeSequence: false,
         },
       }),
