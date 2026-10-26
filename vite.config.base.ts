@@ -89,9 +89,11 @@ export default defineConfig(({ mode, command }) => {
           deadCodeInjectionThreshold: 0.2,
           transformObjectKeys: true,
           selfDefending: true,
-          // 反调试：注入 debugger 保护，开启 devtools 时会被断点打断
-          debugProtection: antiDebug,
-          debugProtectionInterval: antiDebug ? 4000 : 0,
+          // 反调试改由 main-app/src/security/antiDebug.ts 的隐形守卫负责：
+          // obfuscator 自带的 debugProtection 模式固定（Function/debugger/setInterval），
+          // 静态分析一眼能认出来，这里关闭。
+          debugProtection: false,
+          debugProtectionInterval: 0,
           unicodeEscapeSequence: false,
         },
       }),
@@ -115,6 +117,10 @@ export default defineConfig(({ mode, command }) => {
   }
   return {
     base: appName === 'main-app' ? '/' : `/${appName}/`,
+    define: {
+      // 调试包与 APP_ANTI_DEBUG=0 时不安装反调试守卫
+      __ANTI_DEBUG__: JSON.stringify(antiDebug && !isDebugBundle),
+    },
     plugins,
     build: {
       outDir: isDebugBundle ? 'dist-debug' : 'dist',

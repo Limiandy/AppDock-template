@@ -10,6 +10,12 @@ import { SvgIcon, DirectivesPlugin } from 'common'
 
 import { initializeAccess } from './access.ts'
 import { registerMicroApp } from './registerMicroApp.ts'
+import { installAntiDebug } from './security/antiDebug.ts'
+
+// 生产构建才安装反调试守卫；调试包与 dev 不注入
+if (__ANTI_DEBUG__) {
+  installAntiDebug()
+}
 
 async function bootstrap() {
   const app = createApp(App)

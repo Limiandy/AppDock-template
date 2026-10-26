@@ -269,8 +269,13 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
   `node scripts/build-app.mjs <mode> --prod-only|--debug-only`。根脚本 `pnpm build:debug` 只出调试包。
 - 混淆配置在 `vite.config.base.ts`：`vite-plugin-bundle-obfuscator` + `autoExcludeNodeModules` （node_modules 拆成
   `vendor-modules-*` 并跳过）+ `threadPool`。业务 chunk 才会被混淆。
-- 反调试：默认开启（`debugProtection` + `debugProtectionInterval: 4000`），打开 devtools 会被 `debugger`
-  断点打断；线上排查需要临时关闭时用 `APP_ANTI_DEBUG=0 pnpm build:mock`。调试包永远不含反调试代码。
+- 反调试：生产包安装 `main-app/src/security/antiDebug.ts` 的隐形守卫（dev / 调试包不安装）：
+  - 运行时解码 `debugger` / `Function` / `setTimeout` / `performance` 等名字，产物里搜不到这些明文；
+  - 每 1.2–3.8s（随机抖动）用 `performance.now()` 包裹一次 `debugger`
+    探针，被暂停超过 120ms 判定为 devtools 打开，随后进入 300–800ms 随机间隔的持续打断；
+  - obfuscator 自带的 `debugProtection` 已关闭（`Function` + `setInterval` + `0xfa0` 特征太明显）；
+  - 线上排查临时关闭：`APP_ANTI_DEBUG=0 pnpm build:mock`（同时影响调试包的注入开关）。
+  - 限制：客户端反调试只能提高成本；CSP 禁止 `eval` 时会自动跳过安装，敏感逻辑仍必须放在后端。
 - **缓存注意**：混淆发生在 bundle 生成之后，文件名 hash 不随混淆内容变化。因此 `docker/nginx.conf` 对 `/assets/` 使用
   `must-revalidate` 而不是 `immutable`；换 CDN 时也不要给 JS/CSS 配置长 immutable 缓存。
 - `build:select`（多子应用选择构建）目前只出生产包。
