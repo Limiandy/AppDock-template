@@ -279,6 +279,15 @@ pnpm create app-dock my-app --force               # 覆盖非空目录（谨慎�
   - 线上排查临时关闭：`APP_ANTI_DEBUG=0 pnpm build:mock`（调试包始终不安装）。
   - 限制：devtools **独立窗口** + 关闭断点时视口不变、探针也不触发，无法检测；CSP 禁止 `eval`
     时守卫自动跳过。客户端反调试只能提高成本，敏感逻辑必须放后端。
+- 已知边界（按需评估，不是缺陷）：
+  - **vendor 不混淆**（`autoExcludeNodeModules`）：第三方依赖是公开代码，混淆只增加体积和运行开销；约 2.7MB 的
+    `vendor-modules-*.js` 保持压缩但可读，业务 chunk 才混淆。
+  - **运行时字符串 worker 覆盖不到**：`WorkerPool` 用 `registerWorker(name, code)` + Blob 执行， `obfuscateWorker`
+    只覆盖 Vite 的 `?worker` 产物；本仓库目前没有业务使用 worker。
+  - **selfDefending 与二次改写冲突**：HTTP gzip/brotli 安全（实测往返可用）；CDN 的“自动压缩/格式化 JS”（如 Cloudflare
+    Auto Minify、网关的 JS 优化）会重排代码，实测会让混淆产物进入死循环。部署时不要对 `/assets/` 开启这类改写。
+  - **未开启
+    `disableConsoleOutput`**：保留 console 便于排查；不要在业务日志里输出 token、用户隐私等敏感数据，而不是全局禁用 console。
 - **缓存注意**：混淆发生在 bundle 生成之后，文件名 hash 不随混淆内容变化。因此 `docker/nginx.conf` 对 `/assets/` 使用
   `must-revalidate` 而不是 `immutable`；换 CDN 时也不要给 JS/CSS 配置长 immutable 缓存。
 - `build:select`（多子应用选择构建）目前只出生产包。

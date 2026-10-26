@@ -1,4 +1,9 @@
 // WorkerPool.ts
+//
+// 注意：worker 代码是通过 `registerWorker(name, code)` 在运行时以字符串传入，
+// 再由 Blob + importScripts 执行。构建期的 javascript-obfuscator（含 obfuscateWorker）
+// 只处理 Vite 产出的 `?worker` 模块，覆盖不到这里的运行时字符串。
+// 如果 worker 里要放敏感逻辑，请改用 `?worker` 模块或把逻辑放到服务端。
 type Task = {
   workerName: string
   payload: any
